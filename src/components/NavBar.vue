@@ -78,7 +78,9 @@ li a:hover {
   display: flex;
   padding: 8px;
   margin-top: 10px;
-  margin-right: 10px;
+}
+.purpleButton{
+  margin-right: 20px;
 }
 }
 </style>
