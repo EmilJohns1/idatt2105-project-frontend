@@ -1,35 +1,32 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
 }
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+body{
+  padding-top: 30px;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.link{
+  margin:10px;
+  color:black;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.purpleButton {
+  color: white;
+  background-color: #756DD3;
+  border: none;
+  border-radius: 10%;
+  cursor: pointer;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+.blackButton {
+  color: white;
+  background-color: #000000;
+  border: none;
+  border-radius: 10%;
+  cursor: pointer;
 }
