@@ -18,8 +18,8 @@ const email = ref('');
 const password = ref('');
 
 const submitForm = () => {
-  // Handle form submission/registration here
-  console.log(email.value, password.value, 'registered');
+    // Handle form submission/registration here
+    console.log(email.value, password.value, 'registered');
 };
 </script>
 

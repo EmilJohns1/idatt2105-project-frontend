@@ -1,23 +1,23 @@
 <template>
     <div class="login-container">
-      <h1>Log in</h1>
-      <form @submit.prevent="submitLogin">
-        <input type="email" v-model="email" placeholder="Email" required class="input-field">
-        <input type="password" v-model="password" placeholder="Password" required class="input-field">
-        <button type="submit" class="submit-button">Login</button>
-      </form>
+        <h1>Log in</h1>
+        <form @submit.prevent="submitLogin">
+            <input type="email" v-model="email" placeholder="Email" required class="input-field">
+            <input type="password" v-model="password" placeholder="Password" required class="input-field">
+            <button type="submit" class="submit-button">Login</button>
+        </form>
     </div>
-  </template>
+</template>
   
 <script setup>
-  import { ref } from 'vue';
+    import { ref } from 'vue';
   
-  const email = ref('');
-  const password = ref('');
+    const email = ref('');
+    const password = ref('');
   
-  const submitLogin = () => {
+    const submitLogin = () => {
     console.log(email.value, password.value, 'logged in');
-  };
+    };
 </script>
 
 <style scoped>
