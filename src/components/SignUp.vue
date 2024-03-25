@@ -24,19 +24,23 @@ const submitForm = () => {
 </script>
 
 <style scoped>
+.sign-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 .input-field {
     width: 100%;
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
     box-sizing: border-box;
 }
 .submit-button {
     width: 100%;
     padding: 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     background-color: black;
     color: white;
     margin-bottom: 10px;
