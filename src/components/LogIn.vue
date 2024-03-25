@@ -1,12 +1,4 @@
 <template>
-    <div class="log-in-container">
-        <h1>Log in</h1>
-        <h2>Enter your email and password to log in to this app</h2>
-
-    </div>
-</template>
-
-<template>
     <div class="login-container">
       <h1>Log in</h1>
       <form @submit.prevent="submitLogin">
@@ -24,7 +16,6 @@
   const password = ref('');
   
   const submitLogin = () => {
-    // Handle the login submission here
     console.log(email.value, password.value, 'logged in');
   };
   </script>
