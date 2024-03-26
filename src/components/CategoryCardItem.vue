@@ -1,6 +1,8 @@
 <template>
     <div class="category-card">
-        <img :src="image" :alt="title" class="category-image" />
+        <div class="image-container">
+            <img :src="image" :alt="title" class="category-image" />
+        </div>
         <h3 class="category-title">{{ title }}</h3>
         <p class="category-description">{{ description }}</p>
     </div>
@@ -18,10 +20,15 @@ const props = defineProps({
 
 <style>
 .category-card {
-    width: 300px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0;
     border-radius: 1px;
     overflow: hidden;
     transition: box-shadow 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .category-card:hover {
@@ -42,5 +49,16 @@ const props = defineProps({
 .category-description {
     font-size: 1em;
     margin: 0.5em;
+}
+
+.category-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.image-container {
+    width: 100%;
+    overflow: hidden;
 }
 </style>
