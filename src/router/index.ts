@@ -12,6 +12,11 @@ const router = createRouter({
       path: '/',
       name: 'Explore',
       component: ExploreView
+      children:[
+        path: ':subject',
+        name: 'SubjectQuizzes',
+        component:
+      ]
     },
     {
       path: '/about',
