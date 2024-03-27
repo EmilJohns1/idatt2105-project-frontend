@@ -10,6 +10,8 @@
         required
         class="input-field"
       />
+      <p v-if="loginError" class="error-message">{{ loginError }}</p>
+      <!-- Error message -->
       <div class="button-container">
         <button type="submit" class="submit-button">Login</button>
         <div class="additional-buttons">
@@ -20,32 +22,41 @@
         </div>
       </div>
     </form>
-
     <forgot-password-modal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import router from '@/router/index.ts'
 import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
+import { useLogin } from '@/api/userHooks.ts'
+import { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest type
 
 const email = ref('')
 const password = ref('')
 const showForgotPasswordModal = ref(false)
+const { loginUser, clearError, loginError } = useLogin() // Import loginError from useLogin
 
-const submitLogin = () => {
+const submitLogin = async () => {
   console.log(email.value, password.value, 'logged in')
-  // Here you can add your login logic
+  const userData: LoginRequest = {
+    username: email.value,
+    password: password.value
+  }
+  const loginSuccess = await loginUser(userData)
+  if (!loginSuccess) {
+    // Set the error message and clear email and password fields
+    loginError.value = 'Login failed, please check your credentials.'
+    email.value = ''
+    password.value = ''
+  } else {
+    router.push('/')
+  }
 }
 
 const goToRegister = () => {
   router.push('/signup')
-}
-
-const goToForgotPassword = () => {
-  // Implement navigation to the forgot password page
-  console.log('Navigate to Forgot Password')
 }
 
 const openForgotPasswordModal = () => {
@@ -58,6 +69,11 @@ const closeForgotPasswordModal = () => {
 </script>
 
 <style scoped>
+.error-message {
+  color: red;
+  margin-bottom: 10px;
+}
+
 .login-container {
   display: flex;
   flex-direction: column;

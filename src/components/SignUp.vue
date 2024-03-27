@@ -1,51 +1,111 @@
 <template>
-    <div class="sign-container">
-        <h1>Create an account</h1>
-        <h2>Sign up with a email and password for this app</h2>
-        <form @submit.prevent="submitForm">
-            <input type="email" v-model="email" placeholder="Email" required class="input-field">
-            <input type="password" v-model="password" placeholder="Password" required class="input-field">
-            <button type="submit" class="submit-button">Sign up with email</button>
-        </form>
-        <p>By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></p>
-    </div>
+  <div class="sign-container">
+    <h1 id="header-1">Create an account</h1>
+    <h2 id="header-2">Sign up with an email and password for this app</h2>
+    <form @submit.prevent="submitForm">
+      <input
+        @click="clearErrorMessage"
+        type="email"
+        v-model="email"
+        placeholder="Email"
+        required
+        class="input-field"
+      />
+      <input
+        @click="clearErrorMessage"
+        type="password"
+        v-model="password"
+        placeholder="Password"
+        required
+        class="input-field"
+      />
+      <button type="submit" class="submit-button">Sign up with email</button>
+    </form>
+    <p id="registration-error" v-if="registrationError">{{ registrationError }}</p>
+    <p>
+      By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and
+      <a href="/privacy">Privacy Policy</a>
+    </p>
+  </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRegistration } from '@/api/userHooks'
+import { LoginRequest } from '@/types/LoginRequest'
+import router from '@/router/index.ts'
 
-const email = ref('');
-const password = ref('');
+const email = ref('')
+const password = ref('')
+const { registerUser, clearError } = useRegistration()
+const registrationError = ref('')
 
-const submitForm = () => {
-    // Handle form submission/registration here
-    console.log(email.value, password.value, 'registered');
-};
+const submitForm = async () => {
+  clearError()
+  const userData: LoginRequest = {
+    username: email.value,
+    password: password.value
+  }
+  const registrationSuccess = await registerUser(userData)
+  if (!registrationSuccess) {
+    registrationError.value = 'Registration failed, a user with this email already exists.'
+    email.value = ''
+    password.value = ''
+  } else {
+    redirect()
+  }
+}
+const redirect = () => {
+  router.push('/login')
+  setTimeout(() => {
+    window.alert('User created!')
+    // Wait for a tick to allow the redirect to complete
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 0)
+  }, 250)
+}
+
+const clearErrorMessage = () => {
+  registrationError.value = ''
+}
 </script>
 
 <style scoped>
-.sign-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 10%;
-}
-.input-field {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-}
-.submit-button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 10px;
-    background-color: black;
-    color: white;
-    margin-bottom: 10px;
-    cursor: pointer;
+#header-1 {
+  font-size: 2.5rem;
 }
 
+#header-2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#registration-error {
+  color: red;
+}
+
+.sign-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10%;
+}
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
 </style>
