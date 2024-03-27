@@ -9,7 +9,7 @@
       <li><RouterLink to="/create" class="link">Create</RouterLink></li>
       <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
       <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
-      <li><RouterLink to="/signin" class="purpleButton button">Sign up</RouterLink></li>
+      <li><RouterLink to="/signup" class="purpleButton button">Sign up</RouterLink></li>
       <li><RouterLink to="/login" class="blackButton button">Login</RouterLink></li>
     </ul>
 </template>

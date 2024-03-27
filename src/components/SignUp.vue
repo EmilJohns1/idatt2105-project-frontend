@@ -29,6 +29,7 @@ const submitForm = () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding-top: 10%;
 }
 .input-field {
     width: 100%;

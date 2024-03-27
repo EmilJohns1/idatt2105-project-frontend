@@ -3,6 +3,7 @@
 #app {
     display: grid;
     padding: 0 2rem;
+    margin-top: 34px;
   }
 body{
   padding-top: 30px;
