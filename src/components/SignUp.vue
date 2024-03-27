@@ -32,8 +32,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRegistration } from '@/api/userHooks'
-import { LoginRequest } from '@/types/LoginRequest'
-import router from '@/router/index.ts'
+import type { LoginRequest } from '@/types/LoginRequest'
+import router from '@/router/index'
 
 const email = ref('')
 const password = ref('')

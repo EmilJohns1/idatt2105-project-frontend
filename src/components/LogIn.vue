@@ -28,10 +28,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import router from '@/router/index.ts'
+import router from '@/router/index'
 import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
-import { useLogin } from '@/api/userHooks.ts'
-import { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest type
+import { useLogin } from '@/api/userHooks'
+import type { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest type
 
 const email = ref('')
 const password = ref('')
