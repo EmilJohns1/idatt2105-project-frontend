@@ -60,4 +60,5 @@ import CategoryCard from '../components/CategoryCardItem.vue';
     justify-content: center; 
     align-items: start; 
 }
+
 </style>
