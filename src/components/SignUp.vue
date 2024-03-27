@@ -108,4 +108,9 @@ const clearErrorMessage = () => {
   margin-bottom: 10px;
   cursor: pointer;
 }
+
+.submit-button:hover {
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
 </style>
