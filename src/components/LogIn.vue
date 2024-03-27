@@ -63,8 +63,8 @@ const closeForgotPasswordModal = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  padding-bottom: 10%;
+  height: 100%;
+  padding-top: 10%;
 }
 
 #header {
