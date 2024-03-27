@@ -1,49 +1,45 @@
 <template>
     <div class="explore-container">
         <h1>Explore</h1>
+        <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
         <p>Choose your desired subject to start.</p>
         <div class="category-grid">
             <CategoryCard
-                image="/categoryimage/all.png"
-                title="All"
-                description="This contains all quizzes"
-                />
-            <CategoryCard
-                image="/categoryimage/biology.png"
-                title="Biology"
-                description="This contains all Biology quizzes"
-                />
-            <CategoryCard
-                image="/categoryimage/chemistry.png"
-                title="Chemistry"
-                description="This contains all chemistry quizzes"
-                />
-            <CategoryCard
-                image="/categoryimage/english.png"
-                title="English"
-                description="This contains all english quizzes"
-                />
-            <CategoryCard
-                image="/categoryimage/maths.png"
-                title="Maths"
-                description="This contains all math quizzes"
-                />
-            <CategoryCard
-                image="/categoryimage/physics.png"
-                title="Physics"
-                description="This contains all physics quizzes"
-                />
-            <CategoryCard
-                image="/categoryimage/science.png"
-                title="science"
-                description="This contains all science quizzes"
-                />
+                v-for="category in filteredCategories"
+                :key="category.title"
+                :image="category.image"
+                :title="category.title"
+                :description="category.description"
+            />
         </div>
     </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
 import CategoryCard from '../components/CategoryCardItem.vue';
+
+const categories = ref([
+    { image: "/categoryimage/all.png", title: "All", description: "This contains all quizzes" },
+    { image: "/categoryimage/biology.png", title: "Biology", description: "This contains all Biology quizzes" },
+    { image: "/categoryimage/chemistry.png", title: "Chemistry", description: "This contains all chemistry quizzes"},
+    { image: "/categoryimage/english.png", title: "English", description: "This contains all English quizzes."},
+    { image: "/categoryimage/maths.png", title: "Maths", description: "This contains all Maths quizzes."},
+    { image: "/categoryimage/physics.png", title: "Physics", description: "This contains all Physics quizzes."}
+    
+]);
+
+const searchTerm = ref('');
+
+const filteredCategories = computed(() => {
+  if (searchTerm.value) {
+    return categories.value.filter(category => 
+      category.title.toLowerCase().includes(searchTerm.value.toLowerCase())
+    );
+  } else {
+    return categories.value;
+  }
+});
 </script>
 
 <style>

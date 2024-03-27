@@ -1,11 +1,13 @@
 <template>
-    <div class="category-card">
-        <div class="image-container">
-            <img :src="image" :alt="title" class="category-image" />
+    <router-link :to="'/explore/${title.toLowerCase()}'" class="category-card-link">
+        <div class="category-card">
+            <div class="image-container">
+                <img :src="image" :alt="title" class="category-image" />
+            </div>
+            <h3 class="category-title">{{ title }}</h3>
+            <p class="category-description">{{ description }}</p>
         </div>
-        <h3 class="category-title">{{ title }}</h3>
-        <p class="category-description">{{ description }}</p>
-    </div>
+    </router-link>
 </template>
 
 <script setup>
