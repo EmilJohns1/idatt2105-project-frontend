@@ -13,10 +13,11 @@ export default {
 
 <style scoped>
 .card {
-  border: 1px solid #ccc;
+  border: 2px solid #818181;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-image: linear-gradient(to bottom right, #86bfe6, #4ea1f5);
   padding: 20px;
   margin-bottom: 20px;
 }
 </style>
+

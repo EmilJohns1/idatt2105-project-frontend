@@ -1,5 +1,6 @@
 <template>
   <div class="login-container">
+    <Card class="login-card">
     <h1 id="header">Log in</h1>
     <form @submit.prevent="submitLogin">
       <input type="email" v-model="email" placeholder="Email" required class="input-field" />
@@ -22,14 +23,16 @@
         </div>
       </div>
     </form>
+  </Card>
     <forgot-password-modal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, SessionStorage } from 'vue'
 import router from '@/router/index'
 import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
+import Card from '@/components/Card.vue'
 import { useLogin } from '@/api/userHooks'
 import type { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest type
 
@@ -52,6 +55,8 @@ const submitLogin = async () => {
     password.value = ''
   } else {
     router.push('/')
+    sessionStorage.setItem('isLoggedIn', 'true')
+    sessionStorage.setItem('user', userData.username)
   }
 }
 
@@ -72,6 +77,11 @@ const closeForgotPasswordModal = () => {
 .error-message {
   color: red;
   margin-bottom: 10px;
+}
+
+.login-container .login-card {
+  /* Specific styling for the Card component within .login-container */
+  padding: 40px 60px 60px 60px; /* Add 40px padding to the top and 60px padding to the rest */
 }
 
 .login-container {
