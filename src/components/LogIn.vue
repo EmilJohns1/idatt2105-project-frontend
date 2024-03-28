@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, SessionStorage } from 'vue'
+import { ref } from 'vue'
 import router from '@/router/index'
 import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
 import Card from '@/components/Card.vue'
