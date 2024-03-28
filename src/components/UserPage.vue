@@ -17,7 +17,12 @@
     <div class="quizzes-recent-activity">
       <Card class="quizzes-section">
         <h3>Your quizzes</h3>
-        <input type="text" v-model="searchQuery" placeholder="Search quizzes" class="search-input" />
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search quizzes"
+          class="search-input"
+        />
         <ul class="quiz-list">
           <QuizCard id="quiz-card" v-for="quiz in user.quizzes" :key="quiz.id" :quiz="quiz" />
         </ul>
@@ -36,17 +41,21 @@
 </template>
 
 <script>
-import Card from '@/components/Card.vue';
-import QuizCard from '@/components/QuizCard.vue';
-import { ref } from 'vue';
-import { getUserByUsername, getQuizzesByUserId, uploadFile, updateProfilePicture } from '@/api/userHooks';
-
+import Card from '@/components/Card.vue'
+import QuizCard from '@/components/QuizCard.vue'
+import { ref } from 'vue'
+import {
+  getUserByUsername,
+  getQuizzesByUserId,
+  uploadFile,
+  updateProfilePicture
+} from '@/api/userHooks'
 
 export default {
   name: 'UserPage',
   components: {
     Card, // Register the Card component
-    QuizCard, // Register the QuizCard component
+    QuizCard // Register the QuizCard component
   },
   data() {
     return {
@@ -55,18 +64,18 @@ export default {
         email: '',
         quizzes: [
           { id: 1, name: 'Quiz 1', imageUrl: 'quiz1.jpg' },
-          { id: 2, name: 'Quiz 2', imageUrl: 'quiz2.jpg' },
+          { id: 2, name: 'Quiz 2', imageUrl: 'quiz2.jpg' }
           // Add more quizzes as needed
         ],
         recentActivity: [
           { id: 1, quizName: 'Quiz 1', date: '2024-03-27' },
-          { id: 2, quizName: 'Quiz 2', date: '2024-03-26' },
+          { id: 2, quizName: 'Quiz 2', date: '2024-03-26' }
           // Add more recent activity entries as needed
-        ],
+        ]
       },
       searchQuery: '',
-      file: null,
-    };
+      file: null
+    }
   },
   async mounted() {
     const username = sessionStorage.getItem('user')
@@ -81,7 +90,7 @@ export default {
           const quizzesData = await getQuizzesByUserId(userData.id)
           console.log(quizzesData)
           if (quizzesData) {
-            this.user.quizzes = quizzesData.map(quiz => ({
+            this.user.quizzes = quizzesData.map((quiz) => ({
               id: quiz.id,
               name: quiz.title, // Assuming the quiz title corresponds to its name
               imageUrl: quiz.quizPictureUrl // Assuming the quiz picture URL is provided
@@ -99,31 +108,31 @@ export default {
   },
   methods: {
     handleFileChange(event) {
-      this.file = event.target.files[0];
+      this.file = event.target.files[0]
     },
     async uploadProfilePicture() {
       if (this.file) {
         try {
-          const imageUrl = await uploadFile(this.file);
-          console.log('Uploaded profile picture:', imageUrl);
+          const imageUrl = await uploadFile(this.file)
+          console.log('Uploaded profile picture:', imageUrl)
 
-          const success = await updateProfilePicture(this.user.email, imageUrl); 
+          const success = await updateProfilePicture(this.user.email, imageUrl)
           if (success) {
             // Update the profile picture directly with the returned image URL
-            this.user.profilePicture = imageUrl;
-            console.log('Profile picture updated successfully.');
+            this.user.profilePicture = imageUrl
+            console.log('Profile picture updated successfully.')
           } else {
-            console.error('Failed to update profile picture.');
+            console.error('Failed to update profile picture.')
           }
         } catch (error) {
-          console.error('Error uploading profile picture:', error);
+          console.error('Error uploading profile picture:', error)
         }
       } else {
-        console.warn('No file selected.');
+        console.warn('No file selected.')
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -194,12 +203,14 @@ h3 {
   margin-bottom: 20px;
 }
 
-.quiz-list, .activity-list {
+.quiz-list,
+.activity-list {
   list-style: none;
   padding: 0;
 }
 
-.quiz-item, .activity-item {
+.quiz-item,
+.activity-item {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -207,7 +218,8 @@ h3 {
   cursor: pointer;
 }
 
-.quiz-item:hover, .activity-item:hover {
+.quiz-item:hover,
+.activity-item:hover {
   background-color: #f0f0f0;
 }
 
@@ -218,7 +230,7 @@ h3 {
   align-items: start;
 }
 
-.file-input-container input[type="file"] {
+.file-input-container input[type='file'] {
   margin-bottom: 5px;
 }
 </style>

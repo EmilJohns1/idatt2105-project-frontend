@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Card from '@/components/Card.vue'; // Import the Card component
+import Card from '@/components/Card.vue' // Import the Card component
 
 export default {
   props: {
@@ -21,7 +21,7 @@ export default {
   components: {
     Card // Register the Card component
   }
-};
+}
 </script>
 
 <style scoped>
@@ -59,6 +59,10 @@ export default {
 }
 
 .custom-background {
-  background-image: linear-gradient(to bottom right, #f5f5dc, #ffffff); /* Beige/almost white gradient */
+  background-image: linear-gradient(
+    to bottom right,
+    #f5f5dc,
+    #ffffff
+  ); /* Beige/almost white gradient */
 }
 </style>

@@ -1,29 +1,29 @@
 <template>
   <div class="login-container">
     <Card class="login-card">
-    <h1 id="header">Log in</h1>
-    <form @submit.prevent="submitLogin">
-      <input type="email" v-model="email" placeholder="Email" required class="input-field" />
-      <input
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        required
-        class="input-field"
-      />
-      <p v-if="loginError" class="error-message">{{ loginError }}</p>
-      <!-- Error message -->
-      <div class="button-container">
-        <button type="submit" class="submit-button">Login</button>
-        <div class="additional-buttons">
-          <button type="button" @click="goToRegister" class="additional-button">Register</button>
-          <button type="button" @click="openForgotPasswordModal" class="additional-button">
-            Forgot Password
-          </button>
+      <h1 id="header">Log in</h1>
+      <form @submit.prevent="submitLogin">
+        <input type="email" v-model="email" placeholder="Email" required class="input-field" />
+        <input
+          type="password"
+          v-model="password"
+          placeholder="Password"
+          required
+          class="input-field"
+        />
+        <p v-if="loginError" class="error-message">{{ loginError }}</p>
+        <!-- Error message -->
+        <div class="button-container">
+          <button type="submit" class="submit-button">Login</button>
+          <div class="additional-buttons">
+            <button type="button" @click="goToRegister" class="additional-button">Register</button>
+            <button type="button" @click="openForgotPasswordModal" class="additional-button">
+              Forgot Password
+            </button>
+          </div>
         </div>
-      </div>
-    </form>
-  </Card>
+      </form>
+    </Card>
     <forgot-password-modal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
   </div>
 </template>

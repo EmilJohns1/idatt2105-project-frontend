@@ -96,31 +96,36 @@ export const getQuizzesByUserId = async (userId: number): Promise<any[] | null> 
 
 export const uploadFile = async (file: File): Promise<string | null> => {
   try {
-    const formData = new FormData();
-    formData.append('file', file);
+    const formData = new FormData()
+    formData.append('file', file)
 
-    const response = await api.post('/storage/uploadFile', formData);
+    const response = await api.post('/storage/uploadFile', formData)
 
     if (response.status === 200) {
-      return response.data;
+      return response.data
     } else {
-      throw new Error('Failed to upload file');
+      throw new Error('Failed to upload file')
     }
   } catch (error) {
-    throw new Error(`Error uploading file`);
+    throw new Error(`Error uploading file`)
   }
 }
 
-export const updateProfilePicture = async (username: string, profilePictureUrl: string): Promise<boolean> => {
+export const updateProfilePicture = async (
+  username: string,
+  profilePictureUrl: string
+): Promise<boolean> => {
   try {
-    const response = await api.put(`/user/profile-picture?username=${username}&profilePictureUrl=${profilePictureUrl}`);
+    const response = await api.put(
+      `/user/profile-picture?username=${username}&profilePictureUrl=${profilePictureUrl}`
+    )
 
     if (response.status === 200) {
-      return true;
+      return true
     } else {
-      throw new Error(`Failed to update profile picture. Status: ${response.status}`);
+      throw new Error(`Failed to update profile picture. Status: ${response.status}`)
     }
   } catch (error) {
-    throw new Error(`Error updating profile picture: ${error}`);
+    throw new Error(`Error updating profile picture: ${error}`)
   }
 }
