@@ -1,13 +1,13 @@
 <template>
-    <router-link :to="'/explore/${title.toLowerCase()}'" class="category-card-link">
-        <div class="category-card">
+    <div class="category-card">
+        <router-link :to="'/explore/${title.toLowerCase()}'" class="category-card-link">
             <div class="image-container">
                 <img :src="image" :alt="title" class="category-image" />
             </div>
             <h3 class="category-title">{{ title }}</h3>
             <p class="category-description">{{ description }}</p>
-        </div>
-    </router-link>
+        </router-link>
+    </div>
 </template>
 
 <script setup>
@@ -30,37 +30,41 @@ const props = defineProps({
     transition: box-shadow 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    text-align: left;
+    background: white; 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .category-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); 
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 .category-image {
     width: 100%;
     height: auto;
     object-fit: cover;
-}
-
-.category-title {
-    font-size: 1.5em;
-    margin: 0.5em;
-}
-
-.category-description {
-    font-size: 1em;
-    margin: 0.5em;
-}
-
-.category-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
 }
 
+.category-title {
+    font-size: 1.5em;    
+}
+
+.category-description {
+    font-size: 1em;
+}
+
 .image-container {
     width: 100%;
     overflow: hidden;
+}
+.category-card-link {
+    display: block;
+    text-decoration: none;
 }
 </style>

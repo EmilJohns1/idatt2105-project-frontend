@@ -17,19 +17,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { axios } from 'axios';
 import CategoryCard from '../components/CategoryCardItem.vue';
 
-const categories = ref([
-    { image: "/categoryimage/all.png", title: "All", description: "This contains all quizzes" },
-    { image: "/categoryimage/biology.png", title: "Biology", description: "This contains all Biology quizzes" },
-    { image: "/categoryimage/chemistry.png", title: "Chemistry", description: "This contains all chemistry quizzes"},
-    { image: "/categoryimage/english.png", title: "English", description: "This contains all English quizzes."},
-    { image: "/categoryimage/maths.png", title: "Maths", description: "This contains all Maths quizzes."},
-    { image: "/categoryimage/physics.png", title: "Physics", description: "This contains all Physics quizzes."}
-    
-]);
+const categories = ref([]);
+
+onMounted(async () => {
+  const categoryName = route.params.subject;
+  try {
+    const response = await axios.get('/api/quizzes/categories');
+    categories.value = response.data;
+  } catch (error) {
+    console.error("failed to fetch categories:", error);
+  }
+});
 
 const searchTerm = ref('');
 
