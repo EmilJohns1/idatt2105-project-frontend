@@ -1,6 +1,7 @@
 <script setup>
+import router from '@/router';
 import Explore from '../components/Explore.vue';
-import NavBar from '../components/NavBar.vue';
+import SubjectView from './SubjectView.vue';
 </script>
 
 <template>

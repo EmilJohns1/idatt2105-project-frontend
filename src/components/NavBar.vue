@@ -5,7 +5,7 @@
 <template>
     <ul class="navbar">
     <li id="logo">QuizApp</li>
-      <li><RouterLink to="/" class="link">Explore</RouterLink></li>
+      <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
       <li><RouterLink to="/create" class="link">Create</RouterLink></li>
       <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
       <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>

@@ -10,6 +10,7 @@
                 :image="category.image"
                 :title="category.title"
                 :description="category.description"
+                @click="goToSubject(category.title)"
             />
         </div>
     </div>
@@ -17,6 +18,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import CategoryCard from '../components/CategoryCardItem.vue';
 
 const categories = ref([
@@ -40,6 +42,12 @@ const filteredCategories = computed(() => {
     return categories.value;
   }
 });
+
+const router = useRouter();
+
+function goToSubject(subject) {
+  router.push(`/explore/${subject.toLowerCase()}`);
+}
 </script>
 
 <style>
