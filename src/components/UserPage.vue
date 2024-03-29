@@ -76,10 +76,12 @@
         </div>
       </div>
     </Card>
+    <Calendar v-if="user.id" :id="user.id" />
   </div>
 </template>
 
 <script setup lang="ts">
+import Calendar from '@/components/Calendar.vue'
 import Card from '@/components/Card.vue'
 import QuizCard from '@/components/QuizCard.vue'
 import { format } from 'date-fns'
@@ -94,23 +96,23 @@ import {
 } from '@/api/userHooks'
 
 interface User {
-  id: number | null;
-  profilePicture: string | null;
-  email: string;
-  quizzes: Quiz[];
-  recentActivity: Activity[];
+  id: number | null
+  profilePicture: string | null
+  email: string
+  quizzes: Quiz[]
+  recentActivity: Activity[]
 }
 
 interface Quiz {
-  id: number;
-  title: string;
-  quizPictureUrl: string;
+  id: number
+  title: string
+  quizPictureUrl: string
 }
 
 interface Activity {
-  id: number;
-  quizName: string;
-  date: string;
+  id: number
+  quizName: string
+  date: string
 }
 
 const user: Ref<User> = ref({
@@ -125,16 +127,16 @@ const user: Ref<User> = ref({
 })
 const searchQuery = ref('')
 const file = ref<File | null>(null) // Define file type
-const currentQuizId = ref<string | null>(null); // Define currentQuizId type
+const currentQuizId = ref<string | null>(null) // Define currentQuizId type
 const quizComments = ref<{ [key: number]: Comment[] }>({}) // Define quizComments type
 const fetchedQuizzes = ref<Quiz[]>([]) // Define fetchedQuizzes type
 const currentQuiz = ref<Quiz | null>(null) // Define currentQuiz type
 
 interface Comment {
-  id: number;
-  content: string;
-  creationDate: string;
-  lastModifiedDate: string;
+  id: number
+  content: string
+  creationDate: string
+  lastModifiedDate: string
 }
 
 const fetchUserData = async () => {
@@ -169,34 +171,34 @@ const fetchUserData = async () => {
 }
 
 const handleFileChange = (event: Event): void => {
-  const target = event.target as HTMLInputElement;
+  const target = event.target as HTMLInputElement
   if (target.files) {
-    file.value = target.files[0];
+    file.value = target.files[0]
   }
 }
 
 const uploadProfilePicture = async (): Promise<void> => {
   if (file.value) {
     try {
-      const imageUrl: string | null = await uploadFile(file.value);
-      console.log('Uploaded profile picture:', imageUrl);
+      const imageUrl: string | null = await uploadFile(file.value)
+      console.log('Uploaded profile picture:', imageUrl)
 
       if (imageUrl) {
-        const success: boolean = await updateProfilePicture(user.value.email, imageUrl);
+        const success: boolean = await updateProfilePicture(user.value.email, imageUrl)
         if (success) {
-          user.value.profilePicture = imageUrl;
-          console.log('Profile picture updated successfully.');
+          user.value.profilePicture = imageUrl
+          console.log('Profile picture updated successfully.')
         } else {
-          console.error('Failed to update profile picture.');
+          console.error('Failed to update profile picture.')
         }
       } else {
-        console.error('Failed to upload profile picture: Image URL is null.');
+        console.error('Failed to upload profile picture: Image URL is null.')
       }
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
+      console.error('Error uploading profile picture:', error)
     }
   } else {
-    console.warn('No file selected.');
+    console.warn('No file selected.')
   }
 }
 
@@ -257,21 +259,21 @@ const navigateToPreviousQuiz = (): void => {
 }
 
 const fetchQuizzesWithComments = async (): Promise<void> => {
-  const quizzesToFetch: Set<number> = new Set();
+  const quizzesToFetch: Set<number> = new Set()
 
   for (const quizId in quizComments.value) {
-    quizzesToFetch.add(parseInt(quizId));
+    quizzesToFetch.add(parseInt(quizId))
   }
 
-  const fetchedQuizzesData: Quiz[] = [];
+  const fetchedQuizzesData: Quiz[] = []
   for (const quizId of quizzesToFetch) {
-    const quiz = await getQuizByQuizId(quizId);
+    const quiz = await getQuizByQuizId(quizId)
     if (quiz) {
-      fetchedQuizzesData.push(quiz);
+      fetchedQuizzesData.push(quiz)
     }
   }
 
-  fetchedQuizzes.value = [...fetchedQuizzesData];
+  fetchedQuizzes.value = [...fetchedQuizzesData]
 }
 
 // Define the computed property to return the fetched quizzes
@@ -280,20 +282,20 @@ const quizzesWithComments = computed(() => fetchedQuizzes.value)
 // Watch for changes in currentQuizId and quizzesWithComments to update currentQuiz
 watch([currentQuizId, quizzesWithComments], ([newCurrentQuizId, newQuizzesWithComments]) => {
   if (newCurrentQuizId !== null) {
-    const foundQuiz = newQuizzesWithComments.find(
-      (quiz) => quiz.id === parseInt(newCurrentQuizId)
-    );
+    const foundQuiz = newQuizzesWithComments.find((quiz) => quiz.id === parseInt(newCurrentQuizId))
 
-    currentQuiz.value = foundQuiz !== undefined ? foundQuiz : null;
+    currentQuiz.value = foundQuiz !== undefined ? foundQuiz : null
   } else {
-    currentQuiz.value = null;
+    currentQuiz.value = null
   }
-});
+})
 
 // Define a computed property to filter quizzesWithComments based on currentQuizId
 const filteredQuizzes = computed(() => {
   if (currentQuizId.value !== null) {
-    return quizzesWithComments.value.filter((quiz) => quiz.id === (currentQuizId.value ? parseInt(currentQuizId.value) : null))
+    return quizzesWithComments.value.filter(
+      (quiz) => quiz.id === (currentQuizId.value ? parseInt(currentQuizId.value) : null)
+    )
   } else {
     return []
   }
