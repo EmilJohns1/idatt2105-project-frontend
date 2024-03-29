@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SignUpView from '../views/SignUpView.vue'
 import LoginView from '../views/LoginView.vue'
 import ExploreView from '../views/ExploreView.vue'
-import SubjectView from '../views/SubjectView.vue'
+import CategoryView from '../views/CategoryView.vue'
 import CreateView from '@/views/CreateView.vue'
 
 
@@ -15,9 +15,9 @@ const router = createRouter({
       component: ExploreView,
     },
     {
-      path: '/explore/:subject',
-      name: 'subject',
-      component: SubjectView,
+      path: '/explore/:category',
+      name: 'Category',
+      component: CategoryView,
       props: true
     },
     {

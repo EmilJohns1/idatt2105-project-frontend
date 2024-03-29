@@ -7,9 +7,9 @@
           <CategoryCard
               v-for="category in filteredCategories"
               :key="category.id"
-              :image="category.picture_url"
+              :image="getImageUrl(category.name)"
               :title="category.name"
-              @select="goToCategory"
+              @clicked="() => goToCategory (category.name.toLowerCase())"
             />
             <!--Add in description for categories in the future when it's implemented-->
         </div> 
@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang = ts>
-import api from '../api';
+import api from '@/api/axiosConfig';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CategoryCard from '../components/CategoryCardItem.vue';
@@ -30,6 +30,7 @@ onMounted(async () => {
   try {
     const response = await api.get('/quizzes/categories');
     categories.value = response.data;
+    console.log('Categories:', categories.value)
   } catch (error) {
     console.error('Failed to fetch categories:', error);
   }
@@ -45,8 +46,14 @@ const filteredCategories = computed(() => {
   }
 });
 
-function goToCategory(subject) {
-  router.push(`/explore/${subject.toLowerCase()}`);
+function getImageUrl(categoryName) {
+  const imageUrl = categoryName.toLowerCase();
+  return './categoryimage/'+ categoryName.toLowerCase()+'.png';
+}
+
+function goToCategory(categoryId) {
+  console.log('Navigating to category:', categoryId)
+  router.push({ name: 'Category', params: { category: categoryId } });
 }
 </script>
 

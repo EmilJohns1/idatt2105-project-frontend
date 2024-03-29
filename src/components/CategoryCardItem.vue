@@ -11,15 +11,16 @@
 import { defineProps, defineEmits } from 'vue';
 
 type Props = {
-    id: number;
-    title: string;
-    image: string;
+    id: Number;
+    title: String;
+    image: String;
 }
 
 const props = defineProps<Props>();
 const emits = defineEmits(['clicked']);
 
 const handleClick = () => {
+    console.log('Category card clicked:', props.id);
     emits('clicked', props.id);
 };
 </script>
