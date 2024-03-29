@@ -1,31 +1,33 @@
 <template>
   <div class="sign-container">
-    <h1 id="header-1">Create an account</h1>
-    <h2 id="header-2">Sign up with an email and password for this app</h2>
-    <form @submit.prevent="submitForm">
-      <input
-        @click="clearErrorMessage"
-        type="email"
-        v-model="email"
-        placeholder="Email"
-        required
-        class="input-field"
-      />
-      <input
-        @click="clearErrorMessage"
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        required
-        class="input-field"
-      />
-      <button type="submit" class="submit-button">Sign up with email</button>
-    </form>
-    <p id="registration-error" v-if="registrationError">{{ registrationError }}</p>
-    <p>
-      By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and
-      <a href="/privacy">Privacy Policy</a>
-    </p>
+    <Card class="sign-card">
+      <h1 id="header-1">Create an account</h1>
+      <h2 id="header-2">Sign up with an email and password for this app</h2>
+      <form @submit.prevent="submitForm">
+        <input
+          @click="clearErrorMessage"
+          type="email"
+          v-model="email"
+          placeholder="Email"
+          required
+          class="input-field"
+        />
+        <input
+          @click="clearErrorMessage"
+          type="password"
+          v-model="password"
+          placeholder="Password"
+          required
+          class="input-field"
+        />
+        <button type="submit" class="submit-button">Sign up with email</button>
+      </form>
+      <p id="registration-error" v-if="registrationError">{{ registrationError }}</p>
+      <p>
+        By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and
+        <a href="/privacy">Privacy Policy</a>
+      </p>
+    </Card>
   </div>
 </template>
 
@@ -34,6 +36,7 @@ import { ref } from 'vue'
 import { useRegistration } from '@/api/userHooks'
 import type { LoginRequest } from '@/types/LoginRequest'
 import router from '@/router/index'
+import Card from '@/components/Card.vue'
 
 const email = ref('')
 const password = ref('')
@@ -83,6 +86,10 @@ const clearErrorMessage = () => {
 
 #registration-error {
   color: red;
+}
+
+.sign-card {
+  padding: 40px 60px 60px 60px;
 }
 
 .sign-container {

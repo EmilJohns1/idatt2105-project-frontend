@@ -1,27 +1,29 @@
 <template>
   <div class="login-container">
-    <h1 id="header">Log in</h1>
-    <form @submit.prevent="submitLogin">
-      <input type="email" v-model="email" placeholder="Email" required class="input-field" />
-      <input
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        required
-        class="input-field"
-      />
-      <p v-if="loginError" class="error-message">{{ loginError }}</p>
-      <!-- Error message -->
-      <div class="button-container">
-        <button type="submit" class="submit-button">Login</button>
-        <div class="additional-buttons">
-          <button type="button" @click="goToRegister" class="additional-button">Register</button>
-          <button type="button" @click="openForgotPasswordModal" class="additional-button">
-            Forgot Password
-          </button>
+    <Card class="login-card">
+      <h1 id="header">Log in</h1>
+      <form @submit.prevent="submitLogin">
+        <input type="email" v-model="email" placeholder="Email" required class="input-field" />
+        <input
+          type="password"
+          v-model="password"
+          placeholder="Password"
+          required
+          class="input-field"
+        />
+        <p v-if="loginError" class="error-message">{{ loginError }}</p>
+        <!-- Error message -->
+        <div class="button-container">
+          <button type="submit" class="submit-button">Login</button>
+          <div class="additional-buttons">
+            <button type="button" @click="goToRegister" class="additional-button">Register</button>
+            <button type="button" @click="openForgotPasswordModal" class="additional-button">
+              Forgot Password
+            </button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </Card>
     <forgot-password-modal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
   </div>
 </template>
@@ -30,13 +32,14 @@
 import { ref } from 'vue'
 import router from '@/router/index'
 import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
+import Card from '@/components/Card.vue'
 import { useLogin } from '@/api/userHooks'
 import type { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest type
 
 const email = ref('')
 const password = ref('')
 const showForgotPasswordModal = ref(false)
-const { loginUser, clearError, loginError } = useLogin() // Import loginError from useLogin
+const { loginUser, loginError } = useLogin() // Import loginError from useLogin
 
 const submitLogin = async () => {
   console.log(email.value, password.value, 'logged in')
@@ -51,7 +54,15 @@ const submitLogin = async () => {
     email.value = ''
     password.value = ''
   } else {
-    router.push('/')
+    sessionStorage.setItem('isLoggedIn', 'true')
+    sessionStorage.setItem('user', userData.username)
+
+    // Wait for router to be ready and then navigate to '/explore'
+    await router.isReady()
+    await router.push('/explore')
+
+    // After navigation, reload the page
+    window.location.reload()
   }
 }
 
@@ -72,6 +83,11 @@ const closeForgotPasswordModal = () => {
 .error-message {
   color: red;
   margin-bottom: 10px;
+}
+
+.login-container .login-card {
+  /* Specific styling for the Card component within .login-container */
+  padding: 40px 60px 60px 60px; /* Add 40px padding to the top and 60px padding to the rest */
 }
 
 .login-container {
