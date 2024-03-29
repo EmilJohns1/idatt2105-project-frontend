@@ -7,7 +7,12 @@
         <div>
           <p class="email">{{ user.email }}</p>
           <div class="file-input-container">
-            <input type="file" @change="handleFileChange" accept="image/*" />
+            <input
+              type="file"
+              id="fileInput"
+              accept="image/*"
+              @change="validateImageSize($event)"
+            />
             <button @click="uploadProfilePicture">Edit Profile Picture</button>
           </div>
         </div>
@@ -45,7 +50,7 @@
       <div class="quizzes-comments-container">
         <div v-if="currentQuizId !== null" class="comment-grid">
           <QuizCard
-            class="quiz-card"
+            class="comments-card"
             v-for="quiz in filteredQuizzes"
             :key="quiz.id"
             :quiz="quiz"
@@ -92,7 +97,8 @@ import {
   getUserByUsername,
   getQuizzesByUserId,
   uploadFile,
-  updateProfilePicture
+  updateProfilePicture,
+  deleteProfilePicture
 } from '@/api/userHooks'
 
 interface User {
@@ -170,23 +176,35 @@ const fetchUserData = async () => {
   }
 }
 
-const handleFileChange = (event: Event): void => {
-  const target = event.target as HTMLInputElement
-  if (target.files) {
-    file.value = target.files[0]
-  }
-}
-
 const uploadProfilePicture = async (): Promise<void> => {
   if (file.value) {
     try {
+      // Check if the user already has a profile picture
+      if (user.value.profilePicture) {
+        const modifiedProfilePictureUrl = user.value.profilePicture.replace(
+          'https://',
+          'https://quiz-project-fullstack.'
+        )
+
+        console.log('Deleting current profile picture:', modifiedProfilePictureUrl)
+        const deleteSuccess = await deleteProfilePicture(modifiedProfilePictureUrl)
+
+        if (!deleteSuccess) {
+          console.error('Failed to delete current profile picture.')
+          return
+        }
+      }
+
+      // Upload the new profile picture
       const imageUrl: string | null = await uploadFile(file.value)
       console.log('Uploaded profile picture:', imageUrl)
 
       if (imageUrl) {
+        // Update the user's profile picture URL
         const success: boolean = await updateProfilePicture(user.value.email, imageUrl)
         if (success) {
           user.value.profilePicture = imageUrl
+          window.location.reload()
           console.log('Profile picture updated successfully.')
         } else {
           console.error('Failed to update profile picture.')
@@ -199,6 +217,24 @@ const uploadProfilePicture = async (): Promise<void> => {
     }
   } else {
     console.warn('No file selected.')
+  }
+}
+
+const validateImageSize = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const selectedFile = target.files?.[0]
+  if (selectedFile) {
+    const fileSize = selectedFile.size / 1024 // Convert to KB
+    const maxSizeKB = 1024 // Max size in KB (1 MB)
+    if (fileSize > maxSizeKB) {
+      // Show an alert if file size exceeds the maximum limit
+      window.alert('File size exceeds the maximum limit. Maximum 1 MB allowed.')
+      // Reset the file input to clear the selected file
+      target.value = ''
+    } else {
+      // Update the file variable with the selected file
+      file.value = selectedFile
+    }
   }
 }
 
@@ -450,6 +486,7 @@ h3 {
   max-height: 400px;
   min-height: 400px;
   overflow-y: auto;
+  background-image: linear-gradient(to bottom right, #ffffff, #fafafa);
 }
 
 .quiz-section-card {

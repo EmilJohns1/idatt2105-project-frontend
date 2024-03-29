@@ -129,3 +129,25 @@ export const updateProfilePicture = async (
     throw new Error(`Error updating profile picture: ${error}`)
   }
 }
+
+export const deleteProfilePicture = async (url: string): Promise<boolean> => {
+  console.log('url:', url)
+  try {
+    const response = await api.delete('/storage/deleteFile', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        fileUrl: url
+      }
+    })
+
+    if (response.status === 200) {
+      return true
+    } else {
+      throw new Error(`Failed to delete profile picture. Status: ${response.status}`)
+    }
+  } catch (error) {
+    throw new Error(`Error deleting profile picture: ${error}`)
+  }
+}

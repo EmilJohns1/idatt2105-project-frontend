@@ -54,9 +54,15 @@ const submitLogin = async () => {
     email.value = ''
     password.value = ''
   } else {
-    router.push('/')
     sessionStorage.setItem('isLoggedIn', 'true')
     sessionStorage.setItem('user', userData.username)
+
+    // Wait for router to be ready and then navigate to '/explore'
+    await router.isReady()
+    await router.push('/explore')
+
+    // After navigation, reload the page
+    window.location.reload()
   }
 }
 
