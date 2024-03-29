@@ -5,7 +5,7 @@
 <template>
     <ul class="navbar">
     <li id="logo">QuizApp</li>
-      <li><RouterLink to="/" class="link">Explore</RouterLink></li>
+      <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
       <li><RouterLink to="/create" class="link">Create</RouterLink></li>
       <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
       <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
@@ -19,7 +19,7 @@
 ul {
   position: fixed;
   top: 0;
-  width: 96%;
+  width: 100%;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -31,6 +31,7 @@ ul {
   float: left;
   font-size: 35px;
   margin-right: 5%;
+  margin-left: 2%;
   cursor: default;
 }
 
@@ -65,7 +66,7 @@ li a:hover {
   margin-top: 10px;
   margin-right: 10px;
 }
-@media (max-width: 700px) {
+@media (max-width: 750px) {
   #logo{
     display: none;
   }

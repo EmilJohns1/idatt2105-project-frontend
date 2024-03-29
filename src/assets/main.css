@@ -2,7 +2,7 @@
 
 #app {
     display: grid;
-    padding: 0 2rem;
+    
     margin-top: 34px;
   }
 body{
@@ -30,3 +30,57 @@ body{
   border-radius: 10%;
   cursor: pointer;
 }
+
+.tags-input { 
+  display: inline-block; 
+  position: relative; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  padding: 5px; 
+  box-shadow: 2px 2px 5px #00000033; 
+  width: 100%; 
+  max-height: 70px;
+  white-space: nowrap;
+} 
+
+      .tags-input ul { 
+        list-style: none; 
+        padding: 0; 
+        margin: 0; 
+        display: flex;
+        white-space: nowrap;
+        overflow-x: scroll;
+      } 
+      .tags-input .delete-button {
+        background-color: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+
+      .tags-input li { 
+          display: flex; 
+          background-color: #f2f2f2; 
+          color: #333; 
+          border-radius: 20px; 
+          padding: 2px 10px; 
+          margin-right: 5px; 
+          margin-bottom: 8px; 
+          border: solid 1px black;
+      } 
+
+      .tags-input input[type="text"] { 
+          border: none; 
+          outline: none; 
+          padding: 0px; 
+          font-size: 14px; 
+          width: 100%;
+      } 
+
+      .tags-input input[type="text"]:focus { 
+          outline: none; 
+      } 
+      #input-tag{
+        float: left;
+      }
