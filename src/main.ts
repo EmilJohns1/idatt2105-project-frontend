@@ -1,4 +1,6 @@
+/* eslint-disable vue/multi-word-component-names */
 import './assets/main.css'
+import icons from 'v-svg-icons'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -11,4 +13,5 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
+app.component('icon', icons)
 app.mount('#app')

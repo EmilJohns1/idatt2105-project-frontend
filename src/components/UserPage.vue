@@ -13,10 +13,9 @@
         </div>
       </div>
     </Card>
-
     <div class="quizzes-recent-activity">
       <Card class="quizzes-section">
-        <h3>Your quizzes</h3>
+        <h2 id="header">Your quizzes</h2>
         <input
           type="text"
           v-model="searchQuery"
@@ -24,12 +23,16 @@
           class="search-input"
         />
         <ul class="quiz-list">
-          <QuizCard id="quiz-card" v-for="quiz in user.quizzes" :key="quiz.id" :quiz="quiz" />
+          <QuizCard
+            class="quiz-section-card"
+            v-for="quiz in user.quizzes"
+            :key="quiz.id"
+            :quiz="quiz"
+          />
         </ul>
       </Card>
-
       <Card class="recent-activity-section">
-        <h3>Recent activity</h3>
+        <h2 id="header">Recent activity</h2>
         <ul class="activity-list">
           <li v-for="attempt in user.recentActivity" :key="attempt.id" class="activity-item">
             {{ attempt.quizName }} - {{ attempt.date }}
@@ -37,13 +40,52 @@
         </ul>
       </Card>
     </div>
+    <Card>
+      <h2 id="header">Your comments</h2>
+      <div class="quizzes-comments-container">
+        <div v-if="currentQuizId !== null" class="comment-grid">
+          <QuizCard
+            class="quiz-card"
+            v-for="quiz in filteredQuizzes"
+            :key="quiz.id"
+            :quiz="quiz"
+            @selectQuiz="currentQuizId = $event"
+          />
+          <div class="comment-and-button-container">
+            <!-- Display comments for the current quiz -->
+            <Card class="comments-card">
+              <h3>Comments for Quiz {{ currentQuizId }}</h3>
+              <ul v-if="currentQuiz">
+                <li v-for="comment in quizComments[currentQuiz.id]" :key="comment.id">
+                  <p id="comment-content">{{ comment.content }}</p>
+                  <p>Created: {{ formatDate(comment.creationDate) }}</p>
+                  <p>Last Modified: {{ formatDate(comment.lastModifiedDate) }}</p>
+                </li>
+              </ul>
+              <p v-else>No quiz selected.</p>
+            </Card>
+            <div class="button-container">
+              <button @click="navigateToPreviousQuiz" class="previous-quiz-button">
+                <icon class="icon" name="angle-left"></icon>
+              </button>
+              <button @click="navigateToNextQuiz" class="next-quiz-button">
+                <icon class="icon" name="angle-right"></icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 import Card from '@/components/Card.vue'
 import QuizCard from '@/components/QuizCard.vue'
-import { ref } from 'vue'
+import { format } from 'date-fns'
+import { ref, onMounted, computed, watch } from 'vue'
+import { getCommentsByUserId } from '@/api/commentHooks'
+import { getQuizByQuizId } from '@/api/quizHooks'
 import {
   getUserByUsername,
   getQuizzesByUserId,
@@ -51,88 +93,181 @@ import {
   updateProfilePicture
 } from '@/api/userHooks'
 
-export default {
-  name: 'UserPage',
-  components: {
-    Card, // Register the Card component
-    QuizCard // Register the QuizCard component
-  },
-  data() {
-    return {
-      user: {
-        profilePicture: null,
-        email: '',
-        quizzes: [
-          { id: 1, name: 'Quiz 1', imageUrl: 'quiz1.jpg' },
-          { id: 2, name: 'Quiz 2', imageUrl: 'quiz2.jpg' }
-          // Add more quizzes as needed
-        ],
-        recentActivity: [
-          { id: 1, quizName: 'Quiz 1', date: '2024-03-27' },
-          { id: 2, quizName: 'Quiz 2', date: '2024-03-26' }
-          // Add more recent activity entries as needed
-        ]
-      },
-      searchQuery: '',
-      file: null
-    }
-  },
-  async mounted() {
-    const username = sessionStorage.getItem('user')
-    if (username) {
-      try {
-        // Get user by username
-        const userData = await getUserByUsername(username)
-        if (userData) {
-          this.user.profilePicture = userData.profilePictureUrl
-          this.user.email = userData.username
-          // Get quizzes by user ID
-          const quizzesData = await getQuizzesByUserId(userData.id)
-          console.log(quizzesData)
-          if (quizzesData) {
-            this.user.quizzes = quizzesData.map((quiz) => ({
-              id: quiz.id,
-              name: quiz.title, // Assuming the quiz title corresponds to its name
-              imageUrl: quiz.quizPictureUrl // Assuming the quiz picture URL is provided
-            }))
-          } else {
-            console.error('Failed to fetch quizzes for the user:', userData.username)
-          }
-        } else {
-          console.error('Failed to fetch user data for username:', username)
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error)
-      }
-    }
-  },
-  methods: {
-    handleFileChange(event) {
-      this.file = event.target.files[0]
-    },
-    async uploadProfilePicture() {
-      if (this.file) {
-        try {
-          const imageUrl = await uploadFile(this.file)
-          console.log('Uploaded profile picture:', imageUrl)
+const user = ref({
+  id: null,
+  profilePicture: null,
+  email: '',
+  quizzes: [],
+  recentActivity: [
+    { id: 1, quizName: 'Quiz 1', date: '2024-03-27' },
+    { id: 2, quizName: 'Quiz 2', date: '2024-03-26' }
+  ]
+})
+const searchQuery = ref('')
+const file = ref(null)
+const currentQuizId = ref(null)
+const quizComments = ref({})
+const fetchedQuizzes = ref([])
+const currentQuiz = ref(null)
 
-          const success = await updateProfilePicture(this.user.email, imageUrl)
-          if (success) {
-            // Update the profile picture directly with the returned image URL
-            this.user.profilePicture = imageUrl
-            console.log('Profile picture updated successfully.')
-          } else {
-            console.error('Failed to update profile picture.')
-          }
-        } catch (error) {
-          console.error('Error uploading profile picture:', error)
+const fetchUserData = async () => {
+  const username = sessionStorage.getItem('user')
+  if (username) {
+    try {
+      const userData = await getUserByUsername(username)
+      if (userData) {
+        user.value.id = userData.id
+        user.value.profilePicture = userData.profilePictureUrl
+        user.value.email = userData.username
+        console.log('User data:', user.value)
+        const quizzesData = await getQuizzesByUserId(userData.id)
+        if (quizzesData) {
+          user.value.quizzes = quizzesData.map((quiz) => ({
+            id: quiz.id,
+            title: quiz.title,
+            quizPictureUrl: quiz.quizPictureUrl
+          }))
+          console.log('Quizzes:', user.value.quizzes)
+          await fetchQuizComments()
+        } else {
+          console.error('Failed to fetch quizzes for the user:', userData.username)
         }
       } else {
-        console.warn('No file selected.')
+        console.error('Failed to fetch user data for username:', username)
       }
+    } catch (error) {
+      console.error('Error fetching user data:', error)
     }
   }
 }
+
+const handleFileChange = (event) => {
+  file.value = event.target.files[0]
+}
+
+const uploadProfilePicture = async () => {
+  if (file.value) {
+    try {
+      const imageUrl = await uploadFile(file.value)
+      console.log('Uploaded profile picture:', imageUrl)
+
+      const success = await updateProfilePicture(user.value.email, imageUrl)
+      if (success) {
+        user.value.profilePicture = imageUrl
+        console.log('Profile picture updated successfully.')
+      } else {
+        console.error('Failed to update profile picture.')
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error)
+    }
+  } else {
+    console.warn('No file selected.')
+  }
+}
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  return format(date, 'MMMM dd, yyyy HH:mm:ss')
+}
+
+const fetchQuizComments = async () => {
+  if (user.value.id) {
+    try {
+      const fetchedComments = await getCommentsByUserId(user.value.id)
+      console.log('Fetched comments:', fetchedComments)
+      if (fetchedComments) {
+        // Clear the existing quiz comments
+        quizComments.value = {}
+
+        fetchedComments.forEach((comment) => {
+          if (!quizComments.value[comment.quizId]) {
+            quizComments.value[comment.quizId] = []
+          }
+          quizComments.value[comment.quizId].push(comment)
+        })
+        console.log('Quiz comments:', quizComments.value)
+        const firstQuizWithComments = Object.keys(quizComments.value)[0]
+        if (firstQuizWithComments) {
+          currentQuizId.value = firstQuizWithComments
+        }
+      } else {
+        console.error('Failed to fetch comments for the user:', user.value.email)
+      }
+    } catch (error) {
+      console.error('Error fetching comments:', error)
+    }
+  } else {
+    console.warn('User ID not available.')
+  }
+}
+
+const navigateToNextQuiz = () => {
+  if (currentQuizId.value !== null) {
+    const quizIds = Object.keys(quizComments.value)
+    const currentIndex = quizIds.indexOf(currentQuizId.value)
+    const nextIndex = (currentIndex + 1) % quizIds.length
+    currentQuizId.value = quizIds[nextIndex]
+    console.log('Navigated to next quiz:', currentQuizId.value)
+  }
+}
+
+const navigateToPreviousQuiz = () => {
+  if (currentQuizId.value !== null) {
+    const quizIds = Object.keys(quizComments.value)
+    const currentIndex = quizIds.indexOf(currentQuizId.value)
+    const previousIndex = (currentIndex - 1 + quizIds.length) % quizIds.length
+    currentQuizId.value = quizIds[previousIndex]
+    console.log('Navigated to previous quiz:', currentQuizId.value)
+  }
+}
+
+const fetchQuizzesWithComments = async () => {
+  const quizzesToFetch = new Set()
+
+  for (const quizId in quizComments.value) {
+    quizzesToFetch.add(parseInt(quizId))
+  }
+
+  const fetchedQuizzesData = []
+  for (const quizId of quizzesToFetch) {
+    const quiz = await getQuizByQuizId(quizId)
+    if (quiz) {
+      fetchedQuizzesData.push(quiz)
+    }
+  }
+
+  fetchedQuizzes.value = [...fetchedQuizzesData]
+}
+
+// Define the computed property to return the fetched quizzes
+const quizzesWithComments = computed(() => fetchedQuizzes.value)
+
+// Watch for changes in currentQuizId and quizzesWithComments to update currentQuiz
+watch([currentQuizId, quizzesWithComments], ([newCurrentQuizId, newQuizzesWithComments]) => {
+  if (newCurrentQuizId !== null) {
+    currentQuiz.value = newQuizzesWithComments.find(
+      (quiz) => quiz.id === parseInt(newCurrentQuizId)
+    )
+  } else {
+    currentQuiz.value = null
+  }
+})
+
+// Define a computed property to filter quizzesWithComments based on currentQuizId
+const filteredQuizzes = computed(() => {
+  if (currentQuizId.value !== null) {
+    return quizzesWithComments.value.filter((quiz) => quiz.id === parseInt(currentQuizId.value))
+  } else {
+    return []
+  }
+})
+
+onMounted(async () => {
+  await fetchUserData()
+  await fetchQuizComments()
+  await fetchQuizzesWithComments()
+})
 </script>
 
 <style scoped>
@@ -177,8 +312,12 @@ export default {
 }
 
 .quizzes-recent-activity {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
+  max-height: 600px;
+  overflow-y: auto;
+  margin-bottom: 60px;
 }
 
 .quizzes-section {
@@ -232,5 +371,68 @@ h3 {
 
 .file-input-container input[type='file'] {
   margin-bottom: 5px;
+}
+
+.comment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.comment-and-button-container {
+  display: flex;
+  align-items: center;
+}
+.button-container {
+  display: flex;
+  margin-left: 10px;
+  margin-right: -10px;
+  gap: 2px;
+}
+
+.next-quiz-button,
+.previous-quiz-button {
+  background: none;
+  border: 0.5px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.next-quiz-button icon,
+.previous-quiz-button icon {
+  vertical-align: middle;
+}
+
+#comment-content {
+  font-size: 16px;
+  font-family: 'Luckiest Guy', cursive;
+}
+
+.comments-card {
+  max-height: 400px;
+  min-height: 400px;
+  overflow-y: auto;
+}
+
+.quiz-section-card {
+  max-width: 300px;
+  max-height: 400px;
+}
+
+.quiz-card {
+  max-width: 300px;
+  max-height: 400px;
+  border: 2px solid #818181;
+  border-radius: 8px;
+}
+
+.profile-section {
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+
+.icon {
+  font-size: 24px;
+  color: #000000;
 }
 </style>

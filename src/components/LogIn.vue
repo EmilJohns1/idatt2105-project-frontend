@@ -39,7 +39,7 @@ import type { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest 
 const email = ref('')
 const password = ref('')
 const showForgotPasswordModal = ref(false)
-const { loginUser, clearError, loginError } = useLogin() // Import loginError from useLogin
+const { loginUser, loginError } = useLogin() // Import loginError from useLogin
 
 const submitLogin = async () => {
   console.log(email.value, password.value, 'logged in')

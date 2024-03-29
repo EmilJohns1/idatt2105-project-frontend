@@ -1,27 +1,25 @@
 <template>
   <Card class="quiz-card custom-background">
-    <h3 class="card-title">{{ quiz.name }}</h3>
+    <h3 class="card-title">{{ quiz.title }}</h3>
     <div class="separator"></div>
     <div class="image-container">
-      <img :src="quiz.imageUrl" alt="Quiz Image" class="quiz-image" />
+      <img :src="quiz.quizPictureUrl" alt="Quiz Image" class="quiz-image" />
     </div>
   </Card>
 </template>
 
-<script>
-import Card from '@/components/Card.vue' // Import the Card component
+<script setup lang="ts">
+import Card from '@/components/Card.vue'
+import { defineProps } from 'vue'
 
-export default {
-  props: {
-    quiz: {
-      type: Object,
-      required: true
-    }
-  },
-  components: {
-    Card // Register the Card component
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const props = defineProps({
+  quiz: {
+    type: Object,
+    required: true
   }
-}
+})
+
 </script>
 
 <style scoped>
@@ -61,8 +59,8 @@ export default {
 .custom-background {
   background-image: linear-gradient(
     to bottom right,
-    #f5f5dc,
-    #ffffff
+    #ffffff,
+    #fafafa
   ); /* Beige/almost white gradient */
 }
 </style>
