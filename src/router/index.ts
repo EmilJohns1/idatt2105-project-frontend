@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import SignUpView from '../views/SignUpView.vue'
 import LoginView from '../views/LoginView.vue'
 import ExploreView from '../views/ExploreView.vue'
 import SubjectView from '../views/SubjectView.vue'
+import CreateView from '@/views/CreateView.vue'
 
 
 const router = createRouter({
@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'subject',
       component: SubjectView,
       props: true
+    },
+    {
+      path: '/create',
+      name: 'create',
+      component: CreateView
     },
     {
       path: '/about',
