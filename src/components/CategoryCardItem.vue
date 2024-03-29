@@ -1,23 +1,28 @@
 <template>
-    <div class="category-card">
-        <router-link :to="'/explore/${title.toLowerCase()}'" class="category-card-link">
-            <div class="image-container">
-                <img :src="image" :alt="title" class="category-image" />
-            </div>
-            <h3 class="category-title">{{ title }}</h3>
-            <p class="category-description">{{ description }}</p>
-        </router-link>
+    <div class="category-card" @click="handleClick">
+        <div class="category-card-image" :style="backgroundImageStyle"></div>
+        <h3 class="category-card-title">{{ title }}</h3>
     </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue';
+import { computed, defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
     image: String,
     title: String,
     description: String
 });
+
+const emits = defineEmits();
+
+const handleClick = () => {
+  emits('select', props.title);
+};
+
+const backgroundImageStyle = computed(() => ({
+    backgroundImage: `url(${props.image})`
+}));
 </script>
 
 <style>
@@ -43,6 +48,8 @@ const props = defineProps({
 }
 
 .category-image {
+    background-size: cover;
+    background-position: center;
     width: 100%;
     height: auto;
     object-fit: cover;

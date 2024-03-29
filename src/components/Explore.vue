@@ -4,33 +4,35 @@
         <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
         <p>Choose your desired subject to start.</p>
         <div class="category-grid">
-            <CategoryCard
-                v-for="category in filteredCategories"
-                :key="category.title"
-                :image="category.image"
-                :title="category.title"
-                :description="category.description"
-                @click="goToSubject(category.title)"
+          <CategoryCard
+              v-for="category in filteredCategories"
+              :key="category.id"
+              :image="category.picture_url"
+              :title="category.name"
+              @select="goToCategory"
             />
-        </div>
+            <!--Add in description for categories in the future when it's implemented-->
+        </div> 
     </div>
 </template>
 
 <script setup>
+
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { axios } from 'axios';
 import CategoryCard from '../components/CategoryCardItem.vue';
 
 const categories = ref([]);
 
 onMounted(async () => {
-  const categoryName = route.params.subject;
+  console.log('Fetching categories...')
   try {
     const response = await axios.get('/api/quizzes/categories');
+    console.log(response.data);
     categories.value = response.data;
   } catch (error) {
-    console.error("failed to fetch categories:", error);
+    console.error('Failed to fetch categories:', error);
+    categories.value = [];
   }
 });
 
@@ -39,7 +41,7 @@ const searchTerm = ref('');
 const filteredCategories = computed(() => {
   if (searchTerm.value) {
     return categories.value.filter(category => 
-      category.title.toLowerCase().includes(searchTerm.value.toLowerCase())
+      category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
     );
   } else {
     return categories.value;
@@ -48,7 +50,7 @@ const filteredCategories = computed(() => {
 
 const router = useRouter();
 
-function goToSubject(subject) {
+function goToCategory(subject) {
   router.push(`/explore/${subject.toLowerCase()}`);
 }
 </script>
