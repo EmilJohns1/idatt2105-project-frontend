@@ -1,27 +1,27 @@
 <template>
     <div class="category-card" @click="handleClick">
-        <div class="category-card-image" :style="backgroundImageStyle"></div>
-        <h3 class="category-card-title">{{ title }}</h3>
+        <div class="category-card-image" :style="{ backgroundImage: 'url(' + image + ')' }"></div>
+        <div class="category-card-content">
+            <h3 class="category-card-title">{{ title }}</h3>
+        </div>
     </div>
 </template>
+  
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue';
 
-<script setup>
-import { defineProps } from 'vue';
+type Props = {
+    id: number;
+    title: string;
+    image: string;
+}
 
-const props = defineProps({
-    image: String,
-    title: String,
-    description: String
-});
-
+const props = defineProps<Props>();
+const emits = defineEmits(['clicked']);
 
 const handleClick = () => {
-  emits('select', props.title);
+    emits('clicked', props.id);
 };
-
-const backgroundImageStyle = computed(() => ({
-    backgroundImage: `url(${props.image})`
-}));
 </script>
 
 <style>

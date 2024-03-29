@@ -16,27 +16,24 @@
     </div>
 </template>
 
-<script setup>
-
+<script setup lang = ts>
+import api from '../api';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CategoryCard from '../components/CategoryCardItem.vue';
 
 const categories = ref([]);
+const router = useRouter();
+const searchTerm = ref('');
 
 onMounted(async () => {
-  console.log('Fetching categories...')
   try {
-    const response = await axios.get('/api/quizzes/categories');
-    console.log(response.data);
+    const response = await api.get('/quizzes/categories');
     categories.value = response.data;
   } catch (error) {
     console.error('Failed to fetch categories:', error);
-    categories.value = [];
   }
 });
-
-const searchTerm = ref('');
 
 const filteredCategories = computed(() => {
   if (searchTerm.value) {
@@ -47,8 +44,6 @@ const filteredCategories = computed(() => {
     return categories.value;
   }
 });
-
-const router = useRouter();
 
 function goToCategory(subject) {
   router.push(`/explore/${subject.toLowerCase()}`);
