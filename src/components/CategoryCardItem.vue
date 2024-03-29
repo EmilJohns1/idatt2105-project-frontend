@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits } from 'vue';
+import { defineProps } from 'vue';
 
 const props = defineProps({
     image: String,
@@ -14,7 +14,6 @@ const props = defineProps({
     description: String
 });
 
-const emits = defineEmits();
 
 const handleClick = () => {
   emits('select', props.title);
