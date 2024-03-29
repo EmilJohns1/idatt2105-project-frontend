@@ -1,13 +1,11 @@
 <script setup>
-import router from '@/router';
-import Explore from '../components/Explore.vue';
-import SubjectView from './SubjectView.vue';
+import ExploreItem from '../components/ExploreItem.vue';
 </script>
 
 <template>
     <main>
   
-        <Explore />
+        <ExploreItem />
     </main>
 </template>
 
