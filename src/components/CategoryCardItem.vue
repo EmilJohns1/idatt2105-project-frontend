@@ -1,11 +1,13 @@
 <template>
     <div class="category-card" @click="handleClick">
-        <div class="category-card-image" :style="{ backgroundImage: 'url(' + image + ')' }"></div>
-        <div class="category-card-content">
-            <h3 class="category-card-title">{{ title }}</h3>
-        </div>
+      <div class="category-card-image">
+        <img :src="image" alt="Category image">
+      </div>
+      <div class="category-card-content">
+        <h3 class="category-card-title">{{ title }}</h3>
+      </div>
     </div>
-</template>
+  </template>
   
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
@@ -24,54 +26,44 @@ const handleClick = () => {
     emits('clicked', props.id);
 };
 </script>
-
 <style>
 .category-card {
-    width: 100%;
-    max-width: 400px;
-    margin: 0;
-    border-radius: 1px;
-    overflow: hidden;
-    transition: box-shadow 0.3s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    background: white; 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  width: 100%;
+  max-width: 400px; /* Maximum width of the card */
+  margin: 0 auto; /* Centering the card if the container is wider */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Ensures content does not spill outside the border */
+  transition: box-shadow 0.3s ease-in-out; /* Smooth transition for shadow */
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  text-align: left; /* Text aligned to the left */
+  background: white; /* White background for the card */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Shadow for depth */
 }
 
 .category-card:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px); /* Raises the card on hover */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
 }
 
-.category-image {
-    background-size: cover;
-    background-position: center;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
+.category-card-image {
+  width: 100%; /* The container's width */
+  height: 200px; /* The container's height, adjust as needed */
+  overflow: hidden; /* Hide the overflow to maintain clean edges */
 }
 
-.category-title {
-    font-size: 1.5em;    
+.category-card-image img {
+  width: 100%; /* Scale the width to fit the container */
+  height: auto; /* Scale the height to maintain aspect ratio */
+  display: block;
 }
 
-.category-description {
-    font-size: 1em;
+.category-card-content {
+  padding: 16px; 
 }
 
-.image-container {
-    width: 100%;
-    overflow: hidden;
+.category-card-title {
+  font-size: 1.5em;  
 }
-.category-card-link {
-    display: block;
-    text-decoration: none;
-}
+
 </style>

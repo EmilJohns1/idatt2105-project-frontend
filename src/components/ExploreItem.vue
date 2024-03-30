@@ -1,13 +1,14 @@
 <template>
     <div class="explore-container">
         <h1>Explore</h1>
-        <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
         <p>Choose your desired subject to start.</p>
+        <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
+      
         <div class="category-grid">
           <CategoryCard
               v-for="category in filteredCategories"
-              :key="category.id"
-              :image="getImageUrl(category.name)"
+              :id="category.id"
+              :image="'/categoryimage/' + category.name.toLowerCase() + '.png'"
               :title="category.name"
               @clicked="() => goToCategory (category.name.toLowerCase())"
             />
@@ -47,8 +48,7 @@ const filteredCategories = computed(() => {
 });
 
 function getImageUrl(categoryName) {
-  const imageUrl = categoryName.toLowerCase();
-  return './categoryimage/'+ categoryName.toLowerCase()+'.png';
+  return '/categoryimage/' + categoryName.toLowerCase() + '.png';
 }
 
 function goToCategory(categoryId) {
@@ -59,17 +59,24 @@ function goToCategory(categoryId) {
 
 <style>
 .explore-container {
-    padding: 40px; 
-    margin-top: 60px;
-    margin-bottom: 60px; 
+    padding: 40px;  
+}
+
+.search-input {
+    margin-bottom: 20px; /* Add some space below the search box */
+    width: 100%; /* Full width of its container */
+    padding: 10px; /* Padding inside the search box */
+    font-size: 1rem; /* Font size for the text inside the search box */
+    border: 2px solid #000; /* Border for the search box */
+    border-radius: 4px; /* Slightly rounded corners for the search box */
 }
 
 .category-grid {
+    margin-top: 50px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-    gap: 40px; 
+    gap: 40px; /* Adjust the space between the grid items */
     justify-content: center; 
     align-items: start; 
 }
-
 </style>
