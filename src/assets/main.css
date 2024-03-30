@@ -75,12 +75,9 @@ body{
           outline: none; 
           padding: 0px; 
           font-size: 14px; 
-          width: 100%;
+          width: 80%;
       } 
 
       .tags-input input[type="text"]:focus { 
           outline: none; 
       } 
-      #input-tag{
-        float: left;
-      }
