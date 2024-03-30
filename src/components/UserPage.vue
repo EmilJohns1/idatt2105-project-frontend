@@ -3,7 +3,11 @@
     <Card class="profile-section">
       <h2 id="header">Your profile</h2>
       <div class="profile-info">
-        <img :src="user.profilePicture ?? ''" alt="Profile Picture" class="profile-picture" />
+        <img
+          :src="user.profilePicture ? user.profilePicture : defaultProfilePicture"
+          alt="Profile Picture"
+          class="profile-picture"
+        />
         <div>
           <p class="email">{{ user.email }}</p>
           <div class="file-input-container">
@@ -137,6 +141,7 @@ const currentQuizId = ref<string | null>(null) // Define currentQuizId type
 const quizComments = ref<{ [key: number]: Comment[] }>({}) // Define quizComments type
 const fetchedQuizzes = ref<Quiz[]>([]) // Define fetchedQuizzes type
 const currentQuiz = ref<Quiz | null>(null) // Define currentQuiz type
+const defaultProfilePicture = '/default_pfp.svg.png'
 
 interface Comment {
   id: number
