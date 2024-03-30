@@ -37,7 +37,7 @@
   import {getUserByUsername} from '@/api/userHooks'
   
   const imageUrl = ref('');
-  const placeholderImage = 'src/assets/placeholder-image.jpg';
+  const placeholderImage = 'public/placeholder-image.jpg';
   const title = ref('');
   const description = ref('');
   const category = ref('');
