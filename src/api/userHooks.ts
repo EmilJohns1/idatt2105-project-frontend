@@ -151,3 +151,18 @@ export const deleteProfilePicture = async (url: string): Promise<boolean> => {
     throw new Error(`Error deleting profile picture: ${error}`)
   }
 }
+
+export const getQuizzesByUsername = async (username: string): Promise<any[] | null> => {
+  try {
+    const user = await getUserByUsername(username);
+    
+    if (user) {
+      return await getQuizzesByUserId(user.id);
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error getting quizzes by username:', error);
+    return null;
+  }
+}

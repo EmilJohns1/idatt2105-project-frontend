@@ -99,14 +99,14 @@
 }}
 
 
-const redirect = (quiz_id: number,quiz_title: string) => {
-  router.push('/quiz/{'+quiz_id+'}-{'+quiz_title+'}/edit')
+const redirect = (quiz_id: number, quiz_title: string) => {
+  router.push(`/quiz/${quiz_id}-${quiz_title}/edit`);
   setTimeout(() => {
     setTimeout(() => {
-      window.scrollTo(0, 0)
-    }, 0)
-  }, 250)
-}
+      window.scrollTo(0, 0);
+    }, 0);
+  }, 250);
+};
 
 const addTagElement = () => {
   const tag = document.createElement('li');
