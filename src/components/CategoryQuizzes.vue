@@ -1,13 +1,8 @@
 <template>
-  <div class="subject-container">
-    <h1>{{ categoryTitle }} Quizzes</h1>
-    <div class="quiz-grid">
-
-      <!-- Loop through quizzes and display them here -->
-      <div class="quiz-card">
-        <h2>Quiz Title</h2>
-        <p>Quiz Description</p>
-      </div>
+  <div class="category-quizzes-container">
+    <div class="Header">
+      <h1>{{ categoryName }}</h1>
+      <p>Try out all of our quizzes</p>
     </div>
   </div>
 </template>
@@ -17,13 +12,15 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/api/axiosConfig';
 
-const quizzes = ref([]);
 const route = useRoute();
+const quizzes = ref([]);
+const categoryName = ref('');
 
 onMounted(async () => {
-  const categoryId = route.params.category;
+  const category = route.params.category;
+  categoryName.value = category.charAt(0).toUpperCase() + category.slice(1);
   try {
-    const response = await api.get(`/quizzes/byCategory/${categoryId}`);
+    const response = await api.get(`/api/quizzes/category`, { params: { category } });
     quizzes.value = response.data;
   } catch (error) {
     console.error('Failed to fetch quizzes:', error);
