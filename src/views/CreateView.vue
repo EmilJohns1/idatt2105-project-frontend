@@ -3,7 +3,7 @@
     <div id="questions">
       <div class="questionButtonDiv" v-for="(q, index) in questions" :key="index" @mouseover="handleOver(index)" @mouseleave="handleLeave(index)">
         <a :href="'#q' + (index + 1)" :class="{ active: index === 0 }" class="questionButton">Question {{ index + 1 }}</a>
-        <img src='../assets/Trash-White.png'  v-if="shouldShow(index)"  @click="deleteQuestion(index)" class="deleteButton">
+        <img  v-if="shouldShow(index)"  @click="deleteQuestion(index)" class="deleteButton">
       </div>
     </div>
   <a id="add" @click="newQuestion()">Add question</a>
@@ -69,7 +69,7 @@ const questions = ref<Question[]>([{ question: '', imageUrl: null, maxPoints: 1,
 const currentQuestionIndex = ref(0);
 const question = ref('');
 const imageUrl = ref<string | null>(null);
-const placeholderImage = 'src/assets/placeholder-image.jpg';
+const placeholderImage = 'public/placeholder-image.jpg';
 const selectedQuestionType = ref('mc');
 const maxPoints = ref('1');
 const isHovered = ref<boolean[]>([]);
@@ -154,9 +154,10 @@ const shouldShow = computed(() => {
     cursor:pointer;
     border: none;
     background: none;
+    content: url("public/icons/Trash-White.png");
   }
   .deleteButton:hover{
-    content:url("../assets/Trash-Redder.png")
+    content:url("public/icons/Trash-Redder.png")
   }
   .questionButton{
     position: absolute;
@@ -357,14 +358,14 @@ nav {
     width:115px;
   }
   .deleteButton{
-    content:url("../assets/Trash-White-circle.png");
+    content:url("public/icons/Trash-White-circle.png");
     position: absolute;
     top:-12px;
     left: 0px;
     width: 15px;
   }
   .deleteButton:hover{
-    content:url("../assets/Trash-White-circle.png");
+    content:url("public/icons/Trash-White-circle.png");
   }
   .content{
     width: 100%;
