@@ -7,8 +7,15 @@
     <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
     <li class="profile-pic" v-if="isLoggedIn">
       <RouterLink :to="isLoggedIn ? '/user' : '/login'">
-        <img :src="profilePicture" class="profile-picture" alt="Profile" />
+        <img
+          :src="profilePicture ? profilePicture : defaultProfilePicture"
+          class="profile-picture"
+          alt="Profile"
+        />
       </RouterLink>
+    </li>
+    <li v-if="isLoggedIn">
+      <button @click="logout" class="blackButton button">Logout</button>
     </li>
     <li>
       <RouterLink to="/signup" class="purpleButton button" v-if="!isLoggedIn">Sign up</RouterLink>
@@ -22,9 +29,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
+import router from '@/router'
 
 const isLoggedIn = ref(sessionStorage.getItem('isLoggedIn') === 'true')
 const profilePicture = ref('')
+const defaultProfilePicture = '/default_pfp.svg.png'
 
 const fetchUserProfilePicture = async () => {
   if (isLoggedIn.value) {
@@ -32,6 +41,12 @@ const fetchUserProfilePicture = async () => {
     const user = await getUserByUsername(userName)
     profilePicture.value = user.profilePictureUrl
   }
+}
+
+const logout = () => {
+  sessionStorage.clear()
+  isLoggedIn.value = false
+  router.push('/login')
 }
 
 onMounted(() => {
