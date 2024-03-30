@@ -5,6 +5,8 @@ import ExploreView from '../views/ExploreView.vue'
 import SubjectView from '../views/SubjectView.vue'
 import CreateView from '@/views/CreateView.vue'
 import UserPageView from '@/views/UserPageView.vue'
+import ContactView from '@/views/ContactView.vue'
+import ResetPasswordView from '@/views/ResetPasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,7 +14,7 @@ const router = createRouter({
     {
       path: '/explore',
       name: 'Explore',
-      component: ExploreView,
+      component: ExploreView
     },
     {
       path: '/explore/:subject',
@@ -44,6 +46,16 @@ const router = createRouter({
       path: '/user',
       name: 'user',
       component: UserPageView
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: ContactView
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: ResetPasswordView
     }
   ]
 })

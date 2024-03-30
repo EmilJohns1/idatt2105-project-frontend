@@ -81,7 +81,7 @@
         </div>
       </div>
     </Card>
-    <Calendar v-if="user.id" :id="user.id" />
+    <Calendar class="calendar-card" v-if="user.id" :id="user.id" />
   </div>
 </template>
 
@@ -509,5 +509,9 @@ h3 {
 .icon {
   font-size: 24px;
   color: #000000;
+}
+
+.calendar-card {
+  margin-top: 60px;
 }
 </style>
