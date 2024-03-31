@@ -26,6 +26,11 @@ export const useUserStore = defineStore({
     },
     setUserName(userName: string): void {
       this.userName = userName
+    },
+    logout(): void {
+      this.accessToken = ''
+      this.userName = ''
+      this.isLoggedIn = false
     }
   }
 })

@@ -31,4 +31,3 @@ coverage
 
 .env
 
-/certs/*.pem

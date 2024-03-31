@@ -27,27 +27,33 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import router from '@/router'
 import { useUserStore } from '@/stores/userStore'
 
 const userStore = useUserStore()
 
-const isLoggedIn = userStore.getIsLoggedIn
+const isLoggedIn = computed(() => userStore.getIsLoggedIn);
 const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
 
 const fetchUserProfilePicture = async () => {
-  if (isLoggedIn) {
+  console.log("fetchUserProfilePicture: isLoggedIn.value: " + isLoggedIn.value);
+  if (isLoggedIn.value) {
+    while (!userStore.getUserName) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
     const userName = userStore.getUserName
     const user = await getUserByUsername(userName)
     profilePicture.value = user.profilePictureUrl
   }
 }
+watch(isLoggedIn, fetchUserProfilePicture);
+
 
 const logout = () => {
-  sessionStorage.clear()
+  userStore.logout();
   router.push('/login')
 }
 
