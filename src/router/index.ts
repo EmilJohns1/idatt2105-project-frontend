@@ -2,9 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SignUpView from '../views/SignUpView.vue'
 import LoginView from '../views/LoginView.vue'
 import ExploreView from '../views/ExploreView.vue'
-import CategoryView from '../views/CategoryView.vue'
 import CreateView from '@/views/CreateView.vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +15,7 @@ const router = createRouter({
     {
       path: '/explore/:category',
       name: 'Category',
-      component: CategoryView,
+      component: () => import('../views/CategoryView.vue'),
       props: true
     },
     {

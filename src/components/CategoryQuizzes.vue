@@ -41,15 +41,6 @@ onMounted(async () => {
   }
 });
 
-const getAllQuizzes = async () => {
-  try {
-    const response = await api.get('/quizzes');
-    quizzes.value = response.data;
-  } catch (error) {
-    console.error('Failed to fetch all quizzes:', error);
-  }
-};
-
 function goToQuiz(quizId) {
   router.push({ name: 'Quiz', params: { id: quizId } });
 }

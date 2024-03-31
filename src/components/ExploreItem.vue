@@ -9,7 +9,7 @@
             id="all"
             image="/categoryimage/all.png"
             title="All"
-            clickable
+            clickable = "true"
             @clicked="goToCategory('all')"
           />
           <CardItem
