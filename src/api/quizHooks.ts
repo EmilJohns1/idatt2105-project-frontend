@@ -13,6 +13,21 @@ export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   }
 }
 
+export const updateQuizById = async (quizId: number, quizData: QuizRequest): Promise<void> => {
+  try {
+    const response = await api.put(`/quizzes/${quizId}`, quizData)
+
+    if (response.status === 200) {
+      console.log('Quiz updated successfully')
+    } else {
+      console.error('Failed to update quiz')
+    }
+  } catch (error) {
+    console.error('Error updating quiz:', error)
+    throw new Error('Failed to update quiz')
+  }
+}
+
 export const useRegistration = () => {
   const registrationError = ref('')
 
@@ -23,16 +38,16 @@ export const useRegistration = () => {
 
       if (response.status === 201 && response.data && response.data.id) {
         console.log('Quiz registered successfully')
-        return response.data.id;
+        return response.data.id
       } else {
         console.error('Registration failed:', response.data)
         registrationError.value = 'Registration failed'
-        return null;
+        return null
       }
     } catch (error) {
       console.error('Error registering user:', error)
       registrationError.value = 'Registration failed'
-      return null;
+      return null
     }
   }
 
@@ -45,49 +60,62 @@ export const useRegistration = () => {
 
 export const addUserToQuiz = async (quizId: number, userId: number): Promise<void> => {
   try {
-    const response = await api.post(`/quizzes/${quizId}/users/${userId}`);
+    const response = await api.post(`/quizzes/${quizId}/users/${userId}`)
 
     if (response.status === 201) {
-      console.log('User added to quiz successfully');
+      console.log('User added to quiz successfully')
     } else {
-      console.error('Failed to add user to quiz');
+      console.error('Failed to add user to quiz')
     }
   } catch (error) {
-    console.error('Error adding user to quiz:', error);
-    throw new Error('Failed to add user to quiz');
+    console.error('Error adding user to quiz:', error)
+    throw new Error('Failed to add user to quiz')
   }
-};
+}
 
-export const addTagsToQuiz = async (tags: Tag[], quizId:number): Promise<void> => {
-
+export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
-    const response = await api.patch(`/quizzes/add/tags/${quizId}`, tags);
+    const response = await api.patch(`/quizzes/add/tags/${quizId}`, tags)
     console.log(response)
     if (response.status === 200) {
-      console.log('Tag added to quiz successfully');
+      console.log('Tag added to quiz successfully')
     } else {
-      console.error('Failed to add tag to quiz');
+      console.error('Failed to add tag to quiz')
     }
-   } catch (error) {
-    console.error('Error adding tag to quiz:', error);
-    throw new Error('Failed to add tag to quiz');
+  } catch (error) {
+    console.error('Error adding tag to quiz:', error)
+    throw new Error('Failed to add tag to quiz')
   }
-};
+}
+
+export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => {
+  try {
+    const response = await api.patch(`/quizzes/${quizId}/tags`, tags)
+
+    if (response.status === 200) {
+      console.log('Tag updated successfully')
+    } else {
+      console.error('Failed to update tag')
+    }
+  } catch (error) {
+    console.error('Error updating tag:', error)
+    throw new Error('Failed to update tag')
+  }
+}
 
 export const getCategories = async (): Promise<string[] | null> => {
   try {
-    const response = await api.get('/quizzes/categories', {
-    });
+    const response = await api.get('/quizzes/categories', {})
 
     if (response.status === 200) {
-      const categories = response.data.map((category: { name: string }) => category.name);
-      return categories;
+      const categories = response.data.map((category: { name: string }) => category.name)
+      return categories
     } else {
-      console.error('Failed to fetch categories. Status:', response.status);
-      return null;
+      console.error('Failed to fetch categories. Status:', response.status)
+      return null
     }
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    return null;
+    console.error('Error fetching categories:', error)
+    return null
   }
-};
+}

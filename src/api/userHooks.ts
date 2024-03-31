@@ -94,23 +94,6 @@ export const getQuizzesByUserId = async (userId: number): Promise<any[] | null> 
   }
 }
 
-export const uploadFile = async (file: File): Promise<string | null> => {
-  try {
-    const formData = new FormData()
-    formData.append('file', file)
-
-    const response = await api.post('/storage/uploadFile', formData)
-
-    if (response.status === 200) {
-      return response.data
-    } else {
-      throw new Error('Failed to upload file')
-    }
-  } catch (error) {
-    throw new Error(`Error uploading file`)
-  }
-}
-
 export const updateProfilePicture = async (
   username: string,
   profilePictureUrl: string
@@ -130,39 +113,17 @@ export const updateProfilePicture = async (
   }
 }
 
-export const deleteProfilePicture = async (url: string): Promise<boolean> => {
-  console.log('url:', url)
-  try {
-    const response = await api.delete('/storage/deleteFile', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: {
-        fileUrl: url
-      }
-    })
-
-    if (response.status === 200) {
-      return true
-    } else {
-      throw new Error(`Failed to delete profile picture. Status: ${response.status}`)
-    }
-  } catch (error) {
-    throw new Error(`Error deleting profile picture: ${error}`)
-  }
-}
-
 export const getQuizzesByUsername = async (username: string): Promise<any[] | null> => {
   try {
-    const user = await getUserByUsername(username);
-    
+    const user = await getUserByUsername(username)
+
     if (user) {
-      return await getQuizzesByUserId(user.id);
+      return await getQuizzesByUserId(user.id)
     } else {
-      return null;
+      return null
     }
   } catch (error) {
-    console.error('Error getting quizzes by username:', error);
-    return null;
+    console.error('Error getting quizzes by username:', error)
+    return null
   }
 }
