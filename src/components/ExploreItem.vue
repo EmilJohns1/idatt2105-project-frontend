@@ -3,8 +3,15 @@
         <h1>Explore</h1>
         <p>Choose your desired subject to start.</p>
         <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
-      
         <div class="category-grid">
+          <CardItem
+            key="all"
+            id="all"
+            image="/categoryimage/all.png"
+            title="All"
+            clickable
+            @clicked="goToCategory('all')"
+          />
           <CardItem
             v-for="category in filteredCategories"
             :key="category.id"
@@ -55,8 +62,9 @@ function getImageUrl(categoryName) {
 }
 
 function goToCategory(categoryName) {
-  console.log('Navigating to the category page of:', categoryName);
-  router.push({ name: 'Category', params: { category: categoryName } });
+  const lowerCaseCategoryName = categoryName.toLowerCase();
+  console.log('Navigating to the category page of:', lowerCaseCategoryName);
+  router.push({ name: 'Category', params: { category: lowerCaseCategoryName } });
 }
 </script>
 
@@ -66,19 +74,19 @@ function goToCategory(categoryName) {
 }
 
 .search-input {
-    margin-bottom: 20px; /* Add some space below the search box */
-    width: 100%; /* Full width of its container */
-    padding: 10px; /* Padding inside the search box */
-    font-size: 1rem; /* Font size for the text inside the search box */
-    border: 2px solid #000; /* Border for the search box */
-    border-radius: 4px; /* Slightly rounded corners for the search box */
+    margin-bottom: 20px;
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem; 
+    border: 2px solid #000; 
+    border-radius: 4px; 
 }
 
 .category-grid {
     margin-top: 50px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-    gap: 40px; /* Adjust the space between the grid items */
+    gap: 40px;
     justify-content: center; 
     align-items: start; 
 }
