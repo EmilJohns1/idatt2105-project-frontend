@@ -8,7 +8,8 @@ import ContactView from '@/views/ContactView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
 import CreateQuizView from '../views/CreateQuizView.vue'
 import EditView from '../views/CreateView.vue'
-
+import LoginRedirect from '@/components/LoginRedirect.vue'
+import TokenHandlerView from '@/views/TokenHandlerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,7 +48,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginRedirect
     },
     {
       path: '/user',
@@ -63,6 +64,11 @@ const router = createRouter({
       path: '/reset-password',
       name: 'reset-password',
       component: ResetPasswordView
+    },
+    {
+      path: '/token',
+      name: 'token',
+      component: TokenHandlerView
     }
   ]
 })
