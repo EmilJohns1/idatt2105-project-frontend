@@ -9,11 +9,6 @@
         <h2>Display image</h2>
         <img :src="imageUrl || placeholderImage" id="image" /><br>
         <input accept="image/*" type="file" @change="previewImage" /><br>
-        <h3>Category</h3>
-        <select v-model="category">
-      <option disabled value="">Select a category</option>
-      <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-    </select>
         <h3>Add tags</h3>
         <div class="tags-input"> 
       <ul id="tags"></ul> 
@@ -21,6 +16,13 @@
           placeholder="Enter tag (e.g. difficult)" /> 
           <button type="button" @click="addTagElement" :disabled="tagArray.length > 2" id="addTagButton">Create tag</button>
   </div> 
+  <h3>Category: 
+        <select v-model="category" required>
+      <option disabled value="">Select a category</option>
+      <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+    </select></h3>
+  <h3>Randomize Questions: <input type="checkbox" v-model="isRandomized"></h3>
+  <h3>Make Public: <input type="checkbox" v-model="isPublic"></h3>
         <div class="button-container">
           <button type="submit" class="submit-button">Create quiz</button>
         </div>
@@ -42,6 +44,8 @@
   const description = ref('');
   const category = ref('');
   const tagArray = ref<string[]>([]);
+  const isPublic = ref(false);
+  const isRandomized = ref(false);
 
   const { registerQuiz, clearError } = useRegistration()
   const registrationError = ref('')
@@ -63,7 +67,9 @@
     title: title.value,
     description: description.value,
     quizPictureUrl: imageUrl.value,
-    categoryName: category.value
+    categoryName: category.value,
+    randomizedOrder: isRandomized.value,
+    public: isPublic.value
   }
   console.log(quizData)
   const quizId = await registerQuiz(quizData)
@@ -206,7 +212,7 @@ h3{
   text-align: center;
   justify-content: center;
   height: 100%;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 #image{
     width: 320px;
@@ -259,5 +265,6 @@ h3{
 }
 form{
   width: 470px;
+  padding-bottom: 20px;
 }
 </style>
