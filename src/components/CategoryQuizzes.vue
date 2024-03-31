@@ -1,8 +1,18 @@
 <template>
   <div class="category-quizzes-container">
-    <div class="Header">
+    <div class="category-header">
       <h1>{{ categoryName }}</h1>
-      <p>Try out all of our quizzes</p>
+      <p>Try out all the quizzes made by our bustling community</p>
+      <input type="text" v-model="searchTerm" placeholder="Search keywords..." />
+    </div>
+    <div class="quizzes-grid">
+      <CardItem
+      v-for="quiz in filteredQuizzes"
+      :key="quiz.id"
+      :id="quiz.id"
+      :image="quiz.pictureUrl || '/defualt-quiz-image.jpg'"
+      :title="quiz.name"
+      />
     </div>
   </div>
 </template>

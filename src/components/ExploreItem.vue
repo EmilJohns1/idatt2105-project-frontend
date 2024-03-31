@@ -5,23 +5,26 @@
         <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
       
         <div class="category-grid">
-          <CategoryCard
-              v-for="category in filteredCategories"
-              :id="category.id"
-              :image="'/categoryimage/' + category.name.toLowerCase() + '.png'"
-              :title="category.name"
-              @clicked="() => goToCategory (category.name.toLowerCase())"
-            />
+          <CardItem
+            v-for="category in filteredCategories"
+            :key="category.id"
+            :id="category.id"
+            :image="'/categoryimage/' + category.name.toLowerCase() + '.png'"
+            :title="category.name"
+            :clickable="true"
+            @clicked="goToCategory" 
+          />
             <!--Add in description for categories in the future when it's implemented-->
         </div> 
     </div>
 </template>
 
 <script setup lang = ts>
+
 import api from '@/api/axiosConfig';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import CategoryCard from '../components/CategoryCardItem.vue';
+import CardItem from '../components/CardItem.vue';
 
 const categories = ref([]);
 const router = useRouter();
@@ -51,9 +54,9 @@ function getImageUrl(categoryName) {
   return '/categoryimage/' + categoryName.toLowerCase() + '.png';
 }
 
-function goToCategory(categoryId) {
-  console.log('Navigating to category:', categoryId)
-  router.push({ name: 'Category', params: { category: categoryId } });
+function goToCategory(categoryName) {
+  console.log('Navigating to the category page of:', categoryName);
+  router.push({ name: 'Category', params: { category: categoryName } });
 }
 </script>
 
