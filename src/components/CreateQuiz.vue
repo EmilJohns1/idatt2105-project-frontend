@@ -41,6 +41,7 @@ import { useRegistration, getCategories, addUserToQuiz, addTagsToQuiz } from '@/
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { Tag } from '@/types/Tag'
 import { getUserByUsername } from '@/api/userHooks'
+import { useUserStore } from '@/stores/userStore'
 
 const imageUrl = ref('')
 const placeholderImage = 'public/placeholder-image.jpg'
@@ -89,7 +90,8 @@ const submitForm = async () => {
     addTagsToQuiz(tagsData, quizId)
   }
 
-  const username = sessionStorage.getItem('user')
+  const userStore = useUserStore()
+  const username = userStore.getUserName
   if (username && quizId) {
     try {
       const userData = await getUserByUsername(username)

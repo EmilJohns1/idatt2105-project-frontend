@@ -5,7 +5,8 @@ export const useUserStore = defineStore({
   id: 'userStore',
   state: () => ({
     accessToken: useStorage('accessToken', '', sessionStorage),
-    userName: useStorage('userName', '', sessionStorage)
+    userName: useStorage('userName', '', sessionStorage),
+    isLoggedIn: useStorage('isLoggedIn', false, sessionStorage)
   }),
   getters: {
     getAccessToken(): string {
@@ -13,11 +14,15 @@ export const useUserStore = defineStore({
     },
     getUserName(): string {
       return this.userName
+    },
+    getIsLoggedIn(): boolean {
+      return this.isLoggedIn
     }
   },
   actions: {
     setAccessToken(accessToken: string): void {
       this.accessToken = accessToken
+      this.isLoggedIn = true
     },
     setUserName(userName: string): void {
       this.userName = userName
