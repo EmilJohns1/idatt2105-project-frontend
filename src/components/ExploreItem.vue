@@ -64,7 +64,8 @@ function getImageUrl(categoryName) {
 function goToCategory(categoryName) {
   const lowerCaseCategoryName = categoryName.toLowerCase();
   console.log('Navigating to the category page of:', lowerCaseCategoryName);
-  router.push({ name: 'Category', params: { category: lowerCaseCategoryName } });
+  router.push({ 
+    name: 'Category', params: { category: lowerCaseCategoryName } });
 }
 </script>
 
