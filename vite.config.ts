@@ -10,8 +10,8 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import fs from 'fs'; 
 import path from 'path';
 
-const certFile = path.resolve(__dirname, './certs/localhost+2.pem');
-const keyFile = path.resolve(__dirname, './certs/localhost+2-key.pem');
+const certFile = path.resolve(__dirname, './certs/cert.pem');
+const keyFile = path.resolve(__dirname, './certs/key.pem');
 
 // https://vitejs.dev/config/
 export default defineConfig({

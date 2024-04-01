@@ -4,7 +4,7 @@ import { useStorage } from '@vueuse/core'
 export const useApiStore = defineStore({
   id: 'apiStore',
   state: () => ({
-    clientId: 'asdf',
+    clientId: 'frontend-client',
     codeVerifier: useStorage('codeVerifier', '', localStorage),
     baseUrl: 'https://localhost:5173',
     backendUrl: 'https://127.0.0.1:8443'
