@@ -12,6 +12,10 @@ import path from 'path';
 
 const certFile = path.resolve(__dirname, './certs/cert.pem');
 const keyFile = path.resolve(__dirname, './certs/key.pem');
+const httpsConfig = fs.existsSync(certFile) && fs.existsSync(keyFile) ? {
+  key: fs.readFileSync(keyFile),
+  cert: fs.readFileSync(certFile),
+} : undefined;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,9 +29,6 @@ export default defineConfig({
     }
   },
   server: {
-    https: {
-      key: fs.readFileSync(keyFile),
-      cert: fs.readFileSync(certFile)
-    }
+    https: httpsConfig
   }
 })
