@@ -10,7 +10,7 @@
       v-for="quiz in filteredQuizzes"
       :key="quiz.id"
       :id="quiz.id"
-      :image="quiz.pictureUrl || '/defualt-quiz-image.jpg'"
+      :image="quiz.pictureUrl || '/defualt-quiz-image.png'"
       :title="quiz.name"
       :description="quiz.description"
       :clickable="true"
@@ -30,14 +30,28 @@ const route = useRoute();
 const quizzes = ref([]);
 const searchTerm = ref('');
 const categoryName = ref(route.params.category);
+const categories = ref([]);
 
 onMounted(async () => {
-  categoryName.value = categoryName.value.charAt(0).toUpperCase() + categoryName.value.slice(1);
   try {
-    const response = await api.get('/quizzes/category', { categoryName: categoryName.value.toLowerCase() });
-    quizzes.value = response.data;
+    // Fetch categories to get the ID for the category name
+    const categoriesResponse = await api.get('/quizzes/categories');
+    categories.value = categoriesResponse.data;
+    console.log('Categories:', categories.value);
+
+    // Now find the category ID
+    const category = categories.value.find(c => c.name.toLowerCase() === route.params.category.toLowerCase());
+    if (!category) {
+      console.error('Category not found');
+      return;
+    }
+    const category_id = category.id;
+
+    // Fetch quizzes with the category ID
+    const quizzesResponse = await api.get('/quizzes/category', { params: { category_id: category_id } });
+    quizzes.value = quizzesResponse.data;
   } catch (error) {
-    console.error('Failed to fetch quizzes:', error);
+    console.error('Failed to fetch categories or quizzes:', error);
   }
 });
 
