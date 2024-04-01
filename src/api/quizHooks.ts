@@ -73,6 +73,21 @@ export const addUserToQuiz = async (quizId: number, userId: number): Promise<voi
   }
 }
 
+export const deleteUserFromQuiz = async (quizId: number, userId: number): Promise<void> => {
+  try {
+    const response = await api.delete(`/quizzes/${quizId}/users/${userId}`)
+
+    if (response.status === 200) {
+      console.log('User deleted from quiz successfully')
+    } else {
+      console.error('Failed to delete user from quiz')
+    }
+  } catch (error) {
+    console.error('Error deleting user from quiz:', error)
+    throw new Error('Failed to delete user from quiz')
+  }
+}
+
 export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
     const response = await api.patch(`/quizzes/add/tags/${quizId}`, tags)
@@ -116,6 +131,22 @@ export const getCategories = async (): Promise<string[] | null> => {
     }
   } catch (error) {
     console.error('Error fetching categories:', error)
+    return null
+  }
+}
+
+export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> => {
+  try {
+    const response = await api.get(`/quizzes/users/${quizId}`)
+
+    if (response.status === 200) {
+      return response.data || []
+    } else {
+      console.error('Failed to fetch users by quiz ID. Status:', response.status)
+      return null
+    }
+  } catch (error) {
+    console.error('Error fetching users by quiz ID:', error)
     return null
   }
 }

@@ -114,8 +114,8 @@ const submitForm = async () => {
   }
 }
 
-const redirect = (quiz_id: number, quiz_title: string) => {
-  router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
+const redirect = async (quiz_id: number, quiz_title: string) => {
+  await router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
   setTimeout(() => {
     setTimeout(() => {
       window.scrollTo(0, 0)

@@ -35,7 +35,7 @@
           <RouterLink
             v-for="quiz in filteredQuizzesSection"
             :key="quiz.id"
-            :to="`/quiz/${quiz.id}-${quiz.title}/edit`"
+            :to="`/quiz/${quiz.id}-${quiz.title.toLowerCase().replace(/ /g, '-')}/edit`"
             class="router-link-hidden"
           >
             <QuizCard class="quiz-section-card" :quiz="quiz" />

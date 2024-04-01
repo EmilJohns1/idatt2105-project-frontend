@@ -1,5 +1,13 @@
 <template>
   <div class="container">
+    <button
+      v-if="isAuthor"
+      @click="showCollaborateModal"
+      class="additional-button collaborate-button"
+    >
+      Collaborate
+    </button>
+    <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
     <h1 id="header">Edit Quiz</h1>
     <div v-if="quiz">
       <form @submit.prevent="updateQuiz">
@@ -53,9 +61,11 @@
 </template>
 
 <script setup lang="ts">
+import CollaborateModal from '@/components/CollaborateModal.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { getQuizByQuizId, updateQuizById, getCategories, updateTags } from '@/api/quizHooks'
+import { getUserByUsername } from '@/api/userHooks'
 import type { QuizRequest } from '@/types/QuizRequest'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
 
@@ -75,6 +85,9 @@ const editedQuiz = ref<any>({
   public: false
 })
 const tagInput = ref('')
+const userData = ref(null)
+const authorId = ref(0)
+const showModal = ref(false)
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
@@ -89,6 +102,7 @@ const fetchQuizDetails = async () => {
     editedQuiz.value.randomizedOrder = quiz.value.randomizedOrder
     editedQuiz.value.public = quiz.value.public
   }
+  authorId.value = quiz.value.authorId
 }
 
 // Fetch categories
@@ -96,10 +110,16 @@ const fetchCategories = async () => {
   categories.value = await getCategories()
 }
 
+const fetchUserData = async () => {
+  const username = sessionStorage.getItem('user')
+  userData.value = await getUserByUsername(username || '')
+}
+
 // Fetch quiz details and categories on component mount
 onMounted(() => {
   fetchQuizDetails()
   fetchCategories()
+  fetchUserData()
 })
 
 const tagArray = computed(() =>
@@ -238,6 +258,20 @@ const uploadPicture = async (): Promise<void> => {
     console.warn('No file selected.')
   }
 }
+
+const showCollaborateModal = () => {
+  showModal.value = true
+}
+
+const hideCollaborateModal = () => {
+  showModal.value = false
+}
+
+const isAuthor = computed(() => {
+  if (!userData.value) return false
+  const userDataWithId = userData.value as { id: number }
+  return userDataWithId && authorId.value === userDataWithId.id
+})
 </script>
 
 <style scoped>
@@ -340,5 +374,14 @@ form {
   max-height: 200px;
   width: auto;
   height: auto;
+}
+
+.collaborate-button {
+  position: relative;
+  align-self: flex-end;
+  margin-right: 15px;
+  margin-top: -10px;
+  max-width: fit-content;
+  font-size: 1rem;
 }
 </style>

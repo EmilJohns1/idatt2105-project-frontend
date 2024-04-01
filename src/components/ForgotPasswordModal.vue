@@ -14,66 +14,45 @@
         <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
         <div class="button-container">
           <button type="submit" class="submit-button">Submit</button>
-          <button type="button" @click="close" class="close-button">Close</button>
+          <button type="button" @click="emit('close')" class="close-button">Close</button>
         </div>
       </form>
     </div>
   </div>
 </template>
 
-<script>
-import { checkUsername } from '@/api/userHooks.ts' // Import the checkUsername function
-import { sendEmail } from '@/api/emailHooks.ts'
+<script setup lang="ts">
+import { defineEmits, ref, watch } from 'vue'
 
-export default {
-  data() {
-    return {
-      email: '',
-      isValidEmail: true,
-      errorMessage: '' // Add a new data property for error message
-    }
-  },
-  methods: {
-    async submit() {
-      // Check if the username exists
-      try {
-        const usernameExists = await checkUsername(this.email)
+const emit = defineEmits<{
+  (e: 'close'): void
+}>()
 
-        if (usernameExists) {
-          // Username exists
-          console.log('Username exists')
-          try {
-            await sendEmail(this.email)
-            alert('An email has been sent to your email address. Please check your inbox.')
-            this.close()
-          } catch (error) {
-            console.error(error)
-            this.errorMessage = 'An error occurred. Please try again later.'
-            return // Exit the method to prevent closing the modal
-          }
-        } else {
-          // Username does not exist
-          console.log('Username does not exist')
-          this.errorMessage = "User with this email doesn't exist."
-          return // Exit the method to prevent closing the modal
-        }
-      } catch (error) {
-        console.error(error)
-        this.errorMessage = 'An error occurred. Please try again later.'
-      }
-    },
-    close() {
-      // Reset error state and emit an event to parent component to close the modal
-      this.isValidEmail = true
-      this.errorMessage = '' // Reset error message
-      this.$emit('close')
-    },
-    clearErrorMessage() {
-      // Clear the error message when the user starts typing again
-      this.errorMessage = ''
-    }
+const email = ref('')
+const errorMessage = ref('')
+const submissionSuccess = ref(false)
+
+const submit = async () => {
+  try {
+    // Simulate successful submission
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    alert('An email has been sent to your email address. Please check your inbox.')
+    submissionSuccess.value = true
+  } catch (error) {
+    console.error(error)
+    errorMessage.value = 'An error occurred. Please try again later.'
   }
 }
+
+const clearErrorMessage = () => {
+  errorMessage.value = ''
+}
+
+watch(submissionSuccess, (newValue) => {
+  if (newValue) {
+    emit('close')
+  }
+})
 </script>
 
 <style scoped>
