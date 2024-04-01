@@ -1,4 +1,4 @@
-import { api } from '@/api/axiosConfig'
+import { api, oauth2 } from '@/api/axiosConfig'
 import { ref } from 'vue'
 import type { LoginRequest } from '@/types/LoginRequest.ts'
 
@@ -7,7 +7,7 @@ export const useRegistration = () => {
 
   const registerUser = async (userData: LoginRequest): Promise<boolean> => {
     try {
-      const response = await api.post('/user/register', userData)
+      const response = await oauth2.post('/api/user/register', userData)
 
       if (response.status === 200) {
         console.log('User registered successfully')
