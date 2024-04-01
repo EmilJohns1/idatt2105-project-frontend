@@ -1,46 +1,42 @@
 <template>
-  <div class="container">
-    <h1 id="header">Create new quiz</h1>
-    <form @submit.prevent="submitForm">
-      <h2>Title</h2>
-      <input v-model="title" type="text" required class="input-field" />
-      <h2>Description</h2>
-      <textarea v-model="description" type="text" class="input-field description"></textarea>
-      <h2>Display image</h2>
-      <img :src="imageUrl || placeholderImage" id="image" /><br />
-      <input accept="image/*" type="file" @change="previewImage" /><br />
-      <h3>Category</h3>
-      <select v-model="category">
-        <option disabled value="">Select a category</option>
-        <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-      </select>
-      <h3>Add tags</h3>
-      <div class="tags-input">
-        <ul id="tags"></ul>
-        <input type="text" id="input-tag" placeholder="Enter tag (e.g. difficult)" />
-        <button
-          type="button"
-          @click="addTagElement"
-          :disabled="tagArray.length > 2"
-          id="addTagButton"
-        >
-          Create tag
-        </button>
-      </div>
-      <div class="button-container">
-        <button type="submit" class="submit-button">Create quiz</button>
-      </div>
-    </form>
-  </div>
-</template>
-
+    <div class="container">
+      <h1 id="header">Create new quiz</h1>
+      <form @submit.prevent="submitForm">
+        <h2>Title</h2>
+        <input v-model="title" type="text" required class="input-field" />
+        <h2>Description</h2>
+        <textarea v-model="description" type="text" class="input-field description"></textarea>
+        <h2>Display image</h2>
+        <img :src="imageUrl || placeholderImage" id="image" /><br>
+        <input accept="image/*" type="file" @change="previewImage" /><br>
+        <h3>Add tags</h3>
+        <div class="tags-input"> 
+      <ul id="tags"></ul> 
+      <input type="text" id="input-tag" 
+          placeholder="Enter tag (e.g. difficult)" /> 
+          <button type="button" @click="addTagElement" :disabled="tagArray.length > 2" id="addTagButton">Create tag</button>
+  </div> 
+  <h3>Category: 
+        <select v-model="category" required>
+      <option disabled value="">Select a category</option>
+      <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+    </select></h3>
+  <h3>Randomize Questions: <input type="checkbox" v-model="isRandomized"></h3>
+  <h3>Make Public: <input type="checkbox" v-model="isPublic"></h3>
+        <div class="button-container">
+          <button type="submit" class="submit-button">Create quiz</button>
+        </div>
+      </form>
+    </div>
+  </template>
+  
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import router from '@/router'
-import { useRegistration, getCategories, addUserToQuiz, addTagsToQuiz } from '@/api/quizHooks'
-import type { QuizRequest } from '@/types/QuizRequest'
-import type { Tag } from '@/types/Tag'
-import { getUserByUsername } from '@/api/userHooks'
+import { ref, onMounted } from 'vue';
+import router from '@/router';
+import { useRegistration, getCategories, addUserToQuiz,  addTagsToQuiz } from '@/api/quizHooks'
+import type { QuizRequest } from '@/types/QuizRequest';
+import type { Tag } from '@/types/Tag';
+import {getUserByUsername} from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 
 const imageUrl = ref('')
@@ -49,6 +45,8 @@ const title = ref('')
 const description = ref('')
 const category = ref('')
 const tagArray = ref<string[]>([])
+const isPublic = ref(false);
+const isRandomized = ref(false);
 
 const { registerQuiz, clearError } = useRegistration()
 const registrationError = ref('')
@@ -70,7 +68,9 @@ const submitForm = async () => {
     title: title.value,
     description: description.value,
     quizPictureUrl: imageUrl.value,
-    categoryName: category.value
+    categoryName: category.value,
+    randomizedOrder: isRandomized.value,
+    public: isPublic.value
   }
   console.log(quizData)
   const quizId = await registerQuiz(quizData)
@@ -210,7 +210,7 @@ h3 {
   text-align: center;
   justify-content: center;
   height: 100%;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 #image {
   width: 320px;
@@ -263,5 +263,6 @@ h3 {
 }
 form {
   width: 470px;
+  padding-bottom: 20px;
 }
 </style>
