@@ -78,10 +78,11 @@ import {
   updateTags,
   getUsersByQuizId
 } from '@/api/quizHooks'
-import { getUserByUsername } from '@/api/userHooks'
 import type { QuizRequest } from '@/types/QuizRequest'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
 import { getAllQuestionsByQuizId } from '@/api/questionHooks'
+import { getUserByUsername } from '@/api/userHooks'
+import { useUserStore } from '@/stores/userStore'
 
 const router = useRouter()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
@@ -103,6 +104,7 @@ const userData = ref(null)
 const users = ref<any[]>([])
 const authorId = ref(0)
 const showModal = ref(false)
+const userStore = useUserStore()
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
@@ -126,7 +128,7 @@ const fetchCategories = async () => {
 }
 
 const fetchUserData = async () => {
-  const username = sessionStorage.getItem('user')
+  const username = userStore.getUserName
   userData.value = await getUserByUsername(username || '')
 }
 

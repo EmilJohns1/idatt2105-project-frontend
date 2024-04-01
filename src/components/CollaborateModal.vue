@@ -35,6 +35,7 @@ import Popup from '@/components/Popup.vue'
 import { defineProps, ref, onMounted } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import { addUserToQuiz, getUsersByQuizId, deleteUserFromQuiz } from '@/api/quizHooks'
+import { useUserStore } from '@/stores/userStore'
 
 const props = defineProps({
   quizId: Number
@@ -45,6 +46,7 @@ const collaborators = ref<{ id: number; username: string }[]>([])
 const showErrorPopup = ref(false)
 const popupMessage = ref('')
 const fontColor = ref('')
+const userStore = useUserStore()
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -57,7 +59,7 @@ const close = () => {
 const addToQuiz = async () => {
   if (
     username.value === '' ||
-    username.value === sessionStorage.getItem('user') ||
+    username.value === userStore.getUserName ||
     collaborators.value.some((collaborator) => collaborator.username === username.value)
   ) {
     popupMessage.value = 'Please enter a valid username'
@@ -87,11 +89,11 @@ const addToQuiz = async () => {
 }
 
 const fetchCollaborators = async () => {
-  const sessionUsername = sessionStorage.getItem('user') || '' // Get the username from sessionStorage
+  const username = userStore.getUserName || ''
   const fetchedCollaborators = await getUsersByQuizId(props.quizId ?? 0)
   if (fetchedCollaborators !== null) {
     collaborators.value = fetchedCollaborators
-      .filter((collaborator) => collaborator.username !== sessionUsername) // Filter out the session username
+      .filter((collaborator) => collaborator.username !== username) // Filter out the session username
       .map((collaborator) => ({ id: collaborator.id, username: collaborator.username }))
   }
 }

@@ -15,6 +15,7 @@ import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import LoginRedirect from '@/components/LoginRedirect.vue'
 import TokenHandlerView from '@/views/TokenHandlerView.vue'
+import { useUserStore } from '@/stores/userStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,7 +49,8 @@ const router = createRouter({
         const quizTitleParam = to.params.quiz_title.toString()
         const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
         const quizIdNumber = parseInt(quizId)
-        const currentUser = sessionStorage.getItem('user')
+        const userStore = useUserStore()
+        const currentUser = userStore.getUserName
 
         if (!currentUser) {
           console.error('User not logged in')
@@ -109,7 +111,8 @@ const router = createRouter({
         const quizTitleParam = to.params.quiz_title.toString()
         const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
         const quizIdNumber = parseInt(quizId)
-        const currentUser = sessionStorage.getItem('user')
+        const userStore = useUserStore()
+        const currentUser = userStore.getUserName
 
         if (!currentUser) {
           console.error('User not logged in')

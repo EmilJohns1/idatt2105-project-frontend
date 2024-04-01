@@ -210,7 +210,7 @@ const addToQuiz = async () => {
 
     setTimeout(() => {
       returnToQuiz()
-    }, 2000)
+    }, 1000)
   } catch (error) {
     console.error('Error adding question to quiz:', error)
   }

@@ -48,6 +48,7 @@ import { useRegistration, getCategories, addUserToQuiz, addTagsToQuiz } from '@/
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { Tag } from '@/types/Tag'
 import { getUserByUsername } from '@/api/userHooks'
+import { useUserStore } from '@/stores/userStore'
 
 const imageUrl = ref('')
 const placeholderImage = '/placeholder-image.jpg'
@@ -57,6 +58,7 @@ const category = ref('')
 const tagArray = ref<string[]>([])
 const isPublic = ref(false)
 const isRandomized = ref(false)
+const userStore = useUserStore()
 
 const { registerQuiz, clearError } = useRegistration()
 const registrationError = ref('')
@@ -96,7 +98,7 @@ const submitForm = async () => {
     const tagsData: Tag[] = tagArray.value.map((tag) => ({ tagName: tag }))
     await addTagsToQuiz(tagsData, quizId)
 
-    const username = sessionStorage.getItem('user')
+    const username = userStore.getUserName
     if (username) {
       const userData = await getUserByUsername(username)
       if (userData) {
@@ -119,6 +121,7 @@ const redirect = async (quiz_id: number, quiz_title: string) => {
   setTimeout(() => {
     setTimeout(() => {
       window.scrollTo(0, 0)
+      window.location.reload()
     }, 0)
   }, 250)
 }
