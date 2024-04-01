@@ -1,4 +1,4 @@
-import api from '@/api/axiosConfig'
+import { api } from '@/api/axiosConfig'
 
 export const uploadFile = async (file: File): Promise<string | null> => {
   try {
