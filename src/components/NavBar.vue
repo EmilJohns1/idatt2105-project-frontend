@@ -37,23 +37,22 @@ import { oauth2 } from '@/api/axiosConfig'
 const userStore = useUserStore()
 const apiStore = useApiStore()
 
-const isLoggedIn = computed(() => userStore.getIsLoggedIn);
+const isLoggedIn = computed(() => userStore.getIsLoggedIn)
 const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
 
 const fetchUserProfilePicture = async () => {
-  console.log("fetchUserProfilePicture: isLoggedIn.value: " + isLoggedIn.value);
+  console.log('fetchUserProfilePicture: isLoggedIn.value: ' + isLoggedIn.value)
   if (isLoggedIn.value) {
     while (!userStore.getUserName) {
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50))
     }
     const userName = userStore.getUserName
     const user = await getUserByUsername(userName)
     profilePicture.value = user.profilePictureUrl
   }
 }
-watch(isLoggedIn, fetchUserProfilePicture);
-
+watch(isLoggedIn, fetchUserProfilePicture)
 
 const logout = () => {
   oauth2.post('/oauth2/revoke', {
