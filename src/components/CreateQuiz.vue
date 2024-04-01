@@ -1,40 +1,43 @@
 <template>
   <div class="container">
-    <h1 id="header">Create new quiz</h1>
-    <form @submit.prevent="submitForm">
-      <h2>Title</h2>
-      <input v-model="title" type="text" required class="input-field" />
-      <h2>Description</h2>
-      <textarea v-model="description" type="text" class="input-field description"></textarea>
-      <h2>Display image</h2>
-      <img :src="imageUrl || placeholderImage" id="image" /><br />
-      <input accept="image/*" type="file" @change="previewImage" /><br />
-      <h3>Add tags</h3>
-      <div class="tags-input">
-        <ul id="tags"></ul>
-        <input type="text" id="input-tag" placeholder="Enter tag (e.g. difficult)" />
-        <button
-          type="button"
-          @click="addTagElement"
-          :disabled="tagArray.length > 2"
-          id="addTagButton"
-        >
-          Create tag
-        </button>
-      </div>
-      <h3>
-        Category:
-        <select v-model="category" required>
-          <option disabled value="">Select a category</option>
-          <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-        </select>
-      </h3>
-      <h3>Randomize Questions: <input type="checkbox" v-model="isRandomized" /></h3>
-      <h3>Make Public: <input type="checkbox" v-model="isPublic" /></h3>
-      <div class="button-container">
-        <button type="submit" class="submit-button">Create quiz</button>
-      </div>
-    </form>
+    <div v-if="loading" class="loading-message">Creating quiz...</div>
+    <div v-else>
+      <h1 id="header">Create new quiz</h1>
+      <form @submit.prevent="submitForm">
+        <h2>Title</h2>
+        <input v-model="title" type="text" required class="input-field" />
+        <h2>Description</h2>
+        <textarea v-model="description" type="text" class="input-field description"></textarea>
+        <h2>Display image</h2>
+        <img :src="imageUrl || placeholderImage" id="image" class="quiz-image" /><br />
+        <input accept="image/*" type="file" @change="previewImage" /><br />
+        <h3>Add tags</h3>
+        <div class="tags-input">
+          <ul id="tags"></ul>
+          <input type="text" id="input-tag" placeholder="Enter tag (e.g. difficult)" />
+          <button
+            type="button"
+            @click="addTagElement"
+            :disabled="tagArray.length > 2"
+            id="addTagButton"
+          >
+            Create tag
+          </button>
+        </div>
+        <h3>
+          Category:
+          <select v-model="category" required>
+            <option disabled value="">Select a category</option>
+            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+          </select>
+        </h3>
+        <h3>Randomize Questions: <input type="checkbox" v-model="isRandomized" /></h3>
+        <h3>Make Public: <input type="checkbox" v-model="isPublic" /></h3>
+        <div class="button-container">
+          <button type="submit" class="submit-button">Create quiz</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -48,18 +51,21 @@ import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 
 const imageUrl = ref('')
-const placeholderImage = 'public/placeholder-image.jpg'
+const placeholderImage = '/placeholder-image.jpg'
 const title = ref('')
 const description = ref('')
 const category = ref('')
 const tagArray = ref<string[]>([])
 const isPublic = ref(false)
 const isRandomized = ref(false)
+const userStore = useUserStore()
 
 const { registerQuiz, clearError } = useRegistration()
 const registrationError = ref('')
 
 const categories = ref<string[] | null>(null)
+
+const loading = ref(false) // Indicates whether quiz creation is in progress
 
 //fetch categories
 const fetchCategories = async () => {
@@ -71,7 +77,8 @@ onMounted(fetchCategories)
 const submitForm = async () => {
   clearError()
 
-  //registering quiz
+  loading.value = true
+
   const quizData: QuizRequest = {
     title: title.value,
     description: description.value,
@@ -80,44 +87,41 @@ const submitForm = async () => {
     randomizedOrder: isRandomized.value,
     public: isPublic.value
   }
-  console.log(quizData)
-  const quizId = await registerQuiz(quizData)
-  if (quizId == null) {
-    registrationError.value = 'Registration failed.'
-  } else {
-    redirect(quizId, quizData.title)
-  }
 
-  if (tagArray.value && quizId) {
-    let tagsData: Tag[] = []
-    for (let i = tagArray.value.length - 1; i >= 0; i--) {
-      const tag: Tag = { tagName: tagArray.value[i] }
-      tagsData.push(tag)
+  try {
+    const quizId = await registerQuiz(quizData)
+    if (!quizId) {
+      registrationError.value = 'Registration failed.'
+      return
     }
-    console.log(tagsData)
-    addTagsToQuiz(tagsData, quizId)
-  }
 
-  const userStore = useUserStore()
-  const username = userStore.getUserName
-  if (username && quizId) {
-    try {
+    const tagsData: Tag[] = tagArray.value.map((tag) => ({ tagName: tag }))
+    await addTagsToQuiz(tagsData, quizId)
+
+    const username = userStore.getUserName
+    if (username) {
       const userData = await getUserByUsername(username)
       if (userData) {
-        const userId = userData.id
-        addUserToQuiz(quizId, userId)
+        await addUserToQuiz(quizId, userData.id)
       }
-    } catch {
-      console.log('Failed to add user to quiz')
     }
+    setTimeout(() => {
+      loading.value = false
+      redirect(quizId, quizData.title) // Redirect after all asynchronous operations are completed
+    }, 1000)
+  } catch (error) {
+    console.error('Error submitting form:', error)
+    loading.value = false
+    registrationError.value = 'Failed to create quiz.'
   }
 }
 
-const redirect = (quiz_id: number, quiz_title: string) => {
-  router.push('/quiz/{' + quiz_id + '}-{' + quiz_title + '}/edit')
+const redirect = async (quiz_id: number, quiz_title: string) => {
+  await router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
   setTimeout(() => {
     setTimeout(() => {
       window.scrollTo(0, 0)
+      window.location.reload()
     }, 0)
   }, 250)
 }
@@ -272,5 +276,12 @@ h3 {
 form {
   width: 470px;
   padding-bottom: 20px;
+}
+
+.quiz-image {
+  max-width: 100%;
+  max-height: 200px;
+  width: auto;
+  height: auto;
 }
 </style>
