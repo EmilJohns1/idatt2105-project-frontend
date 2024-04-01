@@ -8,6 +8,13 @@
       Collaborate
     </button>
     <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
+    <button
+      v-if="isAuthorOrCollaborator"
+      @click="addQuestion"
+      class="additional-button collaborate-button"
+    >
+      Add question
+    </button>
     <h1 id="header">Edit Quiz</h1>
     <div v-if="quiz">
       <form @submit.prevent="updateQuiz">
@@ -64,10 +71,17 @@
 import CollaborateModal from '@/components/CollaborateModal.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getQuizByQuizId, updateQuizById, getCategories, updateTags } from '@/api/quizHooks'
+import {
+  getQuizByQuizId,
+  updateQuizById,
+  getCategories,
+  updateTags,
+  getUsersByQuizId
+} from '@/api/quizHooks'
 import { getUserByUsername } from '@/api/userHooks'
 import type { QuizRequest } from '@/types/QuizRequest'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
+import { getAllQuestionsByQuizId } from '@/api/questionHooks'
 
 const router = useRouter()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
@@ -86,6 +100,7 @@ const editedQuiz = ref<any>({
 })
 const tagInput = ref('')
 const userData = ref(null)
+const users = ref<any[]>([])
 const authorId = ref(0)
 const showModal = ref(false)
 
@@ -115,11 +130,17 @@ const fetchUserData = async () => {
   userData.value = await getUserByUsername(username || '')
 }
 
+const fetchUsers = async () => {
+  users.value = (await getUsersByQuizId(quizId)) as any[]
+  console.log('Users:', users)
+}
+
 // Fetch quiz details and categories on component mount
 onMounted(() => {
   fetchQuizDetails()
   fetchCategories()
   fetchUserData()
+  fetchUsers()
 })
 
 const tagArray = computed(() =>
@@ -147,12 +168,30 @@ const updateQuiz = async () => {
   console.log('Edited quiz title:', editedQuiz.value.title)
 
   setTimeout(async () => {
-    await redirect(quizId, editedQuiz.value.title)
+    await redirectToPage(quizId, editedQuiz.value.title)
   }, 1000)
 }
 
-const redirect = async (quiz_id: number, quiz_title: string) => {
+const redirectToPage = async (quiz_id: number, quiz_title: string) => {
   router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
+  setTimeout(() => {
+    setTimeout(() => {
+      window.scrollTo(0, 0)
+    }, 0)
+  }, 250)
+}
+
+const redirectToQuestionPage = async (quiz_id: number, quiz_title: string) => {
+  const questions = await getAllQuestionsByQuizId(quiz_id)
+
+  const nextQuestionNumber = questions.length + 1
+
+  console.log('Next question number:', nextQuestionNumber)
+
+  router.push(
+    `/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/questions/${nextQuestionNumber}/edit`
+  )
+
   setTimeout(() => {
     setTimeout(() => {
       window.scrollTo(0, 0)
@@ -272,6 +311,18 @@ const isAuthor = computed(() => {
   const userDataWithId = userData.value as { id: number }
   return userDataWithId && authorId.value === userDataWithId.id
 })
+
+const isAuthorOrCollaborator = computed(() => {
+  const collaboratorIds = users.value.map((user) => user.id)
+  return (
+    isAuthor.value ||
+    (userData.value && collaboratorIds.includes((userData.value as { id: number }).id))
+  )
+})
+
+const addQuestion = async () => {
+  await redirectToQuestionPage(quizId, editedQuiz.value.title)
+}
 </script>
 
 <style scoped>
@@ -316,7 +367,6 @@ h3 {
   text-align: center;
   justify-content: center;
   height: 100%;
-  margin-top: 20px;
 }
 
 #header {
@@ -379,9 +429,9 @@ form {
 .collaborate-button {
   position: relative;
   align-self: flex-end;
-  margin-right: 15px;
-  margin-top: -10px;
+  margin-right: 10px;
   max-width: fit-content;
   font-size: 1rem;
+  margin-top: 10px;
 }
 </style>

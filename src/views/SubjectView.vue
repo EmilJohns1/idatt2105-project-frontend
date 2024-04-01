@@ -1,11 +1,10 @@
 <script setup>
-import SubjectQuizzes from '../components/SubjectQuizzes.vue';
-import NavBar from '../components/NavBar.vue';
+import SubjectQuizzes from '../components/SubjectQuizzes.vue'
+import NavBar from '../components/NavBar.vue'
 </script>
 
 <template>
-    <main>
-        
-        <SubjectQuizzes />
-    </main>
+  <main>
+    <SubjectQuizzes />
+  </main>
 </template>
