@@ -27,26 +27,46 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import router from '@/router'
+import { useUserStore } from '@/stores/userStore'
+import { useApiStore } from '@/stores/apiStore'
+import { oauth2 } from '@/api/axiosConfig'
 
-const isLoggedIn = ref(sessionStorage.getItem('isLoggedIn') === 'true')
+const userStore = useUserStore()
+const apiStore = useApiStore()
+
+const isLoggedIn = computed(() => userStore.getIsLoggedIn);
 const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
 
 const fetchUserProfilePicture = async () => {
+  console.log("fetchUserProfilePicture: isLoggedIn.value: " + isLoggedIn.value);
   if (isLoggedIn.value) {
-    const userName = sessionStorage.getItem('user')
+    while (!userStore.getUserName) {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    const userName = userStore.getUserName
     const user = await getUserByUsername(userName)
     profilePicture.value = user.profilePictureUrl
   }
 }
+watch(isLoggedIn, fetchUserProfilePicture);
+
 
 const logout = () => {
-  sessionStorage.clear()
-  isLoggedIn.value = false
-  router.push('/login')
+  oauth2.post('/oauth2/revoke', {
+    token: userStore.getAccessToken
+  }).then(() => {
+    userStore.logout()
+    sessionStorage.clear()
+  })
+  const clientId = apiStore.clientId
+  const authUrl =
+    apiStore.getBackendUrl +
+    `/connect/logout?client_id=${clientId}&id_token_hint=${userStore.getIdToken}&post_logout_redirect_uri=${apiStore.getBaseUrl}`
+  window.location.href = authUrl
 }
 
 onMounted(() => {

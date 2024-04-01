@@ -44,6 +44,7 @@ import Card from '@/components/Card.vue'
 import Popup from '@/components/Popup.vue'
 import { createFeedback } from '@/api/feedbackHooks'
 import { getUserByUsername } from '@/api/userHooks'
+import { useUserStore } from '@/stores/userStore'
 
 export default {
   name: 'ContactPage',
@@ -67,8 +68,10 @@ export default {
   methods: {
     async submitForm() {
       try {
-        const username = sessionStorage.getItem('user')
-        if (!username || username === 'null') {
+        const userStore = useUserStore()
+        const username = userStore.getUserName
+
+        if (!userStore.getIsLoggedIn) {
           this.feedbackError = 'Please log in to submit feedback.'
           return
         }

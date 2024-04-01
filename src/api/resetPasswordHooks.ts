@@ -1,4 +1,4 @@
-import api from '@/api/axiosConfig'
+import { api } from '@/api/axiosConfig'
 import type { LoginRequest } from '@/types/LoginRequest'
 
 export const findTokenByEmail = async (email: string): Promise<any | null> => {
