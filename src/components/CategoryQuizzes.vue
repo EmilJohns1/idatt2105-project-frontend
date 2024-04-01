@@ -10,8 +10,8 @@
       v-for="quiz in filteredQuizzes"
       :key="quiz.id"
       :id="quiz.id"
-      :image="quiz.pictureUrl || '/defualt-quiz-image.png'"
-      :title="quiz.name"
+      :image="quiz.pictureUrl || '/defualt-quiz-image.jpg'"
+      :title="quiz.title"
       :description="quiz.description"
       :clickable="true"
       @clicked="goToQuiz(quiz.id)"
@@ -20,8 +20,8 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted, ref } from 'vue';
+<script setup lang = ts>
+import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '@/api/axiosConfig';
 import CardItem from './CardItem.vue';
@@ -30,29 +30,33 @@ const route = useRoute();
 const quizzes = ref([]);
 const searchTerm = ref('');
 const categoryName = ref(route.params.category);
-const categories = ref([]);
 
 onMounted(async () => {
+  categoryName.value = route.params.category
+    ? route.params.category.charAt(0).toUpperCase() + route.params.category.slice(1)
+    : 'All';
+
+  // Form the fetch URL
+  const fetchUrl = categoryName.value === 'All' 
+    ? '/quizzes' // Fetch all quizzes
+    : `/quizzes/category?category=${encodeURIComponent(categoryName.value)}`; // Fetch quizzes by category
+
   try {
-    // Fetch categories to get the ID for the category name
-    const categoriesResponse = await api.get('/quizzes/categories');
-    categories.value = categoriesResponse.data;
-    console.log('Categories:', categories.value);
-
-    // Now find the category ID
-    const category = categories.value.find(c => c.name.toLowerCase() === route.params.category.toLowerCase());
-    if (!category) {
-      console.error('Category not found');
-      return;
-    }
-    const category_id = category.id;
-
-    // Fetch quizzes with the category ID
-    const quizzesResponse = await api.get('/quizzes/category', { params: { category_id: category_id } });
-    quizzes.value = quizzesResponse.data;
+    const response = await api.get(fetchUrl);
+    quizzes.value = response.data;
+    console.log('Quizzes:', quizzes.value);
   } catch (error) {
-    console.error('Failed to fetch categories or quizzes:', error);
+    console.error('Failed to fetch quizzes:', error);
   }
+});
+
+const filteredQuizzes = computed(() => {
+  if (!searchTerm.value) {
+    return quizzes.value;
+  }
+  return quizzes.value.filter(quiz =>
+    quiz.title.toLowerCase().includes(searchTerm.value.toLowerCase())
+  );
 });
 
 function goToQuiz(quizId) {
@@ -61,9 +65,15 @@ function goToQuiz(quizId) {
 </script>
 
 <style scoped>
+.category-quizzes-container {
+  padding: 40px;  
+}
 .quizzes-grid {
+  margin-top: 50px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
+  gap: 40px;
+  justify-content: center; 
+  align-items: start; 
 }
 </style>

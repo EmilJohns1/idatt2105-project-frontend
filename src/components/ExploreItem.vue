@@ -9,17 +9,17 @@
             id="all"
             image="/categoryimage/all.png"
             title="All"
-            clickable = "true"
+            :clickable = "true"
             @clicked="goToCategory('all')"
           />
           <CardItem
             v-for="category in filteredCategories"
-            :key="category.id"
-            :id="category.id"
-            :image="'/categoryimage/' + category.name.toLowerCase() + '.png'"
+            key="category.id"
+            id="category.id"
+            :image="`/categoryimage/${category.name.toLowerCase()}.png`"
             :title="category.name"
             :clickable="true"
-            @clicked="goToCategory" 
+            @clicked="() => goToCategory(category.name)" 
           />
             <!--Add in description for categories in the future when it's implemented-->
         </div> 
@@ -33,9 +33,14 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CardItem from '../components/CardItem.vue';
 
-const categories = ref([]);
+const categories = ref<Category[]>([]);
 const router = useRouter();
 const searchTerm = ref('');
+
+interface Category {
+  id: string | number; 
+  name: string; 
+}
 
 onMounted(async () => {
   try {
@@ -57,15 +62,17 @@ const filteredCategories = computed(() => {
   }
 });
 
-function getImageUrl(categoryName) {
-  return '/categoryimage/' + categoryName.toLowerCase() + '.png';
-}
 
-function goToCategory(categoryName) {
-  const lowerCaseCategoryName = categoryName.toLowerCase();
-  console.log('Navigating to the category page of:', lowerCaseCategoryName);
-  router.push({ 
+function goToCategory(categoryName: string) {
+  if (categoryName === 'all') {
+    console.log('Navigating to All quizzes');
+    router.push({ name: 'Category' , params: { category: 'all' } });
+  } else {
+    const lowerCaseCategoryName = categoryName.toLowerCase();
+    console.log('Navigating to ', categoryName);
+    router.push({ 
     name: 'Category', params: { category: lowerCaseCategoryName } });
+  }
 }
 </script>
 

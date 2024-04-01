@@ -14,11 +14,12 @@
 import { defineProps, defineEmits } from 'vue';
 
 type Props = {
-  id: Number,
-  title: String,
-  image: String,
-  description: String,
-  clickable: Boolean
+  id: string | number,
+  title: string,
+  image: string,
+  description?: string,
+  clickable: boolean,
+  cardType?: string
 };
 
 const props = defineProps<Props>();
