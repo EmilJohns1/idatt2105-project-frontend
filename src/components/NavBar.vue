@@ -31,8 +31,11 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import router from '@/router'
 import { useUserStore } from '@/stores/userStore'
+import { useApiStore } from '@/stores/apiStore'
+import { oauth2 } from '@/api/axiosConfig'
 
 const userStore = useUserStore()
+const apiStore = useApiStore()
 
 const isLoggedIn = computed(() => userStore.getIsLoggedIn);
 const profilePicture = ref('')
@@ -53,8 +56,17 @@ watch(isLoggedIn, fetchUserProfilePicture);
 
 
 const logout = () => {
-  userStore.logout();
-  router.push('/login')
+  oauth2.post('/oauth2/revoke', {
+    token: userStore.getAccessToken
+  }).then(() => {
+    userStore.logout()
+    sessionStorage.clear()
+  })
+  const clientId = apiStore.clientId
+  const authUrl =
+    apiStore.getBackendUrl +
+    `/connect/logout?client_id=${clientId}&id_token_hint=${userStore.getIdToken}&post_logout_redirect_uri=${apiStore.getBaseUrl}`
+  window.location.href = authUrl
 }
 
 onMounted(() => {

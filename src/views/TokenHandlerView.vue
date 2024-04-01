@@ -52,6 +52,7 @@ onMounted(() => {
     )
     .then((response) => {
       userStore.setAccessToken(response.data.access_token)
+      userStore.setIdToken(response.data.id_token)
       oauth2
         .post('/userinfo', null, {
           //Gets the user's information
