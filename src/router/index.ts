@@ -13,6 +13,8 @@ import NotFoundView from '../views/NotFoundView.vue'
 import NoAccessView from '../views/NoAccessView.vue'
 import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
+import LoginRedirect from '@/components/LoginRedirect.vue'
+import TokenHandlerView from '@/views/TokenHandlerView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -179,7 +181,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginRedirect
     },
     {
       path: '/user',
@@ -204,6 +206,11 @@ const router = createRouter({
     {
       path: '/:catchAll(.*)',
       redirect: '/404'
+    },
+    {
+      path: '/token',
+      name: 'token',
+      component: TokenHandlerView
     }
   ]
 })

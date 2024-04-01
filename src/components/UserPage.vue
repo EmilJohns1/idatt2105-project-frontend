@@ -101,6 +101,7 @@ import { getCommentsByUserId } from '@/api/commentHooks'
 import { getQuizByQuizId } from '@/api/quizHooks'
 import { getUserByUsername, getQuizzesByUserId, updateProfilePicture } from '@/api/userHooks'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
+import { useUserStore } from '@/stores/userStore'
 
 interface User {
   id: number | null
@@ -148,7 +149,8 @@ interface Comment {
 }
 
 const fetchUserData = async () => {
-  const username = sessionStorage.getItem('user')
+  const userStore = useUserStore()
+  const username = userStore.getUserName
   if (username) {
     try {
       const userData = await getUserByUsername(username)

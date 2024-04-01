@@ -1,4 +1,4 @@
-import api from '@/api/axiosConfig'
+import { api } from '@/api/axiosConfig'
 
 export const getAttemptsByUserId = async (userId: number): Promise<any[] | null> => {
   try {

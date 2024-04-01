@@ -1,4 +1,4 @@
-import api from '@/api/axiosConfig'
+import { api } from '@/api/axiosConfig'
 import { ref } from 'vue'
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { Tag } from '@/types/Tag'
@@ -121,7 +121,6 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
 export const getCategories = async (): Promise<string[] | null> => {
   try {
     const response = await api.get('/quizzes/categories', {})
-
     if (response.status === 200) {
       const categories = response.data.map((category: { name: string }) => category.name)
       return categories

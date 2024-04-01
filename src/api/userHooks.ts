@@ -1,4 +1,4 @@
-import api from '@/api/axiosConfig'
+import { api } from '@/api/axiosConfig'
 import { ref } from 'vue'
 import type { LoginRequest } from '@/types/LoginRequest.ts'
 
