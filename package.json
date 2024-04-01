@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
