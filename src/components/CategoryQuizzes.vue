@@ -8,11 +8,12 @@
     <div class="quizzes-grid">
       <CardItem
       v-for="quiz in filteredQuizzes"
-      :key="quiz.id"
-      :id="quiz.id"
+      key="quiz.id"
+      id="quiz.id"
       :image="quiz.pictureUrl || '/defualt-quiz-image.jpg'"
       :title="quiz.title"
       :description="quiz.description"
+      :date="quiz.creationDate"
       :clickable="true"
       @clicked="goToQuiz(quiz.id)"
       />
@@ -22,21 +23,50 @@
 
 <script setup lang = ts>
 import { onMounted, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
-import api from '@/api/axiosConfig';
+import { useRoute, useRouter } from 'vue-router';
+import { api } from '@/api/axiosConfig';
 import CardItem from './CardItem.vue';
 
 const route = useRoute();
-const quizzes = ref([]);
+const router = useRouter();
+const quizzes = ref<Quiz[]>([]);
 const searchTerm = ref('');
 const categoryName = ref(route.params.category);
 
+interface Quiz {
+  id: string | number; 
+  title: string; 
+  description: string; 
+  pictureUrl: string;
+  creationDate: string;
+  tags: Tag[];
+}
+
+interface Tag {
+  id: number;
+  tagName: string;
+}
+
+async function fetchQuizzesByTag(tag: string) {
+  try {
+    const response = await api.get(`/api/quizzes/tag?tag=${encodeURIComponent(tag)}`);
+    quizzes.value = response.data;
+    console.log('Quizzes by tag:', quizzes.value);
+  } catch (error) {
+    console.error('Failed to fetch quizzes by tag:', error);
+  }
+}
+
 onMounted(async () => {
-  categoryName.value = route.params.category
-    ? route.params.category.charAt(0).toUpperCase() + route.params.category.slice(1)
+  // Just ensure route.params.category is treated as a string so no errors
+  const categoryParam = Array.isArray(route.params.category) 
+    ? route.params.category[0] 
+    : route.params.category;
+
+  categoryName.value = categoryParam
+    ? categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1)
     : 'All';
 
-  // Form the fetch URL
   const fetchUrl = categoryName.value === 'All' 
     ? '/quizzes' // Fetch all quizzes
     : `/quizzes/category?category=${encodeURIComponent(categoryName.value)}`; // Fetch quizzes by category
@@ -50,16 +80,16 @@ onMounted(async () => {
   }
 });
 
+
 const filteredQuizzes = computed(() => {
-  if (!searchTerm.value) {
-    return quizzes.value;
-  }
-  return quizzes.value.filter(quiz =>
-    quiz.title.toLowerCase().includes(searchTerm.value.toLowerCase())
-  );
+  return searchTerm.value
+    ? quizzes.value.filter(quiz =>
+        quiz.title.toLowerCase().includes(searchTerm.value.toLowerCase())
+      )
+    : quizzes.value;
 });
 
-function goToQuiz(quizId) {
+function goToQuiz(quizId: string | number) { 
   router.push({ name: 'Quiz', params: { id: quizId } });
 }
 </script>

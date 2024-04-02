@@ -4,14 +4,7 @@
         <p>Choose your desired subject to start.</p>
         <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
         <div class="category-grid">
-          <CardItem
-            key="all"
-            id="all"
-            image="/categoryimage/all.png"
-            title="All"
-            :clickable = "true"
-            @clicked="goToCategory('all')"
-          />
+          
           <CardItem
             v-for="category in filteredCategories"
             key="category.id"
@@ -28,7 +21,7 @@
 
 <script setup lang = ts>
 
-import api from '@/api/axiosConfig';
+import { api } from '@/api/axiosConfig';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import CardItem from '../components/CardItem.vue';
@@ -41,37 +34,45 @@ interface Category {
   id: string | number; 
   name: string; 
 }
-
 onMounted(async () => {
   try {
     const response = await api.get('/quizzes/categories');
+    // No need to include 'All' category here, as we will add it in the computed property
     categories.value = response.data;
-    console.log('Categories:', categories.value)
+    console.log('Categories:', categories.value);
   } catch (error) {
     console.error('Failed to fetch categories:', error);
   }
 });
 
 const filteredCategories = computed(() => {
+  // Always include 'All' category at the beginning
+  const categoriesToShow: Category[] = [{ id: 'all', name: 'All' }];
+
   if (searchTerm.value) {
-    return categories.value.filter(category => 
+    // Filter categories without affecting the 'All' category
+    const searchResults: Category[] = categories.value.filter((category: Category) =>
       category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
     );
+    categoriesToShow.push(...searchResults);
   } else {
-    return categories.value;
+    // If no search term, show all categories after 'All'
+    categoriesToShow.push(...categories.value);
   }
-});
 
+  return categoriesToShow;
+});
 
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
     console.log('Navigating to All quizzes');
-    router.push({ name: 'Category' , params: { category: 'all' } });
+    router.push({ name: 'Category', params: { category: 'all' } });
   } else {
     const lowerCaseCategoryName = categoryName.toLowerCase();
     console.log('Navigating to ', categoryName);
-    router.push({ 
-    name: 'Category', params: { category: lowerCaseCategoryName } });
+    router.push({
+      name: 'Category', params: { category: lowerCaseCategoryName } 
+    });
   }
 }
 </script>

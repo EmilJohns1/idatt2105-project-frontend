@@ -16,12 +16,17 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
+    "@vueuse/core": "^10.9.0",
     "axios": "^1.6.8",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "latest": "^0.2.0",
     "node": "^21.7.1",
     "pinia": "^2.1.7",
     "router": "^2.0.0-beta.2",
+    "v-calendar": "^3.1.2",
+    "v-svg-icons": "^1.2.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
