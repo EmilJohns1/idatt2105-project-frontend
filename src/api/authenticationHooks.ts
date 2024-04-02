@@ -18,7 +18,7 @@ export const useLogin = async () => {
   window.location.href = authUrl
 }
 
-export const getTokens = async (code: string) => {
+export const getTokens = async (code:string) => {
   const apiStore = useApiStore()
   const userStore = useUserStore()
 
@@ -45,6 +45,7 @@ export const getTokens = async (code: string) => {
     try { //Try catch here due to the possibility of the response not being JSON
       userStore.setAccessToken(tokenRes.data.access_token)
       userStore.setIdToken(tokenRes.data.id_token)
+      userStore.setTimeToLive(tokenRes.data.expires_in)
     } catch (error) {
       console.error('Failed to parse tokens:', error)
       return
@@ -86,11 +87,11 @@ async function sha256(plain: string) {
   return hash
 }
 
-function generateCodeVerifier() {
+export const generateCodeVerifier = () => {
   return base64URLEncode(crypto.getRandomValues(new Uint8Array(32)))
 }
 
-async function generateCodeChallenge(codeVerifier: string) {
+export const generateCodeChallenge = async (codeVerifier: string) => {
   return sha256(codeVerifier).then((hash) => {
     return base64URLEncode(hash)
   })

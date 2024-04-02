@@ -7,7 +7,9 @@ export const useUserStore = defineStore({
     accessToken: useStorage('accessToken', '', sessionStorage),
     userName: useStorage('userName', '', sessionStorage),
     isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
-    idToken: useStorage('idToken', '', sessionStorage)
+    idToken: useStorage('idToken', '', sessionStorage),
+    timeToLive: useStorage('timeToLive', 0, sessionStorage),
+    expiresAt: useStorage('expiresAt', 0, sessionStorage)
   }),
   getters: {
     getAccessToken(): string {
@@ -21,6 +23,12 @@ export const useUserStore = defineStore({
     },
     getIdToken(): string {
       return this.idToken
+    },
+    getTimeToLive(): number {
+      return this.timeToLive
+    },
+    getExpiresAt(): number {
+      return this.expiresAt
     }
   },
   actions: {
@@ -39,6 +47,13 @@ export const useUserStore = defineStore({
       this.userName = ''
       this.isLoggedIn = false
       this.idToken = ''
+    },
+    setTimeToLive(timeToLive: number): void {
+      this.timeToLive = timeToLive
+      this.expiresAt = Date.now() + timeToLive * 1000 - 60000 // Convert seconds to milliseconds, subtract 1 minute for margin of error
+    },
+    tokenIsExpired(): boolean {
+      return Date.now() > this.expiresAt
     }
   }
 })
