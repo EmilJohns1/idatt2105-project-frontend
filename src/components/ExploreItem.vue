@@ -4,7 +4,6 @@
         <p>Choose your desired subject to start.</p>
         <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input"/>
         <div class="category-grid">
-          
           <CardItem
             v-for="category in filteredCategories"
             key="category.id"
