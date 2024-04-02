@@ -17,8 +17,9 @@ api.interceptors.request.use(
   function (config) {
     const userStore = useUserStore()
     const token = userStore.getAccessToken
-    config.headers.Authorization = `Bearer ${token}`
-
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   function (error) {
