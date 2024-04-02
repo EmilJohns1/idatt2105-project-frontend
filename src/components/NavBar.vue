@@ -42,7 +42,6 @@ const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
 
 const fetchUserProfilePicture = async () => {
-  console.log('fetchUserProfilePicture: isLoggedIn.value: ' + isLoggedIn.value)
   if (isLoggedIn.value) {
     while (!userStore.getUserName) {
       await new Promise((resolve) => setTimeout(resolve, 50))
