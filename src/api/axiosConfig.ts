@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/userStore'
+import router from '@/router'
 
 const baseURL = 'https://localhost:8443' // Adjust this according to your backend API base URL
 
@@ -18,6 +19,10 @@ api.interceptors.request.use(
     const userStore = useUserStore()
     const token = userStore.getAccessToken
     if (token) {
+      if (userStore.tokenIsExpired()) {
+        userStore.logout()
+        router.push('/login')
+      }
       config.headers.Authorization = `Bearer ${token}`
     }
     return config

@@ -1,4 +1,6 @@
 import { useApiStore } from '@/stores/apiStore'
+import { oauth2 } from '@/api/axiosConfig'
+import { useUserStore } from '@/stores/userStore'
 
 export const useLogin = async () => {
   const apiStore = useApiStore()
@@ -16,6 +18,60 @@ export const useLogin = async () => {
   window.location.href = authUrl
 }
 
+export const getTokens = async (code: string) => {
+  const apiStore = useApiStore()
+  const userStore = useUserStore()
+
+  const clientId = apiStore.getClientId
+  const redirectUri = apiStore.getBaseUrl + '/token'
+
+  //Get tokens
+  const tokenRes = await oauth2.post(
+    '/oauth2/token',
+    new URLSearchParams({
+      code: code,
+      redirect_uri: redirectUri,
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      code_verifier: apiStore.getCodeVerifier
+    }).toString(),
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    }
+  )
+  if (tokenRes.status === 200) {
+    try {
+      //Try catch here due to the possibility of the response not being JSON
+      userStore.setAccessToken(tokenRes.data.access_token)
+      userStore.setIdToken(tokenRes.data.id_token)
+      userStore.setTimeToLive(tokenRes.data.expires_in)
+    } catch (error) {
+      console.error('Failed to parse tokens:', error)
+      return
+    }
+  } else {
+    console.error('Failed to get tokens:', tokenRes.data)
+    return
+  }
+
+  //Get username
+  const userInfoRes = await oauth2.post('/userinfo', null, {
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken}`
+    }
+  })
+
+  if (userInfoRes.status === 200) {
+    userStore.setUserName(userInfoRes.data.sub)
+    //Other info can also be gotten here
+  } else {
+    console.error('Failed to get user info:', userInfoRes.data)
+    return
+  }
+}
+
 function base64URLEncode(arrayBuffer: ArrayBuffer) {
   return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(arrayBuffer))))
     .replace(/\+/g, '-')
@@ -30,11 +86,11 @@ async function sha256(plain: string) {
   return hash
 }
 
-function generateCodeVerifier() {
+export const generateCodeVerifier = () => {
   return base64URLEncode(crypto.getRandomValues(new Uint8Array(32)))
 }
 
-async function generateCodeChallenge(codeVerifier: string) {
+export const generateCodeChallenge = async (codeVerifier: string) => {
   return sha256(codeVerifier).then((hash) => {
     return base64URLEncode(hash)
   })
