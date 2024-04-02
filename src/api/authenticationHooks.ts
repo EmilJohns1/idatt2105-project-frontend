@@ -18,7 +18,7 @@ export const useLogin = async () => {
   window.location.href = authUrl
 }
 
-export const getTokens = async (code:string) => {
+export const getTokens = async (code: string) => {
   const apiStore = useApiStore()
   const userStore = useUserStore()
 
@@ -27,14 +27,14 @@ export const getTokens = async (code:string) => {
 
   //Get tokens
   const tokenRes = await oauth2.post(
-    '/oauth2/token', 
+    '/oauth2/token',
     new URLSearchParams({
       code: code,
       redirect_uri: redirectUri,
       grant_type: 'authorization_code',
       client_id: clientId,
       code_verifier: apiStore.getCodeVerifier
-    }).toString(), 
+    }).toString(),
     {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -42,7 +42,8 @@ export const getTokens = async (code:string) => {
     }
   )
   if (tokenRes.status === 200) {
-    try { //Try catch here due to the possibility of the response not being JSON
+    try {
+      //Try catch here due to the possibility of the response not being JSON
       userStore.setAccessToken(tokenRes.data.access_token)
       userStore.setIdToken(tokenRes.data.id_token)
       userStore.setTimeToLive(tokenRes.data.expires_in)
@@ -67,11 +68,9 @@ export const getTokens = async (code:string) => {
     //Other info can also be gotten here
   } else {
     console.error('Failed to get user info:', userInfoRes.data)
-    return    
+    return
   }
 }
-
-
 
 function base64URLEncode(arrayBuffer: ArrayBuffer) {
   return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(arrayBuffer))))

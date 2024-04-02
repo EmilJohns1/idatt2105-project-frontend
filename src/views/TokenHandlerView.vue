@@ -26,7 +26,7 @@ onMounted(() => {
     router.push('/')
     return
   }
-  
+
   getTokens(code)
     .then(() => router.push('/'))
     .catch(() => {
