@@ -84,6 +84,72 @@ const checkAuthentication = async (
   }
 }
 
+const checkAuthentication = async (
+  to: { params: { quiz_id: any; quiz_title: { toString: () => any } }; name: string },
+  from: any,
+  next: (arg0?: string) => void
+) => {
+  const quizIdParam = to.params.quiz_id
+  const quizTitleParam = to.params.quiz_title.toString()
+  const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
+  const quizIdNumber = parseInt(quizId)
+  const userStore = useUserStore()
+  const currentUser = userStore.getUserName
+
+  if (!currentUser) {
+    console.error('User not logged in')
+    next('/no-access')
+    return
+  }
+
+  if (isNaN(quizIdNumber)) {
+    console.error('Invalid quiz ID:', quizId)
+    next('/404')
+    return
+  }
+
+  try {
+    const quizDetails = await getQuizByQuizId(quizIdNumber)
+    console.log('quizDetails:', quizDetails)
+    if (!quizDetails) {
+      console.error('Quiz not found:', quizIdNumber)
+      next('/404')
+      return
+    }
+
+    const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-')
+    const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-')
+    const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam
+
+    if (!quizTitleMatches) {
+      console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title)
+      next('/404')
+      return
+    }
+
+    const userQuizzes = await getQuizzesByUsername(currentUser)
+    if (!userQuizzes || !userQuizzes.some((quiz) => quiz.id === quizIdNumber)) {
+      console.error('User does not have permission to access this quiz:', quizIdNumber)
+      next('/no-access')
+      return
+    }
+
+    if (to.name === 'CreateQuestion' || to.name === 'EditQuestions') {
+      const users = await getUsersByQuizId(quizIdNumber)
+      if (!users || !users.some((user) => user.username === currentUser)) {
+        console.error('User does not have permission to these questions:', quizIdNumber)
+        next('/no-access')
+        return
+      }
+    }
+
+    next()
+  } catch (error) {
+    console.error('Error:', error)
+    next('/404')
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
