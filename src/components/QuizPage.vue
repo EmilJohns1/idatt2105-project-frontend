@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="login-container">
     <div id="header">{{ currentQuestion.questionText }}</div>
     <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
@@ -15,20 +15,23 @@
         <div class="upright"></div>
       </button>
       <div id="tof-container" class="button-container" v-if="currentQuestion.alternatives === null">
-        <button @click="() => tofClicked=true" class="alt" id="trueButton">true<div class="upright"></div></button>
-        <button @click="() => tofClicked=false" class="alt" id="falseButton">false<div class="upright"></div></button>
+        <button @click="() => (tofClicked = true)" class="alt" id="trueButton">
+          true
+          <div class="upright"></div>
+        </button>
+        <button @click="() => (tofClicked = false)" class="alt" id="falseButton">
+          false
+          <div class="upright"></div>
+        </button>
       </div>
-      <button 
-  class="submit" 
-  @click="toggleButtonState"
->
-  {{ buttonText }}
-</button>
+      <button class="submit" @click="toggleButtonState">
+        {{ buttonText }}
+      </button>
     </div>
   </div>
   <div class="score-display">
-  {{ scoreDisplay.scoreText }}
-</div>
+    {{ scoreDisplay.scoreText }}
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -40,22 +43,22 @@ import { ref, onMounted, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 import { getQuestionsFromQuizId, registerQuizAttempt } from '@/api/quizHooks'
-import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg';
-import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg';
-import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg';
-import uncheckedFalse from '@/assets/responsebackgrounds/unchecked_false.jpg';
+import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg'
+import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg'
+import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg'
+import uncheckedFalse from '@/assets/responsebackgrounds/unchecked_false.jpg'
 
 const router = useRouter()
 const userStore = useUserStore()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
-const buttonState = ref<'submit' | 'next'>('submit'); 
+const buttonState = ref<'submit' | 'next'>('submit')
 const scoreDisplay = ref({
-  scoreText: 'Loading...',
-});
+  scoreText: 'Loading...'
+})
 
 const buttonText = computed(() => {
-  return buttonState.value === 'submit' ? 'Submit Question' : 'Next Question ->';
-});
+  return buttonState.value === 'submit' ? 'Submit Question' : 'Next Question ->'
+})
 
 const currentQuestion = ref({
   questionText: 'Loading...',
@@ -67,33 +70,33 @@ const currentQuestion = ref({
 
 let questions: Question[] | null = []
 let currentQuestionIndex = 0
-let questionAttempts: QuestionAttempt[] =[]
+let questionAttempts: QuestionAttempt[] = []
 let numberOfCorrect = 0
 let pointsPerQuestion = 0
 let maxScore = 0
-let tofClicked = true;
+let tofClicked = true
 
 const quizAttemptRequest = {
-      score: 0,
-      userId: 0,
-      quizId: quizId,
-      questionAttempts: questionAttempts
-    };
+  score: 0,
+  userId: 0,
+  quizId: quizId,
+  questionAttempts: questionAttempts
+}
 
 const clickedArray: number[] = [] // Array to store clicked alternative indexes
 
 const toggleButtonState = async () => {
   if (buttonState.value === 'submit') {
-    await submit();
-    buttonState.value = 'next';
+    await submit()
+    buttonState.value = 'next'
   } else {
-    nextQuestion();
-    buttonState.value = 'submit';
+    nextQuestion()
+    buttonState.value = 'submit'
   }
-};
+}
 
 const clicked = async (index: number) => {
-  if (questions&&currentQuestion.value.alternatives) {
+  if (questions && currentQuestion.value.alternatives) {
     const alternativeIndex = clickedArray.indexOf(index)
 
     const alternative = currentQuestion.value.alternatives[index]
@@ -124,12 +127,11 @@ const updateClickedClass = () => {
 }
 
 const fetchQuestions = async () => {
-  
-const username = userStore.getUserName
-if (username) {
-  const userData = await getUserByUsername(username)
-  quizAttemptRequest.userId=userData.id
-}
+  const username = userStore.getUserName
+  if (username) {
+    const userData = await getUserByUsername(username)
+    quizAttemptRequest.userId = userData.id
+  }
 
   questions = await getQuestionsFromQuizId(quizId)
   if (questions) {
@@ -137,136 +139,135 @@ if (username) {
   }
 }
 const nextQuestion = async () => {
-  if (questions && currentQuestionIndex < (questions.length - 1)) {
-    currentQuestionIndex++;
-    showQuestion(currentQuestionIndex);
-    
+  if (questions && currentQuestionIndex < questions.length - 1) {
+    currentQuestionIndex++
+    showQuestion(currentQuestionIndex)
+
     // Reset clickedArray and clicked property for each alternative
-    clickedArray.length = 0;
+    clickedArray.length = 0
     if (currentQuestion.value?.alternatives) {
-      currentQuestion.value.alternatives.forEach(alternative => {
+      currentQuestion.value.alternatives.forEach((alternative) => {
         if (alternative) {
-          alternative.wasClicked = false;
+          alternative.wasClicked = false
         }
-      });
+      })
     }
-    updateClickedClass(); // Update the UI to reflect the changes
+    updateClickedClass() // Update the UI to reflect the changes
 
     // Reset background, opacity, and border for each button
-    const buttons = document.querySelectorAll('.alt');
-    buttons.forEach(button => {
+    const buttons = document.querySelectorAll('.alt')
+    buttons.forEach((button) => {
       if (button instanceof HTMLElement) {
-        button.style.backgroundImage = '';
-        button.style.opacity = '';
-        button.style.borderColor = '#756dd3';
+        button.style.backgroundImage = ''
+        button.style.opacity = ''
+        button.style.borderColor = '#756dd3'
 
-        const uprightDiv = button.querySelector('.upright') as HTMLElement | null;
+        const uprightDiv = button.querySelector('.upright') as HTMLElement | null
         if (uprightDiv) {
-          uprightDiv.style.display = 'none';
-          uprightDiv.innerText = '';
+          uprightDiv.style.display = 'none'
+          uprightDiv.innerText = ''
         }
       }
-    });
-  }else {
-    scoreDisplay.value.scoreText = "score: " + quizAttemptRequest.score + " / " + maxScore;
+    })
+  } else {
+    scoreDisplay.value.scoreText = 'score: ' + quizAttemptRequest.score + ' / ' + maxScore
 
     // Hide login-container and show score-display
-    const loginContainer = document.querySelector('.login-container');
-    const scoreDisplayElement = document.querySelector('.score-display');
-    
+    const loginContainer = document.querySelector('.login-container')
+    const scoreDisplayElement = document.querySelector('.score-display')
+
     if (loginContainer instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement) {
-      loginContainer.style.display = 'none';
-      scoreDisplayElement.style.display = 'block';
+      loginContainer.style.display = 'none'
+      scoreDisplayElement.style.display = 'block'
     }
-  } 
-};
+  }
+}
 
 const submit = async () => {
-  if(currentQuestion.value.correctAnswer===null){
-  const questionAttempt = {
-    type: "multiple_choice",
-    questionText: currentQuestion.value?.questionText ?? '',
-    mediaUrl: currentQuestion.value?.mediaUrl ?? '',
-    points: currentQuestion.value?.points,
-    alternatives: currentQuestion.value?.alternatives ?? [] 
-  };
-
-  pointsPerQuestion = Math.floor(currentQuestion.value.points/numberOfCorrect*100)/100
-  maxScore+=pointsPerQuestion*numberOfCorrect
-  let pointsForQuestion = 0
-
-  questionAttempt.alternatives.forEach((alternative, index) => {
-    console.log("wasCorrect: "+alternative.wasCorrect)
-    console.log("correct: "+alternative.correct)
-    console.log(alternative)
-    const button = document.getElementById(`button-${index}`);
-    
-    if (!button) {
-      console.error(`Button with id 'button-${index}' not found`);
-      return;
-    }
-
-    const uprightDiv = button.querySelector('.upright') as HTMLElement | null;
-
-    if (!uprightDiv) {
-      console.error(`Upright div not found in button 'button-${index}'`);
-      return;
-    }
-
-    if (alternative.wasClicked && alternative.wasCorrect) {
-      console.log("correct clicked:" + alternative.alternativeText);
-      button.style.backgroundImage = `url(${checkedCorrect})`;
-      button.style.backgroundSize = 'cover';
-      button.style.borderColor = "#1a912a";
-      uprightDiv.style.display = 'block';
-      uprightDiv.innerText = '+ '+ pointsPerQuestion +' score';
-      pointsForQuestion += pointsPerQuestion
-    } else if (alternative.wasClicked && !alternative.wasCorrect) {
-      console.log("false clicked:" + alternative.alternativeText);
-      button.style.backgroundImage = `url(${checkedFalse})`;
-      button.style.backgroundSize = 'cover';
-      button.style.borderColor = "#911a1a";
-      uprightDiv.style.display = 'block';
-      uprightDiv.innerText = '- '+pointsPerQuestion+' score';
-      pointsForQuestion -= pointsPerQuestion
-    } else if (!alternative.wasClicked && !alternative.wasCorrect) {
-      console.log("false unclicked:" + alternative.alternativeText);
-      button.style.backgroundImage = `url(${uncheckedFalse})`;
-      button.style.backgroundSize = 'cover';
-      button.style.opacity = '0.5';
-    } else if (!alternative.wasClicked && alternative.wasCorrect) {
-      console.log("correct unclicked:" + alternative.alternativeText);
-      button.style.backgroundImage = `url(${uncheckedCorrect})`;
-      button.style.backgroundSize = 'cover';
-      button.style.opacity = '0.5';
-    }
-  });
-  if(pointsForQuestion>0){
-    quizAttemptRequest.score+=pointsForQuestion
-  questionAttempt.points=pointsForQuestion}
-
-  questionAttempts.push(questionAttempt);
-  }
-  else  if(currentQuestion.value.correctAnswer!==null){
+  if (currentQuestion.value.correctAnswer === null) {
     const questionAttempt = {
-    type: "true_or_false",
-    questionText: currentQuestion.value?.questionText ?? '',
-    mediaUrl: currentQuestion.value?.mediaUrl ?? '',
-    points: currentQuestion.value?.points,
-    correctAnswer: currentQuestion.value?.correctAnswer,
-    userAnswer: tofClicked
-  };
+      type: 'multiple_choice',
+      questionText: currentQuestion.value?.questionText ?? '',
+      mediaUrl: currentQuestion.value?.mediaUrl ?? '',
+      points: currentQuestion.value?.points,
+      alternatives: currentQuestion.value?.alternatives ?? []
+    }
 
-  questionAttempts.push(questionAttempt);
+    pointsPerQuestion = Math.floor((currentQuestion.value.points / numberOfCorrect) * 100) / 100
+    maxScore += pointsPerQuestion * numberOfCorrect
+    let pointsForQuestion = 0
+
+    questionAttempt.alternatives.forEach((alternative, index) => {
+      alternative.wasCorrect = alternative.correct
+      console.log('wasCorrect: ' + alternative.wasCorrect)
+      console.log(alternative)
+      const button = document.getElementById(`button-${index}`)
+
+      if (!button) {
+        console.error(`Button with id 'button-${index}' not found`)
+        return
+      }
+
+      const uprightDiv = button.querySelector('.upright') as HTMLElement | null
+
+      if (!uprightDiv) {
+        console.error(`Upright div not found in button 'button-${index}'`)
+        return
+      }
+
+      if (alternative.wasClicked && alternative.wasCorrect) {
+        console.log('correct clicked:' + alternative.alternativeText)
+        button.style.backgroundImage = `url(${checkedCorrect})`
+        button.style.backgroundSize = 'cover'
+        button.style.borderColor = '#1a912a'
+        uprightDiv.style.display = 'block'
+        uprightDiv.innerText = '+ ' + pointsPerQuestion + ' score'
+        pointsForQuestion += pointsPerQuestion
+      } else if (alternative.wasClicked && !alternative.wasCorrect) {
+        console.log('false clicked:' + alternative.alternativeText)
+        button.style.backgroundImage = `url(${checkedFalse})`
+        button.style.backgroundSize = 'cover'
+        button.style.borderColor = '#911a1a'
+        uprightDiv.style.display = 'block'
+        uprightDiv.innerText = '- ' + pointsPerQuestion + ' score'
+        pointsForQuestion -= pointsPerQuestion
+      } else if (!alternative.wasClicked && !alternative.wasCorrect) {
+        console.log('false unclicked:' + alternative.alternativeText)
+        button.style.backgroundImage = `url(${uncheckedFalse})`
+        button.style.backgroundSize = 'cover'
+        button.style.opacity = '0.5'
+      } else if (!alternative.wasClicked && alternative.wasCorrect) {
+        console.log('correct unclicked:' + alternative.alternativeText)
+        button.style.backgroundImage = `url(${uncheckedCorrect})`
+        button.style.backgroundSize = 'cover'
+        button.style.opacity = '0.5'
+      }
+    })
+    if (pointsForQuestion > 0) {
+      quizAttemptRequest.score += pointsForQuestion
+      questionAttempt.points = pointsForQuestion
+    }
+
+    questionAttempts.push(questionAttempt)
+  } else if (currentQuestion.value.correctAnswer !== null) {
+    const questionAttempt = {
+      type: 'true_or_false',
+      questionText: currentQuestion.value?.questionText ?? '',
+      mediaUrl: currentQuestion.value?.mediaUrl ?? '',
+      points: currentQuestion.value?.points,
+      correctAnswer: currentQuestion.value?.correctAnswer,
+      userAnswer: tofClicked
+    }
+
+    questionAttempts.push(questionAttempt)
   }
   console.log(quizAttemptRequest)
-  if (questions && currentQuestionIndex >= (questions.length - 1)) {
-    console.log("done!");
-    await registerQuizAttempt(quizAttemptRequest);
+  if (questions && currentQuestionIndex >= questions.length - 1) {
+    console.log('done!')
+    await registerQuizAttempt(quizAttemptRequest)
   }
   numberOfCorrect = 0
-};
-
+}
 
 const lastQuestion = async () => {
   if (questions && currentQuestionIndex - 1 >= 0) {
@@ -276,38 +277,37 @@ const lastQuestion = async () => {
 }
 
 const showQuestion = (index: number) => {
-  if (questions) {
+  if (questions && questions[index]) {
     const question = questions[index]
-    if(question.alternatives && question.correctAnswer===undefined){
+    if (question.alternatives && question.correctAnswer === undefined) {
       //hide true and false button
-    question.alternatives.forEach(alternative => {
-      alternative.wasClicked = false
-      if(alternative.wasCorrect){
-        numberOfCorrect++
-      }
-    })
-    currentQuestion.value = {
-      questionText: question.questionText,
-      mediaUrl: question.mediaUrl || '/default.jpg',
-      alternatives: question.alternatives,
-      points: question.points,
-      correctAnswer:null
-    }} else if(question.correctAnswer!==undefined){
+      question.alternatives.forEach((alternative: { wasClicked: boolean; wasCorrect: any }) => {
+        alternative.wasClicked = false
+        if (alternative.wasCorrect) {
+          numberOfCorrect++
+        }
+      })
       currentQuestion.value = {
-      questionText: question.questionText,
-      mediaUrl: question.mediaUrl || '/default.jpg',
-      points: question.points,
-      alternatives: null,
-      correctAnswer: question.correctAnswer
+        questionText: question.questionText,
+        mediaUrl: question.mediaUrl || '/default.jpg',
+        alternatives: question.alternatives,
+        points: question.points,
+        correctAnswer: null
+      }
+    } else if (question.correctAnswer !== undefined) {
+      currentQuestion.value = {
+        questionText: question.questionText,
+        mediaUrl: question.mediaUrl || '/default.jpg',
+        points: question.points,
+        alternatives: null,
+        correctAnswer: question.correctAnswer
+      }
+      //show true and false button
     }
-  //show true and false button
-  }
     console.log(currentQuestion.value)
-      
   }
-    updateClickedClass() // Update clicked buttons for the new question
-  }
-
+  updateClickedClass() // Update clicked buttons for the new question
+}
 
 onMounted(fetchQuestions)
 </script>
@@ -324,18 +324,18 @@ onMounted(fetchQuestions)
   overflow-wrap: break-word;
 }
 .upright {
-      position: absolute;
-      top: 1px;
-      right: 1px;
-      background-color: white;
-      border-radius: 20px;
-      color:black;
-      font-size: 1vw;
-      padding: 4px 15px 3px 15px;
-      display:none
-  }
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  background-color: white;
+  border-radius: 20px;
+  color: black;
+  font-size: 1vw;
+  padding: 4px 15px 3px 15px;
+  display: none;
+}
 
-.submit{
+.submit {
   width: 50%;
   margin-left: 20%;
   margin-right: 20%;
@@ -357,7 +357,6 @@ onMounted(fetchQuestions)
   font-size: 15px;
   cursor: pointer;
   background-color: #c0c0c0;
-
 }
 .pre {
   float: left;
@@ -381,7 +380,7 @@ onMounted(fetchQuestions)
 .alt {
   flex: 0 0 calc(40% - 20px); /* Flex basis set to 40% minus margin to control the width */
   box-sizing: border-box; /* Include padding and border in element's total width and height */
-  background-position: center; 
+  background-position: center;
   aspect-ratio: 3/1;
   margin: 10px;
   border: none;
@@ -426,7 +425,6 @@ onMounted(fetchQuestions)
   overflow-wrap: break-word;
 }
 
-
 @media (max-width: 750px) {
   #image {
     width: 70%;
@@ -442,12 +440,12 @@ onMounted(fetchQuestions)
   }
 
   #header {
-  font-size: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  width: 100%; 
-  max-width: 40ch;
-  overflow-wrap: break-word;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 40ch;
+    overflow-wrap: break-word;
+  }
 }
-}
-</style>
+</style> -->
