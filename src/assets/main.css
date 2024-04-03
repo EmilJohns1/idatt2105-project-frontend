@@ -48,7 +48,6 @@ body {
   margin: 0;
   display: flex;
   white-space: nowrap;
-  overflow-x: scroll;
 }
 .tags-input .delete-button {
   background-color: none;

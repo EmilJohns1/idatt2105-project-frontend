@@ -38,7 +38,7 @@
             :to="`/quiz/${quiz.id}-${quiz.title.toLowerCase().replace(/ /g, '-')}/edit`"
             class="router-link-hidden"
           >
-            <QuizCard class="quiz-section-card" :quiz="quiz" />
+            <ImageCard class="quiz-section-card" :quiz="quiz" :item="quiz" />
           </RouterLink>
         </ul>
       </Card>
@@ -55,11 +55,12 @@
       <h2 id="header">Your comments</h2>
       <div class="quizzes-comments-container">
         <div v-if="currentQuizId !== null" class="comment-grid">
-          <QuizCard
+          <ImageCard
             class="comments-card"
             v-for="quiz in filteredQuizzes"
             :key="quiz.id"
             :quiz="quiz"
+            :item="quiz"
             @selectQuiz="currentQuizId = $event"
           />
           <div class="comment-and-button-container">
@@ -94,7 +95,7 @@
 <script setup lang="ts">
 import Calendar from '@/components/Calendar.vue'
 import Card from '@/components/Card.vue'
-import QuizCard from '@/components/QuizCard.vue'
+import ImageCard from '@/components/ImageCard.vue'
 import { format } from 'date-fns'
 import { ref, onMounted, computed, watch, type Ref } from 'vue'
 import { getCommentsByUserId } from '@/api/commentHooks'
@@ -501,8 +502,8 @@ h3 {
 }
 
 .comments-card {
-  max-height: 400px;
-  min-height: 400px;
+  max-height: 240px;
+  min-height: 240px;
   overflow-y: auto;
   background-image: linear-gradient(to bottom right, #ffffff, #fafafa);
 }

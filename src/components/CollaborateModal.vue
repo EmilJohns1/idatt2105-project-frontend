@@ -83,6 +83,9 @@ const addToQuiz = async () => {
   }
 
   await addUserToQuiz(props.quizId ?? 0, user.id)
+  popupMessage.value = `User added successfully!`
+  showErrorPopup.value = true
+  fontColor.value = 'green'
 
   fetchCollaborators()
   username.value = ''
