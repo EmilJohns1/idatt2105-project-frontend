@@ -1,69 +1,103 @@
 <template>
   <div class="container">
-    <button
-      v-if="isAuthor"
-      @click="showCollaborateModal"
-      class="additional-button collaborate-button"
-    >
-      Collaborate
-    </button>
-    <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
-    <button
-      v-if="isAuthorOrCollaborator"
-      @click="addQuestion"
-      class="additional-button collaborate-button"
-    >
-      Add question
-    </button>
-    <h1 id="header">Edit Quiz</h1>
-    <div v-if="quiz">
-      <form @submit.prevent="updateQuiz">
-        <h2>Title</h2>
-        <input v-model="editedQuiz.title" type="text" required class="input-field" />
-        <h2>Description</h2>
-        <textarea
-          v-model="editedQuiz.description"
-          type="text"
-          class="input-field description"
-        ></textarea>
-        <h2>Display image</h2>
-        <img :src="editedQuiz.quizPictureUrl || placeholderImage" class="quiz-image" /><br />
-        <input accept="image/*" type="file" @change="onFileChange" /><br />
-        <h3>Add tags</h3>
-        <div class="tags-input">
-          <ul id="tags">
-            <li v-for="(tag, index) in tagArray" :key="index">
-              {{ tag }}
-              <button class="delete-button" @click="removeTag(index)">X</button>
-            </li>
-          </ul>
-          <input
-            type="text"
-            v-model="tagInput"
-            @keydown.enter="addTag"
-            placeholder="Enter tag (e.g. difficult)"
+    <div class="sidebar">
+      <div
+        v-for="(question, index) in questions"
+        :key="index"
+        class="question"
+        @click="editQuestion(index)"
+      >
+        <div class="image-container">
+          <img
+            :src="question.mediaUrl || '/icons/default_quiz/question.png'"
+            alt="Question"
+            class="question-image"
           />
-          <button type="button" @click="addTag" :disabled="tagArray.length > 2" id="addTagButton">
-            Create tag
-          </button>
         </div>
-        <h3>Category:</h3>
-        <select v-model="editedQuiz.categoryName" required>
-          <option disabled value="">Select a category</option>
-          <option v-for="category in categories" :key="category" :value="category">
-            {{ category }}
-          </option>
-        </select>
-        <h3>Randomize Questions: <input type="checkbox" v-model="editedQuiz.randomizedOrder" /></h3>
-        <h3>Make Public: <input type="checkbox" v-model="editedQuiz.public" /></h3>
-        <div class="button-container">
-          <button type="submit" class="submit-button">Update Quiz</button>
+        <div class="text-container">
+          <h4 class="question-title" :title="question.questionText">{{ question.questionText }}</h4>
         </div>
-      </form>
+        <div class="add-question-button-container">
+          <img
+            src="/icons/trash-white-circle.png"
+            alt="Remove"
+            class="remove-icon"
+            @mouseenter="hoveredIndex = index"
+            @mouseleave="hoveredIndex = null"
+            @click="removeQuestion(index)"
+            @click.stop
+          />
+        </div>
+      </div>
+      <div class="image-container add-question" @click="addQuestion">
+        <icon class="icon" name="plus"></icon>
+      </div>
     </div>
-    <div v-else>
-      <p>Loading...</p>
+    <div class="edit-quiz">
+      <h1 id="header1">Edit Quiz</h1>
+      <div v-if="quiz">
+        <form @submit.prevent="updateQuiz" class="edit-quiz-form">
+          <h2>Title</h2>
+          <input v-model="editedQuiz.title" type="text" required class="input-field" />
+          <h2>Description</h2>
+          <textarea
+            v-model="editedQuiz.description"
+            type="text"
+            class="input-field description"
+          ></textarea>
+          <h2>Display image</h2>
+          <img :src="editedQuiz.quizPictureUrl || placeholderImage" class="quiz-image" /><br />
+          <input accept="image/*" type="file" @change="onFileChange" /><br />
+          <h3>Add tags</h3>
+          <div class="tags-input">
+            <ul id="tags">
+              <li v-for="(tag, index) in tagArray" :key="index">
+                {{ tag }}
+                <button class="delete-button" @click="removeTag(index)">X</button>
+              </li>
+            </ul>
+            <input
+              type="text"
+              v-model="tagInput"
+              @keydown.enter="addTag"
+              placeholder="Enter tag (e.g. difficult)"
+            />
+            <button type="button" @click="addTag" :disabled="tagArray.length > 2" id="addTagButton">
+              Create tag
+            </button>
+          </div>
+          <h3>Category:</h3>
+          <select v-model="editedQuiz.categoryName" required>
+            <option disabled value="">Select a category</option>
+            <option v-for="category in categories" :key="category" :value="category">
+              {{ category }}
+            </option>
+          </select>
+          <h3>
+            Randomize Questions: <input type="checkbox" v-model="editedQuiz.randomizedOrder" />
+          </h3>
+          <h3>Make Public: <input type="checkbox" v-model="editedQuiz.public" /></h3>
+          <div class="button-container">
+            <button type="submit" class="submit-button">Update Quiz</button>
+          </div>
+        </form>
+      </div>
+      <div v-else>
+        <p>Loading...</p>
+      </div>
     </div>
+    <div class="additional-buttons">
+      <button
+        v-if="isAuthor"
+        @click="showCollaborateModal"
+        class="additional-button collaborate-button"
+      >
+        Collaborate
+      </button>
+      <button class="additional-button collaborate-button">Import questions</button>
+      <button class="additional-button collaborate-button">Export questions</button>
+    </div>
+    <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
   </div>
 </template>
 
@@ -80,13 +114,13 @@ import {
 } from '@/api/quizHooks'
 import type { QuizRequest } from '@/types/QuizRequest'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
-import { getAllQuestionsByQuizId } from '@/api/questionHooks'
+import { getAllQuestionsByQuizId, deleteQuestionByQuestionId } from '@/api/questionHooks'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 
 const router = useRouter()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
-const placeholderImage = '/placeholder-image.jpg'
+const placeholderImage = '/icons/default_quiz/question.png'
 const file = ref<File | null>(null)
 const quiz = ref<any | null>(null)
 const categories = ref<string[] | null>(null)
@@ -105,6 +139,9 @@ const users = ref<any[]>([])
 const authorId = ref(0)
 const showModal = ref(false)
 const userStore = useUserStore()
+const questions = ref<any[]>([])
+const hoveredIndex = ref<number | null>(null)
+const originalPictureUrl = ref('')
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
@@ -119,30 +156,26 @@ const fetchQuizDetails = async () => {
     editedQuiz.value.randomizedOrder = quiz.value.randomizedOrder
     editedQuiz.value.public = quiz.value.public
   }
+  if (quiz.value.quizPictureUrl) {
+    originalPictureUrl.value = quiz.value.quizPictureUrl
+  }
   authorId.value = quiz.value.authorId
 }
 
-// Fetch categories
-const fetchCategories = async () => {
-  categories.value = await getCategories()
-}
-
-const fetchUserData = async () => {
-  const username = userStore.getUserName
-  userData.value = await getUserByUsername(username || '')
-}
-
-const fetchUsers = async () => {
-  users.value = (await getUsersByQuizId(quizId)) as any[]
-  console.log('Users:', users)
+const fetchData = async () => {
+  if (quizId) {
+    questions.value = (await getAllQuestionsByQuizId(quizId)) as any[]
+    users.value = (await getUsersByQuizId(quizId)) as any[]
+    const username = userStore.getUserName
+    userData.value = await getUserByUsername(username || '')
+    categories.value = await getCategories()
+  }
 }
 
 // Fetch quiz details and categories on component mount
 onMounted(() => {
   fetchQuizDetails()
-  fetchCategories()
-  fetchUserData()
-  fetchUsers()
+  fetchData()
 })
 
 const tagArray = computed(() =>
@@ -184,15 +217,7 @@ const redirectToPage = async (quiz_id: number, quiz_title: string) => {
 }
 
 const redirectToQuestionPage = async (quiz_id: number, quiz_title: string) => {
-  const questions = await getAllQuestionsByQuizId(quiz_id)
-
-  const nextQuestionNumber = questions.length + 1
-
-  console.log('Next question number:', nextQuestionNumber)
-
-  router.push(
-    `/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/questions/${nextQuestionNumber}/edit`
-  )
+  router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/questions/add`)
 
   setTimeout(() => {
     setTimeout(() => {
@@ -201,7 +226,6 @@ const redirectToQuestionPage = async (quiz_id: number, quiz_title: string) => {
   }, 250)
 }
 
-// Image preview
 const previewImage = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
@@ -223,7 +247,6 @@ const addTag = () => {
   }
 }
 
-// Remove tag
 const removeTag = (index: number) => {
   editedQuiz.value.tags.splice(index, 1)
 }
@@ -266,14 +289,14 @@ const validateImageSize = (event: Event) => {
 const uploadPicture = async (): Promise<void> => {
   if (file.value) {
     try {
-      if (editedQuiz.value.profilePicture) {
-        const modifiedProfilePictureUrl = editedQuiz.value.profilePicture.replace(
-          'https://',
-          'https://quiz-project-fullstack.'
+      if (originalPictureUrl.value) {
+        const modifiedPictureUrl = originalPictureUrl.value.replace(
+          'https://s3.eu-north-1.amazonaws.com/quiz-project-fullstack/',
+          'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/'
         )
 
-        console.log('Deleting current profile picture:', modifiedProfilePictureUrl)
-        const deleteSuccess = await deletePicture(modifiedProfilePictureUrl)
+        console.log('Deleting current profile picture:', modifiedPictureUrl)
+        const deleteSuccess = await deletePicture(modifiedPictureUrl)
 
         if (!deleteSuccess) {
           console.error('Failed to delete current profile picture.')
@@ -314,13 +337,28 @@ const isAuthor = computed(() => {
   return userDataWithId && authorId.value === userDataWithId.id
 })
 
-const isAuthorOrCollaborator = computed(() => {
-  const collaboratorIds = users.value.map((user) => user.id)
-  return (
-    isAuthor.value ||
-    (userData.value && collaboratorIds.includes((userData.value as { id: number }).id))
-  )
-})
+const editQuestion = (index: number) => {
+  const question = questions.value[index]
+  const { quiz_id, quiz_title } = router.currentRoute.value.params
+  if (quiz_id && quiz_title) {
+    if (question && question.id) {
+      router.push(`/quiz/${quiz_id}-${quiz_title}/questions/${question.id}/edit`)
+    }
+  }
+}
+
+const removeQuestion = async (index: number) => {
+  const question = questions.value[index]
+  const confirmDelete = confirm('Are you sure you want to delete this question?')
+  if (confirmDelete) {
+    try {
+      await deleteQuestionByQuestionId((question as { id: number }).id)
+      questions.value.splice(index, 1)
+    } catch (error) {
+      console.error('Error deleting question:', error)
+    }
+  }
+}
 
 const addQuestion = async () => {
   await redirectToQuestionPage(quizId, editedQuiz.value.title)
@@ -343,10 +381,12 @@ const addQuestion = async () => {
   width: 20%;
   font-size: 15px;
   color: white;
-  border-radius: 10%;
+  border-radius: 2px;
   background-color: black;
   border: 0px;
   cursor: pointer;
+  margin: 5px;
+  padding: 5px;
 }
 #addTagButton:disabled {
   background-color: rgb(143, 143, 143);
@@ -363,15 +403,36 @@ h3 {
   resize: none;
 }
 .container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-gap: 20px;
+  padding: 20px;
+}
+
+.sidebar {
+  border-right: 1px solid #ccc;
+}
+
+.edit-quiz-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  justify-content: center;
-  height: 100%;
 }
 
-#header {
+.edit-questions {
+  grid-column: 1 / span 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-quiz {
+  grid-column: 2 / span 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#header1 {
   font-size: 3rem;
   margin-bottom: 20px;
 }
@@ -391,10 +452,14 @@ h3 {
 }
 
 .additional-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
-  width: 100%;
+  grid-column: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.additional-buttons button {
+  margin-bottom: 10px;
 }
 
 .submit-button,
@@ -431,9 +496,128 @@ form {
 .collaborate-button {
   position: relative;
   align-self: flex-end;
-  margin-right: 10px;
   max-width: fit-content;
   font-size: 1rem;
   margin-top: 10px;
+}
+
+.left-panel {
+  width: 30%;
+  padding-right: 20px;
+  margin-right: auto;
+}
+
+#header2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  margin-right: auto;
+}
+
+.question-item {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.question {
+  padding-right: 20px;
+  max-width: 150px;
+  max-height: 200px;
+  margin-bottom: 10px;
+}
+
+.question-info {
+  display: flex;
+  align-items: flex-start;
+}
+
+.image-container {
+  flex-shrink: 0;
+}
+
+.text-container {
+  margin-left: 0px;
+  margin-top: -5px;
+}
+
+.question-image {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  max-height: 78px;
+}
+
+.remove-icon {
+  position: absolute;
+  top: 5px;
+  right: 32px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.question:hover .remove-icon {
+  opacity: 1;
+}
+
+.question {
+  position: relative;
+}
+
+.add-question {
+  cursor: pointer;
+  width: fit-content;
+  min-width: 116px;
+  min-height: 78px;
+  background-color: #ccc;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.question-image {
+  min-width: 116px;
+  max-width: 116px;
+  min-height: 78;
+  max-height: 78px;
+  background-color: #ccc;
+}
+
+.icon {
+  width: fit-content;
+  color: white;
+  margin: 0;
+}
+
+.question-title {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to two lines */
+  -webkit-box-orient: vertical;
+  white-space: normal; /* Ensures text wraps within the limited lines */
+}
+
+/* Hide the title attribute and style the tooltip */
+.question-title[title] {
+  position: relative;
+}
+
+.question-title[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  z-index: 999;
+  left: 100%;
+  top: 0;
+  white-space: normal;
 }
 </style>

@@ -1,17 +1,29 @@
 <template>
   <div class="content">
     <button class="returnButton" @click="returnToQuiz">Return to quiz</button>
-    <h2 class="mainHeader">Question</h2>
+    <h2 class="header1">{{ editMode ? 'Edit Question' : 'Add Question' }}</h2>
+    <h2 class="mainHeader">Question Text</h2>
     <label class="overlay" for="toggle-menu"></label>
     <input type="text" class="choiceInput" v-model="question" /><br />
 
     <h2 class="header">Image or Video</h2>
     <img :src="imageUrl || placeholderImage" id="image" /><br />
-    <input accept="image/*" type="file" @change="previewImage($event)" /><br />
+    <input accept="image/*" type="file" @change="onFileChange" /><br />
+
+    <div class="max-points-slider">
+      <label for="maxPoints">Max Points</label>
+      <input type="range" id="maxPoints" min="1" max="5" v-model="maxPoints" />
+      <span>{{ maxPoints }}</span>
+    </div>
 
     <div class="qType header">
       Question type
-      <select name="QuestionType" id="QuestionType" @change="handleQuestionTypeChange($event)">
+      <select
+        name="QuestionType"
+        id="QuestionType"
+        v-model="selectedQuestionType"
+        @change="handleQuestionTypeChange"
+      >
         <option value="mc">Multiple Choice</option>
         <option value="tof">True or False</option>
       </select>
@@ -37,31 +49,21 @@
     <div class="choice" id="tof" v-if="selectedQuestionType === 'tof'">
       Answer:<br />
       True&nbsp;<label class="container"
-        ><input type="radio" name="tof" value="true" /><span class="checkmark"></span></label
+        ><input type="radio" name="tof" value="true" v-model="selectedTofOption" /><span
+          class="checkmark"
+        ></span></label
       ><br />
       False
       <label class="container"
-        ><input type="radio" name="tof" value="false" /><span class="checkmark"></span></label
+        ><input type="radio" name="tof" value="false" v-model="selectedTofOption" /><span
+          class="checkmark"
+        ></span></label
       ><br />
     </div>
 
-    <input class="toggle-menu" id="toggle-menu" type="checkbox" />
-    <label class="button-toggle-menu" for="toggle-menu">Options</label>
-    <nav>
-      <ul>
-        <li>
-          Max Points<br />
-          <input type="number" id="maxPointsInput" min="0" max="10" v-model="maxPoints" />
-        </li>
-        <li>
-          Difficulty<br />
-          <input type="range" min="1" max="5" value="3" id="difficulty" />
-        </li>
-        <li><button class="blackButton">Import Question</button></li>
-        <li><button class="blackButton">Export Question</button><br /></li>
-      </ul>
-    </nav>
-    <button class="submitButton" @click="addToQuiz">Add question to quiz</button>
+    <button class="submitButton" @click="editMode ? saveChanges() : addToQuiz()">
+      {{ editMode ? 'Confirm' : 'Add Question to quiz' }}
+    </button>
     <Popup
       v-if="popupVisible"
       :error-message="popupMessage"
@@ -72,34 +74,122 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   addQuestionToQuiz,
   addAlternativeToQuestion,
-  updateTrueOrFalseQuestion
+  updateTrueOrFalseQuestion,
+  getQuestionByQuestionId,
+  updateQuestionById,
+  updateQuestionAlternatives,
+  deleteAlternativeByAlternativeId,
+  deleteQuestionByQuestionId
 } from '@/api/questionHooks'
+import { uploadFile, deletePicture } from '@/api/imageHooks'
 import Popup from '@/components/Popup.vue'
+
+interface Alternative {
+  text: string
+  checked: boolean
+  id?: number
+}
 
 const router = useRouter()
 
+const editMode = ref(false)
 const question = ref('')
 const imageUrl = ref<string | null>(null)
-const placeholderImage = 'public/placeholder-image.jpg'
-const selectedQuestionType = ref('mc')
+const placeholderImage = '/icons/default_quiz/question.png'
+const selectedQuestionType = ref('')
 const maxPoints = ref('1')
-const alternatives = ref<{ text: string; checked: boolean }[]>([
+const selectedTofOption = ref()
+const alternatives = ref<Alternative[]>([
   { text: '', checked: false },
   { text: '', checked: false }
 ])
+const originalQuestionType = ref('')
+const file = ref<File | null>(null)
+const questionData = ref<any>(null)
+const originalPictureUrl = ref('')
 
 const previewImage = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   if (file) {
     imageUrl.value = URL.createObjectURL(file)
+  }
+}
+
+const onFileChange = (event: Event) => {
+  validateImageSize(event)
+  previewImage(event)
+}
+
+const validateImageFile = (file: File): boolean => {
+  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
+  return validTypes.includes(file.type)
+}
+
+const validateImageSize = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const selectedFile = target.files?.[0]
+
+  if (selectedFile) {
+    const fileSize = selectedFile.size / 1024 // Convert to KB
+    const maxSizeKB = 1024 * 3 // Max size in KB (3 MB)
+
+    if (!validateImageFile(selectedFile)) {
+      // Show an alert if file type is not valid
+      window.alert('Invalid file type. Please select a PNG, JPG, or JPEG file.')
+      // Reset the file input to clear the selected file
+      target.value = ''
+    } else if (fileSize > maxSizeKB) {
+      // Show an alert if file size exceeds the maximum limit
+      window.alert('File size exceeds the maximum limit. Maximum 3 MB allowed.')
+      // Reset the file input to clear the selected file
+      target.value = ''
+    } else {
+      // Update the file variable with the selected file
+      file.value = selectedFile
+    }
+  }
+}
+
+const uploadPicture = async (): Promise<void> => {
+  if (file.value) {
+    try {
+      console.log(originalPictureUrl.value)
+      //Delete the current profile picture from the storage
+      if (originalPictureUrl.value) {
+        console.log('Deleting current picture:', originalPictureUrl.value)
+        const deleteSuccess = await deletePicture(originalPictureUrl.value)
+
+        if (!deleteSuccess) {
+          console.error('Failed to delete current profile picture.')
+          return
+        }
+      }
+
+      // Upload the new profile picture
+      imageUrl.value = await uploadFile(file.value)
+      console.log('Uploaded picture:', imageUrl)
+
+      if (imageUrl.value) {
+        const modifiedImageUrl = imageUrl.value.replace(
+          'https://s3.eu-north-1.amazonaws.com/quiz-project-fullstack/',
+          'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/'
+        )
+        imageUrl.value = modifiedImageUrl
+        console.log('Picture updated successfully.')
+      } else {
+        console.error('Failed to update profile picture.')
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error)
+    }
   } else {
-    imageUrl.value = null
+    console.warn('No file selected.')
   }
 }
 
@@ -175,6 +265,8 @@ const addToQuiz = async () => {
   const params = router.currentRoute.value.params
   const quizId = params.quiz_id
 
+  await uploadPicture()
+
   try {
     const questionData = {
       questionText: question.value,
@@ -206,7 +298,11 @@ const addToQuiz = async () => {
 
     console.log('Question added successfully!')
 
-    popup('Question added to quiz!', 'green')
+    if (editMode.value) {
+      popup('Question updated!', 'green')
+    } else {
+      popup('Question added to quiz!', 'green')
+    }
 
     setTimeout(() => {
       returnToQuiz()
@@ -237,6 +333,113 @@ const popup = (message: string, fontColor: string) => {
 const popupVisible = ref(false)
 const popupMessage = ref('')
 const popupFontColor = ref('')
+
+const saveChanges = async () => {
+  if (!checkIfValidInputs()) {
+    return
+  }
+
+  const params = router.currentRoute.value.params
+  const quizId = params.quiz_id
+  const questionId = params.question_id
+
+  try {
+    const questionData = {
+      questionText: question.value,
+      mediaUrl: '',
+      points: Number(maxPoints.value),
+      type: getQuestionType(),
+      quizId: quizId,
+      questionId: questionId
+    }
+
+    if (originalQuestionType.value !== questionData.type) {
+      if (originalQuestionType.value === 'mc') {
+        const originalQuiz = await getQuestionByQuestionId(Number(questionId))
+        for (const alternative of originalQuiz.alternatives) {
+          await deleteAlternativeByAlternativeId(alternative.id)
+        }
+        await deleteQuestionByQuestionId(Number(questionId))
+        addToQuiz()
+        return
+      } else if (originalQuestionType.value === 'tof') {
+        await deleteQuestionByQuestionId(Number(questionId))
+        addToQuiz()
+        return
+      }
+    }
+
+    await uploadPicture()
+    questionData.mediaUrl = imageUrl.value ?? ''
+
+    const updatedQuestion = await updateQuestionById(questionData)
+
+    const formattedAlternatives = alternatives.value.map((alternative, index) => {
+      return {
+        alternativeText: alternative.text,
+        correct: alternative.checked,
+        id: alternative.id // Use the ID of the alternative
+      }
+    })
+
+    if (selectedQuestionType.value === 'mc') {
+      await updateQuestionAlternatives(updatedQuestion.id, formattedAlternatives)
+      console.log('Alternatives updated successfully!')
+    } else if (selectedQuestionType.value === 'tof') {
+      const isCorrect = selectedTofOption.value === 'true'
+      await updateTrueOrFalseQuestion(updatedQuestion.id, isCorrect)
+    }
+
+    console.log('Question updated successfully!')
+
+    popup('Question updated!', 'green')
+
+    setTimeout(() => {
+      returnToQuiz()
+    }, 1000)
+  } catch (error) {
+    console.error('Error adding/updating question:', error)
+  }
+}
+
+onMounted(async () => {
+  const params = router.currentRoute.value.params
+  if (params.question_id) {
+    editMode.value = true
+    try {
+      questionData.value = await getQuestionByQuestionId(Number(params.question_id))
+      console.log(questionData)
+      question.value = questionData.value.questionText
+      imageUrl.value = questionData.value.mediaUrl
+      originalPictureUrl.value = questionData.value.mediaUrl
+      console.log('Original picture URL:', originalPictureUrl.value)
+      maxPoints.value = String(questionData.value.points)
+
+      console.log('Original question type:', originalQuestionType)
+
+      if (questionData.value.alternatives) {
+        selectedQuestionType.value = 'mc'
+        originalQuestionType.value = 'mc'
+        alternatives.value = questionData.value.alternatives.map((alternative: any) => ({
+          text: alternative.alternativeText,
+          checked: alternative.correct
+        }))
+      } else {
+        selectedQuestionType.value = 'tof'
+        originalQuestionType.value = 'tof'
+        const isTrue = questionData.value.correctAnswer
+        selectedTofOption.value = isTrue
+        alternatives.value = [
+          { text: 'True', checked: isTrue },
+          { text: 'False', checked: !isTrue }
+        ]
+      }
+      console.log(originalQuestionType.value)
+    } catch (error) {
+      console.error('Error fetching question data:', error)
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -276,70 +479,22 @@ const popupFontColor = ref('')
 }
 
 /* options */
-.maxPoints,
-.difficulty {
+#maxPoints {
   font-size: 20px;
   display: inline-block;
-  margin-top: 60px;
-  margin-right: 13%;
-  margin-left: 13%;
+  width: fit-content;
 }
 #maxPointsInput {
   width: 60px;
 }
 
-.button-toggle-menu {
-  position: absolute;
-  top: 100px;
-  right: 5%;
-  border-radius: 10%;
-  display: block;
-  cursor: pointer;
-  font-size: 20px;
-  background-color: #d1cece;
-  margin-top: 100px;
-  padding: 10px 20px;
-}
-
-.toggle-menu {
-  appearance: none;
-
-  &:checked {
-    ~ nav {
-      display: block;
-    }
-  }
-}
-
-nav {
-  position: absolute;
-  top: 120px;
-  right: 0px;
-  margin-top: 150px;
-  display: none;
-  align-items: center;
+.max-points-slider {
+  margin-top: 20px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
   justify-content: center;
-  position:
-    absolute,
-    0 null 0 0;
-  background: #ffffff;
-  width: 230px;
-  z-index: 1;
-  border-left: solid black 1px;
-
-  ul {
-    list-style: none;
-    padding: 20px 0;
-    margin: 0;
-    height: 100%;
-
-    li {
-      padding: 10px 20px;
-    }
-  }
 }
 
-/* custom checkmarks */
 .container {
   display: inline-block;
   position: relative;
@@ -424,5 +579,10 @@ nav {
 
 .addRemoveButton {
   margin-left: 5px;
+}
+
+.header1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
 }
 </style>
