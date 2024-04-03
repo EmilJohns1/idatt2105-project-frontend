@@ -2,7 +2,7 @@
   <div class="login-container">
     <div id="header">{{ currentQuestion.questionText }}</div>
     <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
-    <div id="button-container">
+    <div class="button-container">
       <button
         v-for="(alternative, index) in currentQuestion.alternatives"
         :key="index"
@@ -12,8 +12,12 @@
         :class="{ clicked: clickedArray.includes(index) }"
       >
         {{ alternative.alternativeText }}
-        <div class="upright">oppi her</div>
+        <div class="upright"></div>
       </button>
+      <div id="tof-container" class="button-container" v-if="currentQuestion.alternatives === null">
+        <button @click="() => tofClicked=true" class="alt" id="trueButton">true<div class="upright"></div></button>
+        <button @click="() => tofClicked=false" class="alt" id="falseButton">false<div class="upright"></div></button>
+      </div>
       <button 
   class="submit" 
   @click="toggleButtonState"
@@ -57,7 +61,8 @@ const currentQuestion = ref({
   questionText: 'Loading...',
   mediaUrl: '/default.jpg',
   points: 0,
-  alternatives: [] as Alternative[]
+  alternatives: null as Alternative[] | null,
+  correctAnswer: null as boolean | null
 })
 
 let questions: Question[] | null = []
@@ -66,6 +71,7 @@ let questionAttempts: QuestionAttempt[] =[]
 let numberOfCorrect = 0
 let pointsPerQuestion = 0
 let maxScore = 0
+let tofClicked = true;
 
 const quizAttemptRequest = {
       score: 0,
@@ -87,11 +93,11 @@ const toggleButtonState = async () => {
 };
 
 const clicked = async (index: number) => {
-  if (questions) {
+  if (questions&&currentQuestion.value.alternatives) {
     const alternativeIndex = clickedArray.indexOf(index)
 
     const alternative = currentQuestion.value.alternatives[index]
-    alternative.clicked = !alternative.clicked // Toggle the clicked property
+    alternative.wasClicked = !alternative.wasClicked // Toggle the clicked property
     console.log(currentQuestion.value.alternatives)
     if (alternativeIndex === -1) {
       // If the alternative is not already clicked, add it to the array
@@ -140,7 +146,7 @@ const nextQuestion = async () => {
     if (currentQuestion.value?.alternatives) {
       currentQuestion.value.alternatives.forEach(alternative => {
         if (alternative) {
-          alternative.clicked = false;
+          alternative.wasClicked = false;
         }
       });
     }
@@ -176,13 +182,13 @@ const nextQuestion = async () => {
 };
 
 const submit = async () => {
-
+  if(currentQuestion.value.correctAnswer===null){
   const questionAttempt = {
     type: "multiple_choice",
     questionText: currentQuestion.value?.questionText ?? '',
     mediaUrl: currentQuestion.value?.mediaUrl ?? '',
-    points: 0,
-    alternatives: currentQuestion.value?.alternatives ?? []
+    points: currentQuestion.value?.points,
+    alternatives: currentQuestion.value?.alternatives ?? [] 
   };
 
   pointsPerQuestion = Math.floor(currentQuestion.value.points/numberOfCorrect*100)/100
@@ -190,6 +196,9 @@ const submit = async () => {
   let pointsForQuestion = 0
 
   questionAttempt.alternatives.forEach((alternative, index) => {
+    console.log("wasCorrect: "+alternative.wasCorrect)
+    console.log("correct: "+alternative.correct)
+    console.log(alternative)
     const button = document.getElementById(`button-${index}`);
     
     if (!button) {
@@ -204,7 +213,7 @@ const submit = async () => {
       return;
     }
 
-    if (alternative.clicked && alternative.correct) {
+    if (alternative.wasClicked && alternative.wasCorrect) {
       console.log("correct clicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${checkedCorrect})`;
       button.style.backgroundSize = 'cover';
@@ -212,7 +221,7 @@ const submit = async () => {
       uprightDiv.style.display = 'block';
       uprightDiv.innerText = '+ '+ pointsPerQuestion +' score';
       pointsForQuestion += pointsPerQuestion
-    } else if (alternative.clicked && !alternative.correct) {
+    } else if (alternative.wasClicked && !alternative.wasCorrect) {
       console.log("false clicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${checkedFalse})`;
       button.style.backgroundSize = 'cover';
@@ -220,12 +229,12 @@ const submit = async () => {
       uprightDiv.style.display = 'block';
       uprightDiv.innerText = '- '+pointsPerQuestion+' score';
       pointsForQuestion -= pointsPerQuestion
-    } else if (!alternative.clicked && !alternative.correct) {
+    } else if (!alternative.wasClicked && !alternative.wasCorrect) {
       console.log("false unclicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${uncheckedFalse})`;
       button.style.backgroundSize = 'cover';
       button.style.opacity = '0.5';
-    } else if (!alternative.clicked && alternative.correct) {
+    } else if (!alternative.wasClicked && alternative.wasCorrect) {
       console.log("correct unclicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${uncheckedCorrect})`;
       button.style.backgroundSize = 'cover';
@@ -237,6 +246,19 @@ const submit = async () => {
   questionAttempt.points=pointsForQuestion}
 
   questionAttempts.push(questionAttempt);
+  }
+  else  if(currentQuestion.value.correctAnswer!==null){
+    const questionAttempt = {
+    type: "true_or_false",
+    questionText: currentQuestion.value?.questionText ?? '',
+    mediaUrl: currentQuestion.value?.mediaUrl ?? '',
+    points: currentQuestion.value?.points,
+    correctAnswer: currentQuestion.value?.correctAnswer,
+    userAnswer: tofClicked
+  };
+
+  questionAttempts.push(questionAttempt);
+  }
   console.log(quizAttemptRequest)
   if (questions && currentQuestionIndex >= (questions.length - 1)) {
     console.log("done!");
@@ -256,9 +278,11 @@ const lastQuestion = async () => {
 const showQuestion = (index: number) => {
   if (questions) {
     const question = questions[index]
+    if(question.alternatives && question.correctAnswer===undefined){
+      //hide true and false button
     question.alternatives.forEach(alternative => {
-      alternative.clicked = false
-      if(alternative.correct){
+      alternative.wasClicked = false
+      if(alternative.wasCorrect){
         numberOfCorrect++
       }
     })
@@ -266,11 +290,24 @@ const showQuestion = (index: number) => {
       questionText: question.questionText,
       mediaUrl: question.mediaUrl || '/default.jpg',
       alternatives: question.alternatives,
-      points: question.points
+      points: question.points,
+      correctAnswer:null
+    }} else if(question.correctAnswer!==undefined){
+      currentQuestion.value = {
+      questionText: question.questionText,
+      mediaUrl: question.mediaUrl || '/default.jpg',
+      points: question.points,
+      alternatives: null,
+      correctAnswer: question.correctAnswer
     }
+  //show true and false button
+  }
+    console.log(currentQuestion.value)
+      
+  }
     updateClickedClass() // Update clicked buttons for the new question
   }
-}
+
 
 onMounted(fetchQuestions)
 </script>
@@ -332,7 +369,7 @@ onMounted(fetchQuestions)
   width: 40%;
   aspect-ratio: 5/3;
 }
-#button-container {
+.button-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -394,7 +431,7 @@ onMounted(fetchQuestions)
   #image {
     width: 70%;
   }
-  #button-container {
+  .button-container {
     width: 90%;
     text-align: center;
   }

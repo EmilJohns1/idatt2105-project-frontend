@@ -73,7 +73,7 @@ export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise
       return null
     }
   } catch (error) {
-    console.error('Error registering user:', error)
+    console.error('Error registering quiz attempt:', error)
     return null
   }
 }
