@@ -94,8 +94,8 @@
       >
         Collaborate
       </button>
-      <button class="additional-button collaborate-button">Import questions</button>
-      <button class="additional-button collaborate-button">Export questions</button>
+      <ImportButton :quizId="quizId" />
+      <ExportButton :quizId="quizId" />
     </div>
     <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
   </div>
@@ -103,6 +103,8 @@
 
 <script setup lang="ts">
 import CollaborateModal from '@/components/CollaborateModal.vue'
+import ImportButton from '@/components/ImportButton.vue'
+import ExportButton from '@/components/ExportButton.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
@@ -481,6 +483,7 @@ h3 {
   background-color: #333;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
+
 form {
   width: 470px;
   padding-bottom: 20px;
