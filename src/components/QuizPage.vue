@@ -14,10 +14,28 @@
         {{ alternative.alternativeText }}
         <div class="upright"></div>
       </button>
-      <div id="tof-container" class="button-container" v-if="currentQuestion.alternatives === null">
-        <button @click="() => tofClicked=true" class="alt" id="trueButton">true<div class="upright"></div></button>
-        <button @click="() => tofClicked=false" class="alt" id="falseButton">false<div class="upright"></div></button>
+     
+      <div id="tof-container" v-if="currentQuestion.alternatives === null">
+        <button 
+  @click="() => trueClicked()" 
+  class="alt" 
+  id="trueButton"
+>
+  True
+  <div class="upright"></div>
+</button>
+
+<button 
+  @click="() => falseClicked()" 
+  :class="{ 'alt': true}" 
+  id="falseButton"
+>
+  False
+  <div class="upright"></div>
+</button>
+
       </div>
+    </div>
       <button 
   class="submit" 
   @click="toggleButtonState"
@@ -25,7 +43,7 @@
   {{ buttonText }}
 </button>
     </div>
-  </div>
+  
   <div class="score-display">
   {{ scoreDisplay.scoreText }}
 </div>
@@ -35,6 +53,7 @@
 import { useRouter } from 'vue-router'
 import type { Question } from '@/types/Question'
 import type { Alternative } from '@/types/Alternative'
+import type { AlternativeAttempt } from '@/types/AlternativeAttempt'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
 import { ref, onMounted, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
@@ -44,17 +63,18 @@ import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg';
 import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg';
 import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg';
 import uncheckedFalse from '@/assets/responsebackgrounds/unchecked_false.jpg';
+import { off } from 'process'
 
 const router = useRouter()
 const userStore = useUserStore()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
 const buttonState = ref<'submit' | 'next'>('submit'); 
 const scoreDisplay = ref({
-  scoreText: 'Loading...',
+  scoreText: 'Score: 0',
 });
 
 const buttonText = computed(() => {
-  return buttonState.value === 'submit' ? 'Submit Question' : 'Next Question ->';
+  return buttonState.value === 'submit' ? 'Submit Answer' : 'Next Question ->';
 });
 
 const currentQuestion = ref({
@@ -92,12 +112,29 @@ const toggleButtonState = async () => {
   }
 };
 
+const trueClicked = async () => {
+  const trueButton = document.getElementById('trueButton')
+  const falseButton = document.getElementById('falseButton')
+  if(falseButton && trueButton){
+    tofClicked=true
+      falseButton.style.backgroundColor="#756dd3"
+      trueButton.style.backgroundColor="#4c4694"
+}}
+const falseClicked = async () => {
+  const trueButton = document.getElementById('trueButton')
+  const falseButton = document.getElementById('falseButton')
+  if(falseButton && trueButton){
+    tofClicked=false
+      trueButton.style.backgroundColor="#756dd3"
+      falseButton.style.backgroundColor="#4c4694"
+}}
+
 const clicked = async (index: number) => {
   if (questions&&currentQuestion.value.alternatives) {
     const alternativeIndex = clickedArray.indexOf(index)
 
     const alternative = currentQuestion.value.alternatives[index]
-    alternative.wasClicked = !alternative.wasClicked // Toggle the clicked property
+    alternative.clicked = !alternative.clicked // Toggle the clicked property
     console.log(currentQuestion.value.alternatives)
     if (alternativeIndex === -1) {
       // If the alternative is not already clicked, add it to the array
@@ -146,7 +183,7 @@ const nextQuestion = async () => {
     if (currentQuestion.value?.alternatives) {
       currentQuestion.value.alternatives.forEach(alternative => {
         if (alternative) {
-          alternative.wasClicked = false;
+          alternative.clicked = false;
         }
       });
     }
@@ -158,8 +195,8 @@ const nextQuestion = async () => {
       if (button instanceof HTMLElement) {
         button.style.backgroundImage = '';
         button.style.opacity = '';
-        button.style.borderColor = '#756dd3';
-
+        button.style.borderColor = '';
+        button.style.backgroundColor = '';
         const uprightDiv = button.querySelector('.upright') as HTMLElement | null;
         if (uprightDiv) {
           uprightDiv.style.display = 'none';
@@ -168,27 +205,36 @@ const nextQuestion = async () => {
       }
     });
   }else {
-    scoreDisplay.value.scoreText = "score: " + quizAttemptRequest.score + " / " + maxScore;
-
-    // Hide login-container and show score-display
+    scoreDisplay.value.scoreText = "Score: " + quizAttemptRequest.score + " / " + maxScore;
+    // make scoreDisplay centered
     const loginContainer = document.querySelector('.login-container');
     const scoreDisplayElement = document.querySelector('.score-display');
     
     if (loginContainer instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement) {
       loginContainer.style.display = 'none';
-      scoreDisplayElement.style.display = 'block';
+      scoreDisplayElement.style.left = '45%';
     }
+    
   } 
 };
 
 const submit = async () => {
   if(currentQuestion.value.correctAnswer===null){
+    const alternativeAttempts = [] as AlternativeAttempt[]
+  currentQuestion.value.alternatives?.forEach((alternative) => {
+    const alternativeAttempt ={
+      alternativeText: alternative.alternativeText,
+      wasCorrect: alternative.correct,
+      wasClicked: alternative.clicked
+    }
+    alternativeAttempts.push(alternativeAttempt)
+  })
   const questionAttempt = {
     type: "multiple_choice",
     questionText: currentQuestion.value?.questionText ?? '',
     mediaUrl: currentQuestion.value?.mediaUrl ?? '',
     points: currentQuestion.value?.points,
-    alternatives: currentQuestion.value?.alternatives ?? [] 
+    alternatives: alternativeAttempts
   };
 
   pointsPerQuestion = Math.floor(currentQuestion.value.points/numberOfCorrect*100)/100
@@ -196,8 +242,6 @@ const submit = async () => {
   let pointsForQuestion = 0
 
   questionAttempt.alternatives.forEach((alternative, index) => {
-    console.log("wasCorrect: "+alternative.wasCorrect)
-    console.log("correct: "+alternative.correct)
     console.log(alternative)
     const button = document.getElementById(`button-${index}`);
     
@@ -213,10 +257,11 @@ const submit = async () => {
       return;
     }
 
-    if (alternative.wasClicked && alternative.wasCorrect) {
+    
+    button.style.backgroundSize = 'cover';
+    if (alternative.wasClicked && alternative.wasCorrect) { //multiple choice
       console.log("correct clicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${checkedCorrect})`;
-      button.style.backgroundSize = 'cover';
       button.style.borderColor = "#1a912a";
       uprightDiv.style.display = 'block';
       uprightDiv.innerText = '+ '+ pointsPerQuestion +' score';
@@ -224,7 +269,6 @@ const submit = async () => {
     } else if (alternative.wasClicked && !alternative.wasCorrect) {
       console.log("false clicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${checkedFalse})`;
-      button.style.backgroundSize = 'cover';
       button.style.borderColor = "#911a1a";
       uprightDiv.style.display = 'block';
       uprightDiv.innerText = '- '+pointsPerQuestion+' score';
@@ -232,12 +276,10 @@ const submit = async () => {
     } else if (!alternative.wasClicked && !alternative.wasCorrect) {
       console.log("false unclicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${uncheckedFalse})`;
-      button.style.backgroundSize = 'cover';
       button.style.opacity = '0.5';
     } else if (!alternative.wasClicked && alternative.wasCorrect) {
       console.log("correct unclicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${uncheckedCorrect})`;
-      button.style.backgroundSize = 'cover';
       button.style.opacity = '0.5';
     }
   });
@@ -247,7 +289,7 @@ const submit = async () => {
 
   questionAttempts.push(questionAttempt);
   }
-  else  if(currentQuestion.value.correctAnswer!==null){
+  else  if(currentQuestion.value.correctAnswer!==null){ //true or false
     const questionAttempt = {
     type: "true_or_false",
     questionText: currentQuestion.value?.questionText ?? '',
@@ -256,6 +298,45 @@ const submit = async () => {
     correctAnswer: currentQuestion.value?.correctAnswer,
     userAnswer: tofClicked
   };
+  maxScore+=questionAttempt.points
+  if(questionAttempt.correctAnswer===tofClicked){
+    quizAttemptRequest.score+=questionAttempt.points
+  }
+  const trueButton = document.getElementById("trueButton")
+  const falseButton = document.getElementById("falseButton")
+  if(trueButton&&falseButton){
+    falseButton.style.backgroundSize = 'cover';
+    trueButton.style.backgroundSize = 'cover';
+  if((questionAttempt.correctAnswer===tofClicked)&&tofClicked===true){
+  const trueUpright = trueButton.querySelector('.upright') as HTMLElement | null;
+    trueButton.style.backgroundImage = `url(${checkedCorrect})`;
+      trueButton.style.borderColor = "#1a912a";
+      falseButton.style.backgroundImage = `url(${uncheckedFalse})`;
+      falseButton.style.opacity = '0.5'
+      if(trueUpright){
+      trueUpright.style.display = 'block';
+      trueUpright.innerText = '+ '+ questionAttempt.points +' score';
+    }
+  } else if((questionAttempt.correctAnswer===tofClicked)&&tofClicked===false){
+    const falseUpright = falseButton.querySelector('.upright') as HTMLElement | null;
+    falseButton.style.backgroundImage = `url(${checkedCorrect})`;
+      falseButton.style.borderColor = "#1a912a";
+      trueButton.style.backgroundImage = `url(${uncheckedFalse})`;
+      trueButton.style.opacity = '0.5'
+      if(falseUpright){
+      falseUpright.style.display = 'block';
+      falseUpright.innerText = '+ '+ questionAttempt.points +' score';
+  }} else if((questionAttempt.correctAnswer!=tofClicked)&&tofClicked===false){
+    falseButton.style.backgroundImage = `url(${checkedFalse})`;
+      falseButton.style.borderColor = "#911a1a";
+      trueButton.style.backgroundImage = `url(${uncheckedCorrect})`;
+      trueButton.style.opacity = '0.5'
+  } else if((questionAttempt.correctAnswer!=tofClicked)&&tofClicked===true){
+    trueButton.style.backgroundImage = `url(${checkedFalse})`;
+      trueButton.style.borderColor = "#911a1a";
+      falseButton.style.backgroundImage = `url(${uncheckedCorrect})`;
+      falseButton.style.opacity = '0.5'
+  }}
 
   questionAttempts.push(questionAttempt);
   }
@@ -265,6 +346,7 @@ const submit = async () => {
     await registerQuizAttempt(quizAttemptRequest);
   }
   numberOfCorrect = 0
+  scoreDisplay.value.scoreText = "Score: " + quizAttemptRequest.score 
 };
 
 
@@ -281,8 +363,8 @@ const showQuestion = (index: number) => {
     if(question.alternatives && question.correctAnswer===undefined){
       //hide true and false button
     question.alternatives.forEach(alternative => {
-      alternative.wasClicked = false
-      if(alternative.wasCorrect){
+      alternative.clicked = false
+      if(alternative.correct){
         numberOfCorrect++
       }
     })
@@ -313,15 +395,17 @@ onMounted(fetchQuestions)
 </script>
 
 <style scoped>
+
 .score-display {
-  display: none; /* Initially hidden */
+  position: absolute;
+  top: 200px; 
+  left: 10px; 
   font-size: 1.5vw;
-  margin-top: 20px;
-  text-align: center;
-  margin-top: 400px;
+  font-weight: bold;
+  text-align: left; 
   width: 100%;
   max-width: 120ch;
-  overflow-wrap: break-word;
+  z-index: 2; 
 }
 .upright {
       position: absolute;
@@ -336,7 +420,7 @@ onMounted(fetchQuestions)
   }
 
 .submit{
-  width: 50%;
+  width: 40%;
   margin-left: 20%;
   margin-right: 20%;
   aspect-ratio: 15/1;
@@ -399,8 +483,8 @@ onMounted(fetchQuestions)
 .alt.clicked {
   background-color: #4c4694;
 }
-.alt:hover {
-  background-color: #4c4694;
+.alt:hover:not(.clicked){
+  background-color: #6c65b6;
 }
 .error-message {
   color: red;
@@ -425,6 +509,12 @@ onMounted(fetchQuestions)
   max-width: 120ch;
   overflow-wrap: break-word;
 }
+#tof-container{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  width:100%;
+}
 
 
 @media (max-width: 750px) {
@@ -438,7 +528,13 @@ onMounted(fetchQuestions)
   .alt {
     aspect-ratio: 2/1;
     max-width: 60ch;
-    font-size: 1.6vw;
+    font-size: 2vw;
+  }
+  .submit{
+    font-size: 2vw;
+  }
+  .score-display{
+    font-size: 2vw;
   }
 
   #header {

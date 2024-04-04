@@ -1,10 +1,10 @@
-import type { Alternative } from "./Alternative"
+import type { AlternativeAttempt } from "./AlternativeAttempt"
 export interface QuestionAttempt {
     type: string
     questionText: string
     mediaUrl: string
     points: number
-    alternatives?: Alternative[]
+    alternatives?: AlternativeAttempt[]
     userAnswer?: boolean
     correctAnswer?: boolean
   }

@@ -1,6 +1,5 @@
 export interface Alternative {
   alternativeText: string
-  wasCorrect: boolean
-  wasClicked: boolean
+  correct: boolean
+  clicked: boolean
 }
-location.reload();
