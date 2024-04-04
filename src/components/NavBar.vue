@@ -1,7 +1,7 @@
 <template>
   <div class="nav-container">
     <ul class="navbar">
-      <li id="logo">QuizApp</li>
+      <li id="logo" @click="goHome()">QuizApp</li>
       <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
       <li><RouterLink to="/quiz/create" class="link">Create</RouterLink></li>
       <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
@@ -42,6 +42,10 @@ const apiStore = useApiStore()
 const isLoggedIn = computed(() => userStore.getIsLoggedIn)
 const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
+
+function goHome() {
+  router.push('/')
+}
 
 const fetchUserProfilePicture = async () => {
   if (isLoggedIn.value) {
@@ -112,6 +116,10 @@ ul {
   margin-right: 5%;
   margin-left: 2%;
   cursor: default;
+}
+
+#logo:hover {
+  cursor: pointer;
 }
 
 .link {

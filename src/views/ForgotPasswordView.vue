@@ -1,5 +1,5 @@
 <template>
-    <ForgotPasswordModal/>
+  <ForgotPasswordModal />
 </template>
 
 <script setup>
@@ -8,5 +8,4 @@ import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
 
 <style scoped>
 /* Your component's styles go here */
-
 </style>
