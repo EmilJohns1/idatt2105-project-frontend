@@ -16,6 +16,7 @@ import TokenHandlerView from '@/views/TokenHandlerView.vue'
 import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
 
 const checkAuthentication = async (
   to: { params: { quiz_id: any; quiz_title: { toString: () => any } }; name: string },
@@ -196,6 +197,11 @@ const router = createRouter({
       path: '/contact',
       name: 'contact',
       component: ContactView
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPasswordView
     },
     {
       path: '/reset-password',
