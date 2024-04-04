@@ -493,6 +493,8 @@ form {
   max-height: 200px;
   width: auto;
   height: auto;
+  border-radius: 8px;
+  border: 1px solid #333;
 }
 
 .collaborate-button {
