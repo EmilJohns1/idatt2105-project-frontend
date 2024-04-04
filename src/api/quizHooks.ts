@@ -1,7 +1,11 @@
 import { api } from '@/api/axiosConfig'
 import { ref } from 'vue'
 import type { QuizRequest } from '@/types/QuizRequest'
+import type { QuizAttemptRequest } from '@/types/QuizAttemptRequest'
 import type { Tag } from '@/types/Tag'
+import type { Page } from '@/types/Page'
+import type { QuizDto } from '@/types/QuizDto'
+import type { Question } from '@/types/Question'
 
 export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   try {
@@ -56,6 +60,24 @@ export const useRegistration = () => {
   }
 
   return { registrationError, registerQuiz, clearError }
+}
+
+export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise<number | null> => {
+  try {
+    console.log(quizData)
+    const response = await api.post('/attempts/add', quizData)
+
+    if (response.status === 201 && response.data && response.data.id) {
+      console.log('Quiz registered successfully')
+      return response.data.id
+    } else {
+      console.error('Registration failed:', response.data)
+      return null
+    }
+  } catch (error) {
+    console.error('Error registering quiz attempt:', error)
+    return null
+  }
 }
 
 export const addUserToQuiz = async (quizId: number, userId: number): Promise<void> => {
@@ -121,6 +143,7 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
 export const getCategories = async (): Promise<string[] | null> => {
   try {
     const response = await api.get('/quizzes/categories', {})
+
     if (response.status === 200) {
       const categories = response.data.map((category: { name: string }) => category.name)
       return categories
@@ -146,6 +169,62 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
     }
   } catch (error) {
     console.error('Error fetching users by quiz ID:', error)
+    return null
+  }
+}
+
+export const fetchQuizzesByCategory = async (
+  category: string,
+  page: number,
+  size: number
+): Promise<Page<QuizDto> | null> => {
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}`
+  try {
+    const response = await api.get(fetchUrl)
+    if (response.status === 200) {
+      console.log('Quizzes by category:', response.data.content)
+      return response.data
+    } else {
+      console.error(`Failed to fetch quizzes by category: ${category}. Status: ${response.status}`)
+      return null
+    }
+  } catch (error) {
+    console.error(`Failed to fetch quizzes by category: ${category}`, error)
+    return null
+  }
+}
+
+export const fetchAllQuizzes = async (
+  page: number,
+  size: number
+): Promise<Page<QuizDto> | null> => {
+  const fetchUrl = `/quizzes?page=${page}&size=${size}`
+  try {
+    const response = await api.get(fetchUrl)
+    if (response.status === 200) {
+      console.log('All quizzes:', response.data.content)
+      return response.data
+    } else {
+      console.error('Failed to fetch all quizzes. Status:', response.status)
+      return null
+    }
+  } catch (error) {
+    console.error('Failed to fetch all quizzes:', error)
+    return null
+  }
+}
+
+export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
+  try {
+    const response = await api.get(`/question/get/all/${quizId}`, {})
+    if (response.status === 200) {
+      return response.data
+    } else {
+      console.error('Failed to fetch categories. Status:', response.status)
+      return null
+    }
+  } catch (error) {
+    console.error('Error fetching categories:', error)
     return null
   }
 }
