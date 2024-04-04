@@ -1,10 +1,9 @@
 <script setup>
-import CategoryQuizzes from '../components/CategoryQuizzes.vue';
+import CategoryQuizzes from '../components/CategoryQuizzes.vue'
 </script>
 
 <template>
-    <main>
-        
-        <CategoryQuizzes />
-    </main>
+  <main>
+    <CategoryQuizzes />
+  </main>
 </template>

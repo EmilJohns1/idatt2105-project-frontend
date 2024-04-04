@@ -1,7 +1,14 @@
 <template>
-  <div :class="['card-item', cardType, { 'clickable': clickable, 'quiz-type': type === 'quiz', 'category-type': type === 'category' }]" @click="handleClick">
+  <div
+    :class="[
+      'card-item',
+      cardType,
+      { clickable: clickable, 'quiz-type': type === 'quiz', 'category-type': type === 'category' }
+    ]"
+    @click="handleClick"
+  >
     <div class="card-item-image">
-      <img :src="image" :alt="title">
+      <img :src="image" :alt="title" />
     </div>
     <div class="card-item-content">
       <h3 class="card-item-title">{{ title }}</h3>
@@ -24,82 +31,81 @@
     </div>
   </div>
 </template>
-    
-  
+
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue';
-import HoverCard from './HoverCard.vue';
+import { defineProps, defineEmits, ref } from 'vue'
+import HoverCard from './HoverCard.vue'
+import type { Tag } from '@/types/Tag'
 
 type Props = {
-  id: string | number,
-  title: string,
-  image: string,
-  description?: string,
-  creationDate?: string,
-  clickable: boolean,
-  cardType?: string,
-  authorName?: string,
-  tags?: { id: number, tagName: string }[],
-  lastModifiedDate?: string,
+  id: string | number
+  title: string
+  image: string
+  description?: string
+  creationDate?: string
+  clickable: boolean
+  cardType?: string
+  authorName?: string
+  tags?: Tag[]
+  lastModifiedDate?: string
   type?: 'quiz' | 'category'
-};
+}
 
-const hover = ref(false);
-const props = defineProps<Props>();
-const emits = defineEmits(['clicked']);
-
+const hover = ref(false)
+const props = defineProps<Props>()
+const emits = defineEmits(['clicked'])
 
 const handleClick = () => {
   if (props.clickable) {
-    emits('clicked', props.title);
+    emits('clicked', props.title)
   }
-};
+}
 </script>
 
 <style>
 .card-item {
   width: 100%;
-  max-width: 400px; 
-  margin: 0 auto; 
-  border-radius: 8px; 
-  overflow: hidden; 
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
   transition: box-shadow 0.3s ease-in-out;
   display: flex;
-  flex-direction: column; 
-  text-align: left; 
+  flex-direction: column;
+  text-align: left;
   background: white;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.card-item:hover   {
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); 
+.card-item:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 .card-item-image {
-  width: 100%; 
-  height: 200px; 
-  overflow: hidden; 
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
 }
 
 .card-item-image img {
-  width: 100%; 
-  height: auto; 
+  width: 100%;
+  height: auto;
   display: block;
 }
 
 .card-item-content {
-  padding: 16px; 
+  padding: 16px;
 }
 
 .card-item-title {
-  font-size: 1.5em;  
+  font-size: 1.5em;
 }
 
 .card-item-footer {
-  display: flex; 
-  justify-content: space-between; 
-  align-items: center; 
-  margin-top: 16px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
 }
 
 .tags-icon {
@@ -127,11 +133,11 @@ const handleClick = () => {
   position: absolute;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%); 
+  transform: translateX(-50%);
   background: white;
   z-index: 10;
   width: max-content;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
 </style>
