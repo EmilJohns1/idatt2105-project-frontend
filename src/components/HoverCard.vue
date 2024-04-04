@@ -10,7 +10,7 @@
 <script setup>
 import { ref } from 'vue';
 
-const showContent = ref(false);
+const showContent = ref(false)
 </script>
 
 <style scoped>

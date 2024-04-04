@@ -4,9 +4,13 @@
   display: grid;
 
   margin-top: 34px;
+  max-width: 100%; /* Set maximum width to 100% */
+  overflow-x: hidden;
 }
 body {
   padding-top: 30px;
+  max-width: 100%; /* Set maximum width to 100% */
+  overflow-x: hidden;
 }
 
 .link {
