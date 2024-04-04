@@ -19,20 +19,30 @@
           </li>
         </ul>
       </div>
-      <button @click="searchByTags" class="search-btn">Search</button>
     </div>
     <div class="quizzes-grid">
       <CardItem
       v-for="quiz in filteredQuizzes"
-      key="quiz.id"
-      id="quiz.id"
-      :image="quiz.pictureUrl || '/defualt-quiz-image.jpg'"
+      :key="quiz.id"
+      :id="quiz.id"
+      :image="quiz.quizPictureUrl || '/defualt-quiz-image.jpg'"
       :title="quiz.title"
       :description="quiz.description"
+      :authorName="authorName(quiz)"
+      :tags="quiz.tags"
       :date="quiz.creationDate"
+      :lastModifiedDate="quiz.lastModifiedDate"
       :clickable="true"
+      :type="'quiz'"
       @clicked="goToQuiz(quiz.id)"
       />
+    </div>
+    <div class="pagination-controls">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">Previous</button>
+      
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+
+      <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next</button>
     </div>
   </div>
 </template>
@@ -42,6 +52,10 @@ import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '@/api/axiosConfig';
 import CardItem from './CardItem.vue';
+
+const authorName = (quiz) => {
+  return quiz.userDTOs.length > 0 ? quiz.userDTOs[0].username : 'Unknown';
+};
 
 const route = useRoute();
 const router = useRouter();
@@ -54,10 +68,10 @@ interface Quiz {
   id: number;
   title: string;
   description: string;
-  pictureUrl: string;
+  quizPictureUrl?: string;
   categoryName: string;
   creationDate: string;
-  lastModifiedDate: string;
+  lastModifiedDate?: string;
   userDTOs: User[];
   tags: Tag[];
   randomizedOrder: boolean;
@@ -77,6 +91,12 @@ interface Tag {
   tagName: string;
 }
 
+const filteredQuizzes = computed(() => quizzes.value);
+
+const quizzesPerPage = (6);
+const currentPage = ref(1);
+const totalPages = ref(0);
+
 const currentTag = ref('');
 const searchTags = ref<string[]>([]);
 
@@ -91,28 +111,25 @@ const removeTag = (index: number) => {
   searchTags.value.splice(index, 1);
 };
 
-async function searchByTags() {
-  if (searchTags.value.length === 0) {
-    await fetchAllQuizzes();
-  } else {
-    const tagsString = searchTags.value.join(',');
-    await fetchQuizzesByTag(tagsString);
-  }
-};
-
-async function fetchQuizzesByTag(tags: string) {
+async function fetchQuizzesByCategory(category: string) {
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${currentPage.value - 1}&size=${quizzesPerPage}`;
   try {
-    const response = await api.get(`/api/quizzes/tag?tags=${encodeURIComponent(tags)}`);
-    quizzes.value = response.data;
+    const response = await api.get(fetchUrl);
+    console.log('Quizzes by category:', response.data.content);
+    quizzes.value = response.data.content; 
+    totalPages.value = response.data.totalPages;
   } catch (error) {
-    console.error('Failed to fetch quizzes by tags:', error);
+    console.error(`Failed to fetch quizzes by category: ${category}`, error);
   }
-};
+}
 
 async function fetchAllQuizzes() {
+  const fetchUrl = `/quizzes?page=${currentPage.value - 1}&size=${quizzesPerPage}`;
   try {
-    const response = await api.get('/quizzes');
-    quizzes.value = response.data;
+    const response = await api.get(fetchUrl);
+    console.log('All quizzes:', response.data.content);
+    quizzes.value = response.data.content;
+    totalPages.value = response.data.totalPages;
   } catch (error) {
     console.error('Failed to fetch all quizzes:', error);
   }
@@ -122,32 +139,23 @@ onMounted(async () => {
   const categoryParam = Array.isArray(route.params.category) 
     ? route.params.category[0] 
     : route.params.category;
-
-  categoryName.value = categoryParam
-    ? categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1)
-    : 'All';
-
-  const fetchUrl = categoryName.value === 'All' 
-    ? '/quizzes' // Fetch all quizzes
-    : `/quizzes/category?category=${encodeURIComponent(categoryName.value)}`; // Fetch quizzes by category
-
-  try {
-    const response = await api.get(fetchUrl);
-    quizzes.value = response.data;
-    console.log('Quizzes:', quizzes.value);
-  } catch (error) {
-    console.error('Failed to fetch quizzes:', error);
+  categoryName.value = categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1);
+  
+  if (categoryName.value === 'All') {
+    await fetchAllQuizzes();
+  } else {
+    await fetchQuizzesByCategory(categoryName.value);
   }
 });
 
-
-const filteredQuizzes = computed(() => {
-  return searchTerm.value
-    ? quizzes.value.filter(quiz =>
-        quiz.title.toLowerCase().includes(searchTerm.value.toLowerCase())
-      )
-    : quizzes.value;
-});
+const changePage = async (newPage: number) => {
+  currentPage.value = newPage;
+  if (categoryName.value === 'All') {
+    await fetchAllQuizzes();
+  } else {
+    await fetchQuizzesByCategory(categoryName.value);
+  }
+};
 
 function goToQuiz(quizId: string | number) { 
   router.push({ name: 'Quiz', params: { id: quizId } });
@@ -220,18 +228,13 @@ function goToQuiz(quizId: string | number) {
   cursor: pointer;
 }
 
-.search-btn {
-  border: 2px solid black;
-  background: none;
-  padding: 5px 20px;
-  cursor: pointer;
-}
+
 
 .input-tag, .add-tag-btn, .search-btn {
   height: 40px;
 }
 
-.add-tag-btn:hover, .search-btn:hover {
+.add-tag-btn:hover {
   background-color: black;
   color: white;
 }

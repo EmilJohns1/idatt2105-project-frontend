@@ -6,12 +6,13 @@
         <div class="category-grid">
           <CardItem
             v-for="category in filteredCategories"
-            key="category.id"
-            id="category.id"
+            :key="category.id"
+            :id="category.id"
             :image="`/categoryimage/${category.name.toLowerCase()}.png`"
             :title="category.name"
             :clickable="true"
-            @clicked="() => goToCategory(category.name)" 
+            @clicked="() => goToCategory(category.name)"
+
           />
             <!--Add in description for categories in the future when it's implemented-->
         </div> 
@@ -36,7 +37,6 @@ interface Category {
 onMounted(async () => {
   try {
     const response = await api.get('/quizzes/categories');
-    // No need to include 'All' category here, as we will add it in the computed property
     categories.value = response.data;
     console.log('Categories:', categories.value);
   } catch (error) {
@@ -45,21 +45,18 @@ onMounted(async () => {
 });
 
 const filteredCategories = computed(() => {
-  // Always include 'All' category at the beginning
-  const categoriesToShow: Category[] = [{ id: 'all', name: 'All' }];
-
-  if (searchTerm.value) {
-    // Filter categories without affecting the 'All' category
-    const searchResults: Category[] = categories.value.filter((category: Category) =>
-      category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-    );
-    categoriesToShow.push(...searchResults);
-  } else {
-    // If no search term, show all categories after 'All'
-    categoriesToShow.push(...categories.value);
+  const results = [];
+  if (!searchTerm.value || searchTerm.value.toLowerCase().startsWith('a')) {
+    results.push({ id: 'all', name: 'All' });
   }
+  // Filter categories based on the search term.
+  results.push(
+    ...categories.value.filter((category: Category) =>
+      category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+    )
+  );
 
-  return categoriesToShow;
+  return results;
 });
 
 function goToCategory(categoryName: string) {

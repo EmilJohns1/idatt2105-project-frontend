@@ -1,17 +1,34 @@
 <template>
-  <div :class="['card-item', cardType, { 'clickable': clickable }]" @click="handleClick">
-        <div class="card-item-image">
-            <img :src="image" :alt="title">
-        </div>
-        <div class="card-item-content">
-            <h3 class="card-item-title">{{ title }}</h3>
-            <p v-if="description">{{ description }}</p>
-        </div>
+  <div :class="['card-item', cardType, { 'clickable': clickable, 'quiz-type': type === 'quiz', 'category-type': type === 'category' }]" @click="handleClick">
+    <div class="card-item-image">
+      <img :src="image" :alt="title">
     </div>
+    <div class="card-item-content">
+      <h3 class="card-item-title">{{ title }}</h3>
+      <p v-if="description">{{ description }}</p>
+      <div v-if="type === 'quiz'" class="card-item-footer">
+        <span class="author-name">{{ authorName }}</span>
+        <HoverCard>
+          <template #trigger>
+            <span class="tags-icon">🏷️</span>
+          </template>
+          <template #content>
+            <div class="tags-list">
+              <ul>
+                <li v-for="tag in tags" :key="tag.id">{{ tag.tagName }}</li>
+              </ul>
+            </div>
+          </template>
+        </HoverCard>
+      </div>
+    </div>
+  </div>
 </template>
+    
   
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, ref } from 'vue';
+import HoverCard from './HoverCard.vue';
 
 type Props = {
   id: string | number,
@@ -20,11 +37,17 @@ type Props = {
   description?: string,
   creationDate?: string,
   clickable: boolean,
-  cardType?: string
+  cardType?: string,
+  authorName?: string,
+  tags?: { id: number, tagName: string }[],
+  lastModifiedDate?: string,
+  type?: 'quiz' | 'category'
 };
 
+const hover = ref(false);
 const props = defineProps<Props>();
 const emits = defineEmits(['clicked']);
+
 
 const handleClick = () => {
   if (props.clickable) {
@@ -49,7 +72,6 @@ const handleClick = () => {
 }
 
 .card-item:hover   {
-  transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); 
 }
 
@@ -73,5 +95,43 @@ const handleClick = () => {
   font-size: 1.5em;  
 }
 
+.card-item-footer {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-top: 16px; 
+}
 
+.tags-icon {
+  cursor: cursor;
+}
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.author-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tags-icon {
+  margin-left: auto;
+}
+
+.tags-list {
+  display: none;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%); 
+  background: white;
+  z-index: 10;
+  width: max-content;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+  border-radius: 4px;
+}
 </style>
