@@ -32,12 +32,14 @@
           class="search-input"
         />
         <ul class="quiz-list">
-          <QuizCard
-            class="quiz-section-card"
-            v-for="quiz in user.quizzes"
+          <RouterLink
+            v-for="quiz in filteredQuizzesSection"
             :key="quiz.id"
-            :quiz="quiz"
-          />
+            :to="`/quiz/${quiz.id}-${quiz.title.toLowerCase().replace(/ /g, '-')}/edit`"
+            class="router-link-hidden"
+          >
+            <ImageCard class="quiz-section-card" :quiz="quiz" :item="quiz" />
+          </RouterLink>
         </ul>
       </Card>
       <Card class="recent-activity-section">
@@ -53,11 +55,12 @@
       <h2 id="header">Your comments</h2>
       <div class="quizzes-comments-container">
         <div v-if="currentQuizId !== null" class="comment-grid">
-          <QuizCard
+          <ImageCard
             class="comments-card"
             v-for="quiz in filteredQuizzes"
             :key="quiz.id"
             :quiz="quiz"
+            :item="quiz"
             @selectQuiz="currentQuizId = $event"
           />
           <div class="comment-and-button-container">
@@ -92,18 +95,13 @@
 <script setup lang="ts">
 import Calendar from '@/components/Calendar.vue'
 import Card from '@/components/Card.vue'
-import QuizCard from '@/components/QuizCard.vue'
+import ImageCard from '@/components/ImageCard.vue'
 import { format } from 'date-fns'
 import { ref, onMounted, computed, watch, type Ref } from 'vue'
 import { getCommentsByUserId } from '@/api/commentHooks'
 import { getQuizByQuizId } from '@/api/quizHooks'
-import {
-  getUserByUsername,
-  getQuizzesByUserId,
-  uploadFile,
-  updateProfilePicture,
-  deleteProfilePicture
-} from '@/api/userHooks'
+import { getUserByUsername, getQuizzesByUserId, updateProfilePicture } from '@/api/userHooks'
+import { uploadFile, deletePicture } from '@/api/imageHooks'
 import { useUserStore } from '@/stores/userStore'
 
 interface User {
@@ -194,7 +192,7 @@ const uploadProfilePicture = async (): Promise<void> => {
         )
 
         console.log('Deleting current profile picture:', modifiedProfilePictureUrl)
-        const deleteSuccess = await deleteProfilePicture(modifiedProfilePictureUrl)
+        const deleteSuccess = await deletePicture(modifiedProfilePictureUrl)
 
         if (!deleteSuccess) {
           console.error('Failed to delete current profile picture.')
@@ -344,6 +342,11 @@ const filteredQuizzes = computed(() => {
   }
 })
 
+const filteredQuizzesSection = computed(() => {
+  const query = searchQuery.value.toLowerCase()
+  return user.value.quizzes.filter((quiz) => quiz.title.toLowerCase().includes(query))
+})
+
 onMounted(async () => {
   await fetchUserData()
   await fetchQuizComments()
@@ -404,6 +407,7 @@ onMounted(async () => {
 .quizzes-section {
   display: grid;
   align-items: center;
+  width: 100%;
 }
 
 .recent-activity-section {
@@ -421,12 +425,20 @@ h3 {
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 20px;
+  max-width: 300px;
+  align-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.quiz-list,
 .activity-list {
   list-style: none;
   padding: 0;
+}
+
+.quiz-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
 .quiz-item,
@@ -490,8 +502,8 @@ h3 {
 }
 
 .comments-card {
-  max-height: 400px;
-  min-height: 400px;
+  max-height: 240px;
+  min-height: 240px;
   overflow-y: auto;
   background-image: linear-gradient(to bottom right, #ffffff, #fafafa);
 }
@@ -520,5 +532,11 @@ h3 {
 
 .calendar-card {
   margin-top: 60px;
+}
+
+.router-link-hidden {
+  display: block;
+  text-decoration: none;
+  color: inherit;
 }
 </style>

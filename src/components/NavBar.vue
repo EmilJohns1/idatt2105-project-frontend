@@ -2,7 +2,7 @@
   <ul class="navbar">
     <li id="logo">QuizApp</li>
     <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
-    <li><RouterLink to="/create" class="link">Create</RouterLink></li>
+    <li><RouterLink to="/quiz/create" class="link">Create</RouterLink></li>
     <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
     <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
     <li class="profile-pic" v-if="isLoggedIn">
@@ -42,7 +42,6 @@ const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
 
 const fetchUserProfilePicture = async () => {
-  console.log('fetchUserProfilePicture: isLoggedIn.value: ' + isLoggedIn.value)
   if (isLoggedIn.value) {
     while (!userStore.getUserName) {
       await new Promise((resolve) => setTimeout(resolve, 50))
