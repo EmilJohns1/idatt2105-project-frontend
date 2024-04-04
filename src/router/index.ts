@@ -17,6 +17,7 @@ import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import HomeView from '@/views/HomeView.vue'
 
 const checkAuthentication = async (
   to: { params: { quiz_id: any; quiz_title: { toString: () => any } }; name: string },
@@ -87,6 +88,11 @@ const checkAuthentication = async (
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: HomeView
+    },
     {
       path: '/explore',
       name: 'Explore',

@@ -3,10 +3,7 @@
 #app {
   display: grid;
 
-  margin-top: 34px;
-}
-body {
-  padding-top: 30px;
+  height: 100%;
 }
 
 .link {
