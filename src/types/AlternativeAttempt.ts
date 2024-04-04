@@ -1,5 +1,5 @@
 export interface AlternativeAttempt {
-    alternativeText: string
-    wasCorrect: boolean
-    wasClicked: boolean
-  }
+  alternativeText: string
+  wasCorrect: boolean
+  wasClicked: boolean
+}

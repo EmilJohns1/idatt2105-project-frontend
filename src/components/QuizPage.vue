@@ -188,7 +188,11 @@ const nextQuestion = async () => {
       }
     })
   } else {
-    scoreDisplay.value.scoreText = 'Score: ' + Math.floor(quizAttemptRequest.score*100)/100 + ' / ' + Math.floor(maxScore*100)/100
+    scoreDisplay.value.scoreText =
+      'Score: ' +
+      Math.floor(quizAttemptRequest.score * 100) / 100 +
+      ' / ' +
+      Math.floor(maxScore * 100) / 100
     const container = document.querySelector('.container')
     const scoreDisplayElement = document.querySelector('.score-display')
 

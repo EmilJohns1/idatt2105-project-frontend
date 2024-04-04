@@ -30,6 +30,7 @@ async function exportQuestions() {
     for (const question of questions) {
       content += `Question title: ${question.questionText}\n`
       content += `Max points: ${question.points}\n`
+      content += `Media url: ${question.mediaUrl}\n`
 
       if (question.alternatives) {
         content += `Question type: multiple choice\n`
