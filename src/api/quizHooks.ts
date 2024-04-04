@@ -3,12 +3,9 @@ import { ref } from 'vue'
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { QuizAttemptRequest } from '@/types/QuizAttemptRequest'
 import type { Tag } from '@/types/Tag'
-<<<<<<< HEAD
 import type { Page } from '@/types/Page'
 import type { QuizDto } from '@/types/QuizDto'
-=======
 import type { Question } from '@/types/Question'
->>>>>>> dev
 
 export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   try {
@@ -176,7 +173,6 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
   }
 }
 
-<<<<<<< HEAD
 export const fetchQuizzesByCategory = async (
   category: string,
   page: number,
@@ -214,7 +210,10 @@ export const fetchAllQuizzes = async (
     }
   } catch (error) {
     console.error('Failed to fetch all quizzes:', error)
-=======
+    return null
+  }
+}
+
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
     const response = await api.get(`/question/get/all/${quizId}`, {})
@@ -226,7 +225,6 @@ export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[]
     }
   } catch (error) {
     console.error('Error fetching categories:', error)
->>>>>>> dev
     return null
   }
 }
