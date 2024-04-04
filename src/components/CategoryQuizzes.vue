@@ -61,7 +61,7 @@ const route = useRoute();
 const router = useRouter();
 const quizzes = ref<Quiz[]>([]);
 const searchTerm = ref('');
-const categoryName = ref(route.params.category);
+const categoryName = ref((route.params.category as string).charAt(0).toUpperCase() + (route.params.category as string).slice(1));
 
 // Defining the Quiz interface with the fields returned by our API
 interface Quiz {
