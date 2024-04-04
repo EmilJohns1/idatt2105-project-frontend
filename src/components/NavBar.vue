@@ -1,29 +1,31 @@
 <template>
-  <ul class="navbar">
-    <li id="logo">QuizApp</li>
-    <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
-    <li><RouterLink to="/quiz/create" class="link">Create</RouterLink></li>
-    <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
-    <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
-    <li class="profile-pic" v-if="isLoggedIn">
-      <RouterLink :to="isLoggedIn ? '/user' : '/login'">
-        <img
-          :src="profilePicture ? profilePicture : defaultProfilePicture"
-          class="profile-picture"
-          alt="Profile"
-        />
-      </RouterLink>
-    </li>
-    <li v-if="isLoggedIn">
-      <button @click="logout" class="blackButton button">Logout</button>
-    </li>
-    <li>
-      <RouterLink to="/signup" class="purpleButton button" v-if="!isLoggedIn">Sign up</RouterLink>
-    </li>
-    <li>
-      <RouterLink to="/login" class="blackButton button" v-if="!isLoggedIn">Login</RouterLink>
-    </li>
-  </ul>
+  <div class="nav-container">
+    <ul class="navbar">
+      <li id="logo">QuizApp</li>
+      <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
+      <li><RouterLink to="/quiz/create" class="link">Create</RouterLink></li>
+      <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
+      <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
+      <li class="profile-pic" v-if="isLoggedIn">
+        <RouterLink :to="isLoggedIn ? '/user' : '/login'">
+          <img
+            :src="profilePicture ? profilePicture : defaultProfilePicture"
+            class="profile-picture"
+            alt="Profile"
+          />
+        </RouterLink>
+      </li>
+      <li v-if="isLoggedIn">
+        <button @click="logout" class="blackButton button">Logout</button>
+      </li>
+      <li>
+        <RouterLink to="/signup" class="purpleButton button" v-if="!isLoggedIn">Sign up</RouterLink>
+      </li>
+      <li>
+        <RouterLink to="/login" class="blackButton button" v-if="!isLoggedIn">Login</RouterLink>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
@@ -72,6 +74,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  padding: 0;
+  width: 100%;
+}
+
 .profile-picture {
   width: 40px;
   height: 40px;
@@ -89,8 +98,6 @@ onMounted(() => {
 }
 
 ul {
-  position: fixed;
-  top: 0;
   width: 100%;
   list-style-type: none;
   margin: 0;
@@ -124,6 +131,7 @@ li a:hover {
   text-decoration: underline;
 }
 .navbar {
+  display: block;
   min-width: 400px;
   border-bottom: solid 1px black;
 }

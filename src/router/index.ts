@@ -16,6 +16,8 @@ import TokenHandlerView from '@/views/TokenHandlerView.vue'
 import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import HomeView from '@/views/HomeView.vue'
 import QuizView from '@/views/QuizView.vue'
 
 const checkAuthentication = async (
@@ -87,6 +89,11 @@ const checkAuthentication = async (
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: HomeView
+    },
     {
       path: '/faq',
       name: 'faq',
@@ -256,6 +263,11 @@ const router = createRouter({
       path: '/contact',
       name: 'contact',
       component: ContactView
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPasswordView
     },
     {
       path: '/reset-password',
