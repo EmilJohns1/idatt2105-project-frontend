@@ -3,17 +3,16 @@
     <div class="discover">
       <h1>Discover</h1>
       <div class="category-cards" ref="cardsContainer">
-        <TransitionGroup
-        name="list"
-        >
-          <CardItem class="category-card"
-          v-for="category in categories"
-          :key="category.id"
-          :id="category.id"
-          :image="`/categoryimage/${category.name.toLowerCase()}.png`"
-          :title="category.name"
-          :clickable="true"
-          @clicked="() => goToCategory(category.name)"
+        <TransitionGroup name="list">
+          <CardItem
+            class="category-card"
+            v-for="category in categories"
+            :key="category.id"
+            :id="category.id"
+            :image="`/categoryimage/${category.name.toLowerCase()}.png`"
+            :title="category.name"
+            :clickable="true"
+            @clicked="() => goToCategory(category.name)"
           />
         </TransitionGroup>
       </div>
@@ -29,8 +28,7 @@
         <RouterLink to="/login" class="blackButton button">Log in</RouterLink>
       </div>
     </div>
-    <div class="aligner">
-    </div>
+    <div class="aligner"></div>
   </div>
 </template>
 
@@ -39,12 +37,12 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import CardItem from '@/components/CardItem.vue'
 import { api } from '@/api/axiosConfig'
+import type { Category } from '@/types/Category'
 
 const router = useRouter()
 
 const categories = ref<Category[]>([])
-const cardsContainer = ref(null)
-
+const cardsContainer = ref()
 
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
@@ -57,7 +55,6 @@ function goToCategory(categoryName: string) {
     })
   }
 }
-
 
 onMounted(async () => {
   try {
@@ -108,7 +105,7 @@ function scrollRight() {
   cursor: pointer;
 }
 
-.list-move, 
+.list-move,
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
@@ -119,7 +116,6 @@ function scrollRight() {
   opacity: 0;
   transform: translateX(30px);
 }
-
 
 .list-leave-active {
   position: absolute;
@@ -163,16 +159,20 @@ function scrollRight() {
   width: 1200px;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  -webkit-mask-image: linear-gradient(90deg, 
-                                    rgba(0,0,0,0) 0%, 
-                                    rgba(0,0,0,1) 10%, 
-                                    rgba(0,0,0,1) 90%, 
-                                    rgba(0,0,0,0) 100%);
-mask-image: linear-gradient(90deg, 
-                            rgba(0,0,0,0) 0%, 
-                            rgba(0,0,0,1) 10%, 
-                            rgba(0,0,0,1) 90%, 
-                            rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 10%,
+    rgba(0, 0, 0, 1) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }
 .category-cards::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Opera */
@@ -190,7 +190,7 @@ mask-image: linear-gradient(90deg,
   display: flex;
   flex-direction: column;
   align-items: center;
-  width:100%;
+  width: 100%;
 }
 
 .button {
