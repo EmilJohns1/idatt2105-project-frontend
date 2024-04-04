@@ -1,5 +1,5 @@
 <template>
-    <ForgotPasswordModal/>
+  <ForgotPasswordModal />
 </template>
 
 <script setup>

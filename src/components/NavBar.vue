@@ -78,7 +78,7 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
   padding: 0;
-  width:100%;
+  width: 100%;
 }
 
 .profile-picture {
