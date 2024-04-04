@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { QuizAttemptRequest } from '@/types/QuizAttemptRequest'
 import type { Tag } from '@/types/Tag'
+import type { Page } from '@/types/Page'
+import type { QuizDto } from '@/types/QuizDto'
 import type { Question } from '@/types/Question'
 
 export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
@@ -167,6 +169,47 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
     }
   } catch (error) {
     console.error('Error fetching users by quiz ID:', error)
+    return null
+  }
+}
+
+export const fetchQuizzesByCategory = async (
+  category: string,
+  page: number,
+  size: number
+): Promise<Page<QuizDto> | null> => {
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}`
+  try {
+    const response = await api.get(fetchUrl)
+    if (response.status === 200) {
+      console.log('Quizzes by category:', response.data.content)
+      return response.data
+    } else {
+      console.error(`Failed to fetch quizzes by category: ${category}. Status: ${response.status}`)
+      return null
+    }
+  } catch (error) {
+    console.error(`Failed to fetch quizzes by category: ${category}`, error)
+    return null
+  }
+}
+
+export const fetchAllQuizzes = async (
+  page: number,
+  size: number
+): Promise<Page<QuizDto> | null> => {
+  const fetchUrl = `/quizzes?page=${page}&size=${size}`
+  try {
+    const response = await api.get(fetchUrl)
+    if (response.status === 200) {
+      console.log('All quizzes:', response.data.content)
+      return response.data
+    } else {
+      console.error('Failed to fetch all quizzes. Status:', response.status)
+      return null
+    }
+  } catch (error) {
+    console.error('Failed to fetch all quizzes:', error)
     return null
   }
 }
