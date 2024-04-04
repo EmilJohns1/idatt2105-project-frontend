@@ -53,7 +53,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { api } from '@/api/axiosConfig';
 import CardItem from './CardItem.vue';
 
-const authorName = (quiz) => {
+const authorName = (quiz: Quiz) => {
   return quiz.userDTOs.length > 0 ? quiz.userDTOs[0].username : 'Unknown';
 };
 
