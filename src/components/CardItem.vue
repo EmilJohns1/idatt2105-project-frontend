@@ -15,8 +15,10 @@
           <template #content>
             <div class="tags-list">
               <ul>
+                <p>Tags:</p>
                 <li v-for="tag in tags" :key="tag.id">{{ tag.tagName }}</li>
               </ul>
+              <p>{{ latestDate }}</p>
             </div>
           </template>
         </HoverCard>
@@ -27,7 +29,7 @@
     
   
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, defineEmits, ref, computed } from 'vue';
 import HoverCard from './HoverCard.vue';
 
 type Props = {
@@ -47,6 +49,11 @@ type Props = {
 const hover = ref(false);
 const props = defineProps<Props>();
 const emits = defineEmits(['clicked']);
+const latestDate = computed(() => {
+  return props.creationDate && (!props.lastModifiedDate || new Date(props.creationDate) > new Date(props.lastModifiedDate))
+    ? props.creationDate
+    : props.lastModifiedDate;
+});
 
 
 const handleClick = () => {
@@ -104,6 +111,7 @@ const handleClick = () => {
 
 .tags-icon {
   cursor: cursor;
+  font-size: 1.75em; 
 }
 .footer-content {
   display: flex;
@@ -123,7 +131,7 @@ const handleClick = () => {
 }
 
 .tags-list {
-  display: none;
+  display: block;
   position: absolute;
   bottom: 20px;
   left: 50%;

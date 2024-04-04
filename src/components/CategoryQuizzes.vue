@@ -3,6 +3,17 @@
     <div class="header">
       <h1>{{ categoryName }}</h1>
       <p>Try out all the quizzes made by our bustling community</p>
+      <div class="search-input-container">
+        <input type="text"
+          v-model="searchTerm"
+          @keyup.enter="searchQuizzes"
+          placeholder="Search Quiz Titles..."
+          button="Search"
+        </div>
+      <div>
+        <button @click="changeSort('creationDate')">Sort by Creation Date</button>
+        <button @click="changeSort('lastModifiedDate')">Sort by Last Modified Date</button>
+      </div>
       <div class="tags-input-container">
         <div class="tags-input">
           <input type="text"
@@ -39,12 +50,19 @@
     </div>
     <div class="pagination-controls">
       <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">Previous</button>
-      
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button @click="changePage(1)" :disabled="currentPage === 1">1</button>
 
+      <span v-if="currentPage > 3" class="pagination-ellipsis">...</span>
+      <button v-if="currentPage > 2" @click="changePage(currentPage - 1)">{{ currentPage - 1 }}</button>
+      <button v-if="currentPage > 1 && currentPage < totalPages" class="current-page" :disabled="true">{{ currentPage }}</button>
+      <button v-if="currentPage < totalPages - 1" @click="changePage(currentPage + 1)">{{ currentPage + 1 }}</button>
+      <span v-if="currentPage < totalPages - 2" class="pagination-ellipsis">...</span>
+
+      <button v-if="totalPages > 1" @click="changePage(totalPages)" :disabled="currentPage === totalPages">{{ totalPages }}</button>
       <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next</button>
     </div>
   </div>
+  
 </template>
 
 <script setup lang = ts>
@@ -91,7 +109,38 @@ interface Tag {
   tagName: string;
 }
 
-const filteredQuizzes = computed(() => quizzes.value);
+const sortKey = ref('creationDate'); // Default sorting by creation date
+
+const filteredQuizzes = computed(() => {
+  let sorted = [...quizzes.value].sort((a, b) => {
+    if (sortKey.value === 'creationDate') {
+      return new Date(a.creationDate).getTime() - new Date(b.creationDate).getTime();
+    } else {
+      return new Date(a.lastModifiedDate || a.creationDate).getTime() - new Date(b.lastModifiedDate || b.creationDate).getTime();
+    }
+  });
+
+  if (searchTerm.value) {
+    sorted = sorted.filter(quiz => 
+      quiz.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+      quiz.description.toLowerCase().includes(searchTerm.value.toLowerCase())
+    );
+  }
+
+  if (searchTags.value.length > 0) {
+    sorted = sorted.filter(quiz =>
+      searchTags.value.every(tag => 
+        quiz.tags.some(qTag => qTag.tagName.toLowerCase() === tag.toLowerCase())
+      )
+    );
+  }
+
+  return sorted;
+});
+
+function changeSort(newSortKey: string) {
+  sortKey.value = newSortKey;
+}
 
 const quizzesPerPage = (6);
 const currentPage = ref(1);
@@ -109,6 +158,15 @@ const addTag = () => {
 
 const removeTag = (index: number) => {
   searchTags.value.splice(index, 1);
+};
+
+const searchQuizzes = async () => {
+  currentPage.value = 1; //reset to first page
+  if (categoryName.value === 'All') {
+    await fetchAllQuizzes();
+  } else {
+    await fetchQuizzesByCategory(categoryName.value);
+  }
 };
 
 async function fetchQuizzesByCategory(category: string) {
@@ -228,8 +286,6 @@ function goToQuiz(quizId: string | number) {
   cursor: pointer;
 }
 
-
-
 .input-tag, .add-tag-btn, .search-btn {
   height: 40px;
 }
@@ -237,5 +293,49 @@ function goToQuiz(quizId: string | number) {
 .add-tag-btn:hover {
   background-color: black;
   color: white;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.pagination-controls button {
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+  background-color: white;
+  padding: 8px 16px;
+  margin: 0 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+.pagination-controls button.current-page, 
+.pagination-controls button:disabled {
+  background-color: black;
+  color: white;
+  pointer-events: none; 
+}
+
+.pagination-controls span {
+  user-select: none; 
+}
+
+.pagination-controls .pagination-ellipsis {
+  text-align: center;
+  padding: 8px 16px; 
+  margin: 0 5px;
+  display: inline-block;
+  min-width: 36px; 
+}
+
+.pagination-controls .pagination-ellipsis {
+  cursor: default;
 }
 </style>
