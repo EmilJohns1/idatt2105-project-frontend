@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="container">
     <div id="header">{{ currentQuestion.questionText }}</div>
     <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
     <div class="button-container">
@@ -63,7 +63,6 @@ import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg';
 import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg';
 import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg';
 import uncheckedFalse from '@/assets/responsebackgrounds/unchecked_false.jpg';
-import { off } from 'process'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -134,17 +133,14 @@ const clicked = async (index: number) => {
     const alternativeIndex = clickedArray.indexOf(index)
 
     const alternative = currentQuestion.value.alternatives[index]
-    alternative.clicked = !alternative.clicked // Toggle the clicked property
+    alternative.clicked = !alternative.clicked 
     console.log(currentQuestion.value.alternatives)
     if (alternativeIndex === -1) {
-      // If the alternative is not already clicked, add it to the array
       clickedArray.push(index)
     } else {
-      // If the alternative is already clicked, remove it from the array
       clickedArray.splice(alternativeIndex, 1)
     }
     console.log(clickedArray)
-    // Update the class of the clicked alternative
     updateClickedClass()
   }
 }
@@ -178,7 +174,6 @@ const nextQuestion = async () => {
     currentQuestionIndex++;
     showQuestion(currentQuestionIndex);
     
-    // Reset clickedArray and clicked property for each alternative
     clickedArray.length = 0;
     if (currentQuestion.value?.alternatives) {
       currentQuestion.value.alternatives.forEach(alternative => {
@@ -187,9 +182,8 @@ const nextQuestion = async () => {
         }
       });
     }
-    updateClickedClass(); // Update the UI to reflect the changes
+    updateClickedClass(); 
 
-    // Reset background, opacity, and border for each button
     const buttons = document.querySelectorAll('.alt');
     buttons.forEach(button => {
       if (button instanceof HTMLElement) {
@@ -206,12 +200,11 @@ const nextQuestion = async () => {
     });
   }else {
     scoreDisplay.value.scoreText = "Score: " + quizAttemptRequest.score + " / " + maxScore;
-    // make scoreDisplay centered
-    const loginContainer = document.querySelector('.login-container');
+    const container = document.querySelector('.container');
     const scoreDisplayElement = document.querySelector('.score-display');
     
-    if (loginContainer instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement) {
-      loginContainer.style.display = 'none';
+    if (container instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement) {
+      container.style.display = 'none';
       scoreDisplayElement.style.left = '45%';
     }
     
@@ -238,7 +231,7 @@ const submit = async () => {
   };
 
   pointsPerQuestion = Math.floor(currentQuestion.value.points/numberOfCorrect*100)/100
-  maxScore+=pointsPerQuestion*numberOfCorrect
+  maxScore+= Math.floor(pointsPerQuestion*numberOfCorrect*100)/100
   let pointsForQuestion = 0
 
   questionAttempt.alternatives.forEach((alternative, index) => {
@@ -265,14 +258,14 @@ const submit = async () => {
       button.style.borderColor = "#1a912a";
       uprightDiv.style.display = 'block';
       uprightDiv.innerText = '+ '+ pointsPerQuestion +' score';
-      pointsForQuestion += pointsPerQuestion
+      pointsForQuestion += Math.floor(pointsPerQuestion*100)/100
     } else if (alternative.wasClicked && !alternative.wasCorrect) {
       console.log("false clicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${checkedFalse})`;
       button.style.borderColor = "#911a1a";
       uprightDiv.style.display = 'block';
       uprightDiv.innerText = '- '+pointsPerQuestion+' score';
-      pointsForQuestion -= pointsPerQuestion
+      pointsForQuestion -= Math.floor(pointsPerQuestion*100)/100
     } else if (!alternative.wasClicked && !alternative.wasCorrect) {
       console.log("false unclicked:" + alternative.alternativeText);
       button.style.backgroundImage = `url(${uncheckedFalse})`;
@@ -284,8 +277,8 @@ const submit = async () => {
     }
   });
   if(pointsForQuestion>0){
-    quizAttemptRequest.score+=pointsForQuestion
-  questionAttempt.points=pointsForQuestion}
+    quizAttemptRequest.score+=Math.floor(pointsForQuestion*100)/100
+  questionAttempt.points=Math.floor(pointsForQuestion*100)/100}
 
   questionAttempts.push(questionAttempt);
   }
@@ -298,9 +291,9 @@ const submit = async () => {
     correctAnswer: currentQuestion.value?.correctAnswer,
     userAnswer: tofClicked
   };
-  maxScore+=questionAttempt.points
+  maxScore+=Math.floor(questionAttempt.points)
   if(questionAttempt.correctAnswer===tofClicked){
-    quizAttemptRequest.score+=questionAttempt.points
+    quizAttemptRequest.score+=Math.floor(questionAttempt.points)
   }
   const trueButton = document.getElementById("trueButton")
   const falseButton = document.getElementById("falseButton")
@@ -346,22 +339,13 @@ const submit = async () => {
     await registerQuizAttempt(quizAttemptRequest);
   }
   numberOfCorrect = 0
-  scoreDisplay.value.scoreText = "Score: " + quizAttemptRequest.score 
+  scoreDisplay.value.scoreText = "Score: " + Math.floor(quizAttemptRequest.score*100)/100
 };
-
-
-const lastQuestion = async () => {
-  if (questions && currentQuestionIndex - 1 >= 0) {
-    currentQuestionIndex--
-    showQuestion(currentQuestionIndex)
-  }
-}
 
 const showQuestion = (index: number) => {
   if (questions) {
     const question = questions[index]
     if(question.alternatives && question.correctAnswer===undefined){
-      //hide true and false button
     question.alternatives.forEach(alternative => {
       alternative.clicked = false
       if(alternative.correct){
@@ -382,12 +366,11 @@ const showQuestion = (index: number) => {
       alternatives: null,
       correctAnswer: question.correctAnswer
     }
-  //show true and false button
   }
     console.log(currentQuestion.value)
       
   }
-    updateClickedClass() // Update clicked buttons for the new question
+    updateClickedClass() 
   }
 
 
@@ -463,8 +446,8 @@ onMounted(fetchQuestions)
 }
 
 .alt {
-  flex: 0 0 calc(40% - 20px); /* Flex basis set to 40% minus margin to control the width */
-  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  flex: 0 0 calc(40% - 20px); 
+  box-sizing: border-box; 
   background-position: center; 
   aspect-ratio: 3/1;
   margin: 10px;
@@ -476,7 +459,7 @@ onMounted(fetchQuestions)
   border-radius: 20px;
   cursor: pointer;
   max-width: 40ch;
-  overflow: hidden; /* Hide any overflow */
+  overflow: hidden;
   position: relative;
   word-break: break-all;
 }
@@ -491,7 +474,7 @@ onMounted(fetchQuestions)
   margin-bottom: 10px;
 }
 
-.login-container {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
