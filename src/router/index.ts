@@ -18,6 +18,7 @@ import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
 import HomeView from '@/views/HomeView.vue'
+import QuizView from '@/views/QuizView.vue'
 
 const checkAuthentication = async (
   to: { params: { quiz_id: any; quiz_title: { toString: () => any } }; name: string },
@@ -94,6 +95,11 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/faq',
+      name: 'faq',
+      component: QuizView
+    },
+    {
       path: '/explore',
       name: 'Explore',
       component: ExploreView
@@ -109,6 +115,61 @@ const router = createRouter({
       name: 'createQuiz',
       component: CreateQuizView
     },
+    {
+      path: '/quiz/:quiz_id-:quiz_title',
+      name: 'DoQuiz',
+      component: QuizView,
+      props: (route) => ({
+        quiz_id: route.params.quiz_id,
+        quiz_title: route.params.quiz_title as string
+      }),
+      beforeEnter: async (to, from, next) => {
+        const quizIdParam = to.params.quiz_id;
+        const quizTitleParam = to.params.quiz_title.toString();
+        const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam;
+        const quizIdNumber = parseInt(quizId);
+        const userStore = useUserStore();
+        const currentUser = userStore.getUserName;
+
+        if (!currentUser) {
+          console.error('User not logged in');
+          next('/no-access');
+          return;
+        }
+
+        if (isNaN(quizIdNumber)) {
+          console.error('Invalid quiz ID:', quizId);
+          next('/404');
+          return;
+        }
+
+        try {
+          const quizDetails = await getQuizByQuizId(quizIdNumber);
+          console.log('quizDetails:', quizDetails);
+          if (!quizDetails) {
+            console.error('Quiz not found:', quizIdNumber);
+            next('/404');
+            return;
+          }
+
+          const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-');
+          const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-');
+          const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam;
+
+          if (!quizTitleMatches) {
+            console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title);
+            next('/404');
+            return;
+          }
+
+          next();
+        } catch (error) {
+          console.error('Error:', error);
+          next('/404');
+        }
+      }
+    }
+  ,
     {
       path: '/quiz/:quiz_id-:quiz_title/edit',
       name: 'EditQuiz',
