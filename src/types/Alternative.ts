@@ -1,5 +1,5 @@
 export interface Alternative {
   alternativeText: string
-  correct: boolean
-  clicked: boolean
+  correct?: boolean
+  clicked?: boolean
 }
