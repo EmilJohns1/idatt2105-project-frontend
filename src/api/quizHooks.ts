@@ -249,6 +249,22 @@ export const fetchQuizzesByTags = async (
   }
 };
 
+export const fetchAllTags = async (): Promise<Tag[] | null> => {
+  try {
+    const response = await api.get('/api/quizzes/all/tags');
+    if (response.status === 200) {
+      console.log('All tags:', response.data);
+      return response.data;
+    } else {
+      console.error('Failed to fetch all tags. Status:', response.status);
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to fetch all tags:', error);
+    return null;
+  }
+};
+
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
     const response = await api.get(`/question/get/all/${quizId}`, {})

@@ -45,7 +45,7 @@
         :lastModifiedDate="quiz.lastModifiedDate"
         :clickable="true"
         :type="'quiz'"
-        @clicked="goToQuiz(quiz.id)"
+        @clicked="() => goToQuiz(quiz.id, quiz.title)"
       />
     </div>
     <div class="pagination-controls">
@@ -70,10 +70,18 @@ import CardItem from './CardItem.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
+import { fetchAllTags } from '@/api/quizHooks'
 
 const authorName = (quiz: QuizDto) => {
   return quiz.userDTOs.length > 0 ? quiz.userDTOs[0].username : 'Unknown'
 }
+
+//Tags consts
+const currentTag = ref('');
+const tagSuggestions = ref([]);
+const allTags = ref([]);
+const availableTags = ref([]);
+
 
 // Use route and router for navigation and param retrieval
 const route = useRoute();
@@ -171,7 +179,6 @@ watch([searchTags, currentPage], async () => {
   }
 });
 
-const currentTag = ref('')
 
 const addTag = () => {
   if (currentTag.value && !searchTags.value.includes(currentTag.value)) {
@@ -183,6 +190,11 @@ const addTag = () => {
 
 const removeTag = (index: number) => {
   searchTags.value.splice(index, 1);
+  if (searchTags.value.length > 0) {
+    searchQuizzesByTags();
+  } else {
+    fetchQuizzes();
+  }
 };
 
 onMounted(() => {
@@ -195,8 +207,9 @@ const changePage = async (newPage: number) => {
   await fetchQuizzes(); 
 };
 
-function goToQuiz(quizId: string | number) {
-  router.push({ name: 'Quiz', params: { id: quizId } })
+function goToQuiz(quizId: number, quizTitle: string) {
+  const formattedTitle = encodeURIComponent(quizTitle.replace(/\s+/g, '-'));
+  router.push(`/quiz/${quizId}-${formattedTitle}`);
 }
 
 const filteredQuizzes = computed(() => quizzes.value);
