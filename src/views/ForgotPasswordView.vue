@@ -12,6 +12,4 @@ import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
 .container {
   height: 100%;
 }
-
-
 </style>

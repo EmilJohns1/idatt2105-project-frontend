@@ -153,7 +153,6 @@ const tags = ref<HTMLElement | null>(null)
 const input = ref<HTMLInputElement | null>(null)
 
 onMounted(() => {
-  
   tags.value = document.getElementById('tags')
   input.value = document.getElementById('input-tag') as HTMLInputElement
 

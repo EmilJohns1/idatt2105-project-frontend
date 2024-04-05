@@ -67,7 +67,6 @@ watch(submissionSuccess, (newValue) => {
   height: 100vh;
 }
 
-
 #header {
   text-align: center;
   margin-bottom: 15px;
@@ -136,7 +135,6 @@ watch(submissionSuccess, (newValue) => {
     width: 60%;
     height: 50%;
   }
-  
 }
 @media (max-width: 470px) {
   .modal-content {
