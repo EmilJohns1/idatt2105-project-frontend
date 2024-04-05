@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { defineEmits, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -31,12 +32,14 @@ const emit = defineEmits<{
 const email = ref('')
 const errorMessage = ref('')
 const submissionSuccess = ref(false)
+const router = useRouter()
 
 const submit = async () => {
   try {
     // Simulate successful submission
     await new Promise((resolve) => setTimeout(resolve, 1000))
     alert('An email has been sent to your email address. Please check your inbox.')
+    router.push('/')
     submissionSuccess.value = true
   } catch (error) {
     console.error(error)

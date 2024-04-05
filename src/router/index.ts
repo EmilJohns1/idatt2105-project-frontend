@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SignUpView from '../views/SignUpView.vue'
 import LoginView from '../views/LoginView.vue'
 import ExploreView from '../views/ExploreView.vue'
-import SubjectView from '../views/SubjectView.vue'
+import CreateView from '@/views/CreateView.vue'
 import UserPageView from '@/views/UserPageView.vue'
 import ContactView from '@/views/ContactView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
@@ -16,6 +16,8 @@ import TokenHandlerView from '@/views/TokenHandlerView.vue'
 import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import HomeView from '@/views/HomeView.vue'
 import QuizView from '@/views/QuizView.vue'
 
 const checkAuthentication = async (
@@ -88,6 +90,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      component: HomeView
+    },
+    {
       path: '/faq',
       name: 'faq',
       component: QuizView
@@ -98,9 +105,9 @@ const router = createRouter({
       component: ExploreView
     },
     {
-      path: '/explore/:subject',
-      name: 'subject',
-      component: SubjectView,
+      path: '/explore/:category',
+      name: 'Category',
+      component: () => import('../views/CategoryView.vue'),
       props: true
     },
     {
@@ -117,52 +124,51 @@ const router = createRouter({
         quiz_title: route.params.quiz_title as string
       }),
       beforeEnter: async (to, from, next) => {
-        const quizIdParam = to.params.quiz_id;
-        const quizTitleParam = to.params.quiz_title.toString();
-        const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam;
-        const quizIdNumber = parseInt(quizId);
-        const userStore = useUserStore();
-        const currentUser = userStore.getUserName;
+        const quizIdParam = to.params.quiz_id
+        const quizTitleParam = to.params.quiz_title.toString()
+        const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
+        const quizIdNumber = parseInt(quizId)
+        const userStore = useUserStore()
+        const currentUser = userStore.getUserName
 
         if (!currentUser) {
-          console.error('User not logged in');
-          next('/no-access');
-          return;
+          console.error('User not logged in')
+          next('/no-access')
+          return
         }
 
         if (isNaN(quizIdNumber)) {
-          console.error('Invalid quiz ID:', quizId);
-          next('/404');
-          return;
+          console.error('Invalid quiz ID:', quizId)
+          next('/404')
+          return
         }
 
         try {
-          const quizDetails = await getQuizByQuizId(quizIdNumber);
-          console.log('quizDetails:', quizDetails);
+          const quizDetails = await getQuizByQuizId(quizIdNumber)
+          console.log('quizDetails:', quizDetails)
           if (!quizDetails) {
-            console.error('Quiz not found:', quizIdNumber);
-            next('/404');
-            return;
+            console.error('Quiz not found:', quizIdNumber)
+            next('/404')
+            return
           }
 
-          const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-');
-          const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-');
-          const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam;
+          const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-')
+          const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-')
+          const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam
 
           if (!quizTitleMatches) {
-            console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title);
-            next('/404');
-            return;
+            console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title)
+            next('/404')
+            return
           }
 
-          next();
+          next()
         } catch (error) {
-          console.error('Error:', error);
-          next('/404');
+          console.error('Error:', error)
+          next('/404')
         }
       }
-    }
-  ,
+    },
     {
       path: '/quiz/:quiz_id-:quiz_title/edit',
       name: 'EditQuiz',
@@ -257,6 +263,11 @@ const router = createRouter({
       path: '/contact',
       name: 'contact',
       component: ContactView
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPasswordView
     },
     {
       path: '/reset-password',

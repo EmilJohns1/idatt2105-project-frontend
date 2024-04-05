@@ -1,11 +1,10 @@
-import type { AlternativeAttempt } from "./AlternativeAttempt"
+import type { AlternativeRecord } from './AlternativeRecord'
 export interface QuestionAttempt {
-    type: string
-    questionText: string
-    mediaUrl: string
-    points: number
-    alternatives?: AlternativeAttempt[]
-    userAnswer?: boolean
-    correctAnswer?: boolean
-  }
-  
+  type: string
+  questionText: string
+  mediaUrl: string
+  points: number
+  alternatives?: AlternativeRecord[]
+  userAnswer?: boolean
+  correctAnswer?: boolean
+}

@@ -1,67 +1,93 @@
 <template>
   <div class="explore-container">
     <h1>Explore</h1>
-    <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input" />
     <p>Choose your desired subject to start.</p>
+    <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input" />
     <div class="category-grid">
-      <CategoryCard
+      <CardItem
         v-for="category in filteredCategories"
         :key="category.id"
-        :image="category.picture_url"
+        :id="category.id"
+        :image="`/categoryimage/${category.name.toLowerCase()}.png`"
         :title="category.name"
-        @select="goToCategory"
+        :clickable="true"
+        @clicked="() => goToCategory(category.name)"
       />
       <!--Add in description for categories in the future when it's implemented-->
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { api } from '@/api/axiosConfig'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import CategoryCard from '../components/CategoryCardItem.vue'
+import CardItem from '../components/CardItem.vue'
 
-const categories = ref([])
-
-onMounted(async () => {
-  console.log('Fetching categories...')
-  try {
-    const response = await axios.get('/api/quizzes/categories')
-    console.log(response.data)
-    categories.value = response.data
-  } catch (error) {
-    console.error('Failed to fetch categories:', error)
-    categories.value = []
-  }
-})
-
+const categories = ref<Category[]>([])
+const router = useRouter()
 const searchTerm = ref('')
 
-const filteredCategories = computed(() => {
-  if (searchTerm.value) {
-    return categories.value.filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-    )
-  } else {
-    return categories.value
+interface Category {
+  id: string | number
+  name: string
+}
+onMounted(async () => {
+  try {
+    const response = await api.get('/quizzes/categories')
+    categories.value = response.data
+    console.log('Categories:', categories.value)
+  } catch (error) {
+    console.error('Failed to fetch categories:', error)
   }
 })
 
-const router = useRouter()
+const filteredCategories = computed(() => {
+  const results = []
+  if (!searchTerm.value || searchTerm.value.toLowerCase().startsWith('a')) {
+    results.push({ id: 'all', name: 'All' })
+  }
+  // Filter categories based on the search term.
+  results.push(
+    ...categories.value.filter((category: Category) =>
+      category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+    )
+  )
 
-function goToCategory(subject) {
-  router.push(`/explore/${subject.toLowerCase()}`)
+  return results
+})
+
+function goToCategory(categoryName: string) {
+  if (categoryName === 'all') {
+    console.log('Navigating to All quizzes')
+    router.push({ name: 'Category', params: { category: 'all' } })
+  } else {
+    const lowerCaseCategoryName = categoryName.toLowerCase()
+    console.log('Navigating to ', categoryName)
+    router.push({
+      name: 'Category',
+      params: { category: lowerCaseCategoryName }
+    })
+  }
 }
 </script>
 
 <style>
 .explore-container {
   padding: 40px;
-  margin-top: 60px;
-  margin-bottom: 60px;
+}
+
+.search-input {
+  margin-bottom: 20px;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 2px solid #000;
+  border-radius: 4px;
 }
 
 .category-grid {
+  margin-top: 50px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 40px;

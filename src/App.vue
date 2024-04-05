@@ -5,12 +5,17 @@ import NavBar from './components/NavBar.vue'
 
 <template>
   <div class="layout-container">
-    <RouterView></RouterView>
     <NavBar></NavBar>
+    <RouterView></RouterView>
   </div>
 </template>
 
 <style scoped>
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 header {
   line-height: 1.5;
   max-height: 100vh;
