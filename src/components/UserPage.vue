@@ -45,9 +45,11 @@
       <Card class="recent-activity-section">
         <h2 id="header">Recent activity</h2>
         <ul class="activity-list">
-          <li v-for="attempt in user.recentActivity" :key="attempt.id" class="activity-item">
-            {{ attempt.quizName }} - {{ attempt.date }}
-          </li>
+          <RouterLink class="activity-router" v-for="attempt in user.recentActivity" :key="attempt.id" :to="`/quiz/${attempt.quizId}-${attempt.quizName}/attempt/${attempt.id}`" >
+    <li class="activity-link">
+        {{ attempt.quizName }} - {{ attempt.date }}
+    </li>
+</RouterLink>
         </ul>
       </Card>
     </div>
@@ -103,6 +105,7 @@ import { getQuizByQuizId } from '@/api/quizHooks'
 import { getUserByUsername, getQuizzesByUserId, updateProfilePicture } from '@/api/userHooks'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
 import { useUserStore } from '@/stores/userStore'
+import { getAttemptsByUserId } from '@/api/attemptHooks'
 
 interface User {
   id: number | null
@@ -120,8 +123,16 @@ interface Quiz {
 
 interface Activity {
   id: number
-  quizName: string
+  quizId: number
+  quizName:string
   date: string
+}
+
+interface Attempt {
+  id: string;
+  title: string;
+  quizId: string;
+  attemptTime: string; 
 }
 
 const user: Ref<User> = ref({
@@ -130,8 +141,6 @@ const user: Ref<User> = ref({
   email: '',
   quizzes: [],
   recentActivity: [
-    { id: 1, quizName: 'Quiz 1', date: '2024-03-27' },
-    { id: 2, quizName: 'Quiz 2', date: '2024-03-26' }
   ]
 })
 const searchQuery = ref('')
@@ -180,6 +189,35 @@ const fetchUserData = async () => {
     }
   }
 }
+
+const fetchRecentActivity = async () => {
+  if (user.value.id) {
+    const recentActivityData = await getAttemptsByUserId(user.value.id, 10, 0);
+    if (recentActivityData) {
+      
+      user.value.recentActivity = recentActivityData.content.map((attempt: Attempt) => {
+        if (!attempt.attemptTime) {
+          return null; 
+        }
+        const [datePart, timePart] = attempt.attemptTime.split('T');
+        const [year, month, day] = datePart.split('-');
+        const [hourMinuteSecond] = timePart.split('.');
+        const [hour, minute, second] = hourMinuteSecond.split(':');
+        const attemptDate = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
+        const formattedDate = `${('0' + attemptDate.getHours()).slice(-2)}:${('0' + attemptDate.getMinutes()).slice(-2)} ${('0' + attemptDate.getDate()).slice(-2)}/${('0' + (attemptDate.getMonth() + 1)).slice(-2)}/${attemptDate.getFullYear()}`;
+
+        return {
+          id: attempt.id,
+          quizName: attempt.title,
+          quizId: attempt.quizId,
+          date: formattedDate
+        };
+      }).filter(Boolean) as Activity[]; 
+
+      user.value.recentActivity.reverse();
+    }
+  }
+};
 
 const uploadProfilePicture = async (): Promise<void> => {
   if (file.value) {
@@ -349,6 +387,7 @@ const filteredQuizzesSection = computed(() => {
 
 onMounted(async () => {
   await fetchUserData()
+  await fetchRecentActivity()
   await fetchQuizComments()
   await fetchQuizzesWithComments()
 })
@@ -434,6 +473,20 @@ h3 {
 .activity-list {
   list-style: none;
   padding: 0;
+}
+
+.activity-link{
+  text-decoration: none;
+  color:#333;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.activity-router{
+  text-decoration: none;
 }
 
 .quiz-list {
