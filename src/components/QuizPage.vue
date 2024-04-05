@@ -45,7 +45,7 @@ import QuizFrontPage from '@/components/QuizFrontPage.vue'
 import { useRouter } from 'vue-router'
 import type { Question } from '@/types/Question'
 import type { Alternative } from '@/types/Alternative'
-import type { AlternativeAttempt } from '@/types/AlternativeAttempt'
+import type { AlternativeRecord } from '@/types/AlternativeRecord'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
 import { ref, onMounted, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
@@ -77,10 +77,11 @@ const currentQuestion = ref({
 })
 
 let questions: Question[] | null = []
-let currentQuestionIndex = 0
+let currentQuestionIndex = -1
 let questionAttempts: QuestionAttempt[] = []
 let numberOfCorrect = 0
 let pointsPerQuestion = 0
+let currentScore = 0
 let maxScore = 0
 let tofClicked = true
 
@@ -96,6 +97,8 @@ const frontPage = ref(true)
 
 const startQuiz = () => {
   frontPage.value = false
+  fetchQuestions()
+  console.log("check")
 }
 
 const toggleButtonState = async () => {
@@ -156,6 +159,7 @@ const updateClickedClass = () => {
 }
 
 const fetchQuestions = async () => {
+  console.log("start")
   const username = userStore.getUserName
   if (username) {
     const userData = await getUserByUsername(username)
@@ -163,6 +167,7 @@ const fetchQuestions = async () => {
   }
 
   questions = await getQuestionsFromQuizId(quizId)
+  nextQuestion()
 }
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {
@@ -196,7 +201,7 @@ const nextQuestion = async () => {
   } else {
     scoreDisplay.value.scoreText =
       'Score: ' +
-      Math.floor(quizAttemptRequest.score * 100) / 100 +
+      Math.floor(currentScore * 100) / 100 +
       ' / ' +
       Math.floor(maxScore * 100) / 100
     const container = document.querySelector('.container')
@@ -211,12 +216,12 @@ const nextQuestion = async () => {
 
 const submit = async () => {
   if (currentQuestion.value.correctAnswer === null) {
-    const alternativeAttempts = [] as AlternativeAttempt[]
+    const alternativeAttempts = [] as AlternativeRecord[]
     currentQuestion.value.alternatives?.forEach((alternative) => {
       const alternativeAttempt = {
         alternativeText: alternative.alternativeText,
         wasCorrect: alternative.correct,
-        wasClicked: alternative.clicked
+        wasSelected: alternative.clicked
       }
       alternativeAttempts.push(alternativeAttempt)
     })
@@ -249,35 +254,32 @@ const submit = async () => {
       }
 
       button.style.backgroundSize = 'cover'
-      if (alternative.wasClicked && alternative.wasCorrect) {
+      if (alternative.wasSelected && alternative.wasCorrect) {
         //multiple choice
-        console.log('correct clicked:' + alternative.alternativeText)
         button.style.backgroundImage = `url(${checkedCorrect})`
         button.style.borderColor = '#1a912a'
         uprightDiv.style.display = 'block'
         uprightDiv.innerText = '+ ' + pointsPerQuestion + ' score'
         pointsForQuestion += Math.floor(pointsPerQuestion * 100) / 100
-      } else if (alternative.wasClicked && !alternative.wasCorrect) {
-        console.log('false clicked:' + alternative.alternativeText)
+      } else if (alternative.wasSelected && !alternative.wasCorrect) {
         button.style.backgroundImage = `url(${checkedFalse})`
         button.style.borderColor = '#911a1a'
         uprightDiv.style.display = 'block'
         uprightDiv.innerText = '- ' + pointsPerQuestion + ' score'
         pointsForQuestion -= Math.floor(pointsPerQuestion * 100) / 100
-      } else if (!alternative.wasClicked && !alternative.wasCorrect) {
-        console.log('false unclicked:' + alternative.alternativeText)
+      } else if (!alternative.wasSelected && !alternative.wasCorrect) {
         button.style.backgroundImage = `url(${uncheckedFalse})`
         button.style.opacity = '0.5'
-      } else if (!alternative.wasClicked && alternative.wasCorrect) {
-        console.log('correct unclicked:' + alternative.alternativeText)
+      } else if (!alternative.wasSelected && alternative.wasCorrect) {
         button.style.backgroundImage = `url(${uncheckedCorrect})`
         button.style.opacity = '0.5'
       }
     })
     if (pointsForQuestion > 0) {
-      quizAttemptRequest.score += Math.floor(pointsForQuestion * 100) / 100
-      questionAttempt.points = Math.floor(pointsForQuestion * 100) / 100
+      currentScore += Math.floor(pointsForQuestion * 100) / 100
     }
+    quizAttemptRequest.score += currentQuestion.value.points
+    questionAttempt.points = currentQuestion.value.points
 
     questionAttempts.push(questionAttempt)
   } else if (currentQuestion.value.correctAnswer !== null) {
@@ -292,7 +294,7 @@ const submit = async () => {
     }
     maxScore += Math.floor(questionAttempt.points)
     if (questionAttempt.correctAnswer === tofClicked) {
-      quizAttemptRequest.score += Math.floor(questionAttempt.points)
+      currentScore += Math.floor(questionAttempt.points)
     }
     const trueButton = document.getElementById('trueButton')
     const falseButton = document.getElementById('falseButton')
@@ -331,7 +333,8 @@ const submit = async () => {
         falseButton.style.opacity = '0.5'
       }
     }
-
+    
+    quizAttemptRequest.score += currentQuestion.value.points
     questionAttempts.push(questionAttempt)
   }
   console.log(quizAttemptRequest)
@@ -340,7 +343,7 @@ const submit = async () => {
     await registerQuizAttempt(quizAttemptRequest)
   }
   numberOfCorrect = 0
-  scoreDisplay.value.scoreText = 'Score: ' + Math.floor(quizAttemptRequest.score * 100) / 100
+  scoreDisplay.value.scoreText = 'Score: ' + Math.floor(currentScore * 100) / 100
 }
 
 const showQuestion = (index: number) => {
@@ -373,8 +376,6 @@ const showQuestion = (index: number) => {
   }
   updateClickedClass()
 }
-
-onMounted(fetchQuestions)
 </script>
 
 <style scoped>
@@ -386,7 +387,7 @@ onMounted(fetchQuestions)
   font-weight: bold;
   text-align: left;
   width: 100%;
-  max-width: 120ch;
+  max-width: 20ch;
   z-index: 2;
 }
 .upright {
