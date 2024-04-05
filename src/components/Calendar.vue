@@ -79,10 +79,10 @@ const updateTimer = () => {
 const fetchActivityData = async () => {
   try {
     const userId = props.id
-    const attempts: Attempt[] = (await getAttemptsByUserId(userId)) as Attempt[]
+    const attempts = (await getAttemptsByUserId(userId,100,0)) 
     console.log('attempts:', attempts)
 
-    const events: Event[] = attempts.map((attempt) => ({
+    const events: Event[] = attempts.content.map((attempt:Attempt) => ({
       title: '✔',
       date: attempt.attemptTime // Use the attemptTime directly
     }))
