@@ -3,7 +3,7 @@
     <h1>Explore</h1>
     <p>Choose your desired subject to start.</p>
     <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input" />
-    <div class="category-grid">
+    <div class="grid-layout">
       <CardItem
         v-for="category in filteredCategories"
         :key="category.id"
@@ -32,6 +32,7 @@ interface Category {
   id: string | number
   name: string
 }
+
 onMounted(async () => {
   const fetchedCategories = await getCategories();
   if (fetchedCategories) {
@@ -42,6 +43,9 @@ onMounted(async () => {
   }
 });
 
+/**
+ * Filter categories in the search term.
+ */
 const filteredCategories = computed(() => {
   const results = []
   if (!searchTerm.value || searchTerm.value.toLowerCase().startsWith('a')) {
@@ -56,6 +60,9 @@ const filteredCategories = computed(() => {
   return results
 })
 
+/**
+ * Routes to the category.
+ */
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
     console.log('Navigating to All quizzes')
@@ -85,12 +92,4 @@ function goToCategory(categoryName: string) {
   border-radius: 4px;
 }
 
-.category-grid {
-  margin-top: 50px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 40px;
-  justify-content: center;
-  align-items: start;
-}
 </style>

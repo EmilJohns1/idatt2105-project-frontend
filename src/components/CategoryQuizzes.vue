@@ -30,7 +30,7 @@
         </ul>
       </div>
     </div>
-    <div class="quizzes-grid">
+    <div class="grid-layout">
       <CardItem
         v-for="quiz in filteredQuizzes"
         :key="quiz.id"
@@ -248,14 +248,6 @@ const searchQuizzes = async () => {
 .category-quizzes-container {
   padding: 40px;
 }
-.quizzes-grid {
-  margin-top: 50px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 40px;
-  justify-content: center;
-  align-items: start;
-}
 
 .tags-input-container {
   display: flex;
@@ -321,48 +313,6 @@ const searchQuizzes = async () => {
   color: white;
 }
 
-.pagination-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-}
 
-.pagination-controls button {
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  background-color: white;
-  padding: 8px 16px;
-  margin: 0 5px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.pagination-controls button:hover:not(:disabled) {
-  background-color: #f0f0f0;
-}
-
-.pagination-controls button.current-page, 
-.pagination-controls button:disabled {
-  background-color: black;
-  color: white;
-  pointer-events: none; 
-}
-
-.pagination-controls span {
-  user-select: none; 
-}
-
-.pagination-controls .pagination-ellipsis {
-  text-align: center;
-  padding: 8px 16px; 
-  margin: 0 5px;
-  display: inline-block;
-  min-width: 36px; 
-}
-
-.pagination-controls .pagination-ellipsis {
-  cursor: default;
-}
 </style>
 @/types/QuizDTO
