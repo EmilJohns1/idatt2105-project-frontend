@@ -14,7 +14,7 @@
         <div class="error-message" v-if="errorMessage">{{ errorMessage }}</div>
         <div class="button-container">
           <button type="submit" class="submit-button">Submit</button>
-          <button type="button" @click="emit('close')" class="close-button">Close</button>
+          <button type="button" @click="close()" class="close-button">Close</button>
         </div>
       </form>
     </div>
@@ -23,6 +23,8 @@
 
 <script setup lang="ts">
 import { defineEmits, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { sendEmail } from '@/api/emailHooks'
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -31,17 +33,22 @@ const emit = defineEmits<{
 const email = ref('')
 const errorMessage = ref('')
 const submissionSuccess = ref(false)
+const router = useRouter()
 
 const submit = async () => {
   try {
-    // Simulate successful submission
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await sendEmail(email.value)
     alert('An email has been sent to your email address. Please check your inbox.')
+    router.push('/')
     submissionSuccess.value = true
   } catch (error) {
     console.error(error)
     errorMessage.value = 'An error occurred. Please try again later.'
   }
+}
+
+function close() {
+  router.push('/')
 }
 
 const clearErrorMessage = () => {
@@ -56,17 +63,18 @@ watch(submissionSuccess, (newValue) => {
 </script>
 
 <style scoped>
+#app {
+  height: 100vh;
+}
+
 #header {
   text-align: center;
   margin-bottom: 15px;
 }
 
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -77,7 +85,7 @@ watch(submissionSuccess, (newValue) => {
   background-color: white;
   padding: 20px;
   border-radius: 5px;
-  width: 20vw;
+  width: 30%;
 }
 
 .input-field {
@@ -117,5 +125,32 @@ watch(submissionSuccess, (newValue) => {
 .close-button:hover {
   background-color: #333;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+@media (max-width: 1200px) {
+  .modal-content {
+    width: 50%;
+  }
+  .submit-button,
+  .close-button {
+    width: 60%;
+    height: 50%;
+  }
+}
+@media (max-width: 470px) {
+  .modal-content {
+    width: 50%;
+    height: 50%;
+  }
+  .button-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 20vh;
+  }
+  .submit-button,
+  .close-button {
+    width: 80%;
+    height: 40%;
+  }
 }
 </style>

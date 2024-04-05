@@ -13,10 +13,13 @@ import NotFoundView from '../views/NotFoundView.vue'
 import NoAccessView from '../views/NoAccessView.vue'
 import LoginRedirect from '@/components/LoginRedirect.vue'
 import TokenHandlerView from '@/views/TokenHandlerView.vue'
-import { getQuizByQuizId, getUsersByQuizId } from '@/api/quizHooks'
+import { getQuizByQuizId, getUsersByQuizId, getQuizAttemptById } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import HomeView from '@/views/HomeView.vue'
 import QuizView from '@/views/QuizView.vue'
+import QuizAttemptView from '@/views/QuizAttemptView.vue'
 
 const checkAuthentication = async (
   to: { params: { quiz_id: any; quiz_title: { toString: () => any } }; name: string },
@@ -88,6 +91,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      component: HomeView
+    },
+    {
       path: '/faq',
       name: 'faq',
       component: QuizView
@@ -107,6 +115,59 @@ const router = createRouter({
       path: '/quiz/create',
       name: 'createQuiz',
       component: CreateQuizView
+    }
+    ,
+    {
+      path: '/quiz/:quiz_id-:quiz_title/attempt/:quizattempt_id',
+      name: 'QuizAttempt',
+      component: QuizAttemptView,
+      props: (route) => ({
+        quiz_id: route.params.quiz_id,
+        quiz_title: route.params.quiz_title as string,
+        quizattempt_id: route.params.quizattempt_id
+      }),
+      beforeEnter: async (to, from, next) => {
+        const quizIdParam = to.params.quiz_id
+        const quizTitleParam = to.params.quiz_title.toString()
+        const quizAttemptIdParam = to.params.quizattempt_id
+        const quizAttemptId = Array.isArray(quizAttemptIdParam) ? quizAttemptIdParam[0] : quizAttemptIdParam
+        const quizAttemptIdNumber = parseInt(quizAttemptId)
+        const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
+        const quizIdNumber = parseInt(quizId)
+        try {
+          const quizDetails = await getQuizByQuizId(quizIdNumber)
+          console.log('quizDetails:', quizDetails)
+          if (!quizDetails) {
+            console.error('Quiz not found:', quizIdNumber)
+            next('/404')
+            return
+          }
+
+          const quizAttemptDetails = await getQuizAttemptById(quizAttemptIdNumber)
+          console.log('quizDetails:', quizAttemptDetails)
+          if (!quizAttemptDetails) {
+            console.error('Quiz not found:', quizAttemptIdNumber)
+            next('/404')
+            return
+          }
+
+
+          const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-')
+          const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-')
+          const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam
+
+          if (!quizTitleMatches) {
+            console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title)
+            next('/404')
+            return
+          }
+
+          next()
+        } catch (error) {
+          console.error('Error:', error)
+          next('/404')
+        }
+      }
     },
     {
       path: '/quiz/:quiz_id-:quiz_title',
@@ -121,21 +182,6 @@ const router = createRouter({
         const quizTitleParam = to.params.quiz_title.toString()
         const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
         const quizIdNumber = parseInt(quizId)
-        const userStore = useUserStore()
-        const currentUser = userStore.getUserName
-
-        if (!currentUser) {
-          console.error('User not logged in')
-          next('/no-access')
-          return
-        }
-
-        if (isNaN(quizIdNumber)) {
-          console.error('Invalid quiz ID:', quizId)
-          next('/404')
-          return
-        }
-
         try {
           const quizDetails = await getQuizByQuizId(quizIdNumber)
           console.log('quizDetails:', quizDetails)
@@ -256,6 +302,11 @@ const router = createRouter({
       path: '/contact',
       name: 'contact',
       component: ContactView
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: ForgotPasswordView
     },
     {
       path: '/reset-password',

@@ -461,6 +461,8 @@ onMounted(async () => {
 #image {
   width: 500px;
   height: 300px;
+  border-radius: 8px;
+  border: 1px solid #333;
 }
 
 .content {

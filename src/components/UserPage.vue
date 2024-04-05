@@ -51,7 +51,7 @@
         </ul>
       </Card>
     </div>
-    <Card>
+    <Card class="comment-card">
       <h2 id="header">Your comments</h2>
       <div class="quizzes-comments-container">
         <div v-if="currentQuizId !== null" class="comment-grid">
@@ -501,11 +501,18 @@ h3 {
   font-family: 'Luckiest Guy', cursive;
 }
 
+.comment-card {
+  padding: 40px;
+}
+
 .comments-card {
   max-height: 240px;
   min-height: 240px;
   overflow-y: auto;
-  background-image: linear-gradient(to bottom right, #ffffff, #fafafa);
+}
+
+.comments-card:hover {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .quiz-section-card {
@@ -532,6 +539,7 @@ h3 {
 
 .calendar-card {
   margin-top: 60px;
+  padding: 40px;
 }
 
 .router-link-hidden {
