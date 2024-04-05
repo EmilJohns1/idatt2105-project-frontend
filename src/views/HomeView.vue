@@ -156,7 +156,7 @@ function scrollRight() {
   align-items: center;
   overscroll-behavior: contain;
   overflow: auto;
-  width: 1200px;
+  width: 100vw;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   -webkit-mask-image: linear-gradient(
@@ -183,14 +183,14 @@ function scrollRight() {
   flex-direction: column;
   align-items: center;
   margin-top: 2%;
-  width: 20%;
+  width: 100%;
 }
 
 .buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: 20%;
 }
 
 .button {
@@ -213,14 +213,17 @@ function scrollRight() {
 }
 
 @media (max-width: 750px) {
+  .buttons {
+    width: 80%;
+  }
+
   #logo {
     display: none;
   }
   .button {
-    font-size: 13px;
+    font-size: 1.5em;
     display: flex;
-    padding: 8px;
-    margin-top: 10px;
+    margin: 10px;
   }
 }
 </style>
