@@ -51,7 +51,7 @@ import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 
 const imageUrl = ref('')
-const placeholderImage = '/placeholder-image.jpg'
+const placeholderImage = '/default.jpg'
 const title = ref('')
 const description = ref('')
 const category = ref('')
@@ -283,5 +283,7 @@ form {
   max-height: 200px;
   width: auto;
   height: auto;
+  border-radius: 8px;
+  border: 1px solid #333;
 }
 </style>

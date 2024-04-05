@@ -1,43 +1,47 @@
 <template>
-  <div class="container">
-    <div id="header">{{ currentQuestion.questionText }}</div>
-    <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
-    <div class="button-container">
-      <button
-        v-for="(alternative, index) in currentQuestion.alternatives"
-        :key="index"
-        class="alt"
-        @click="() => clicked(index)"
-        :id="'button-' + index"
-        :class="{ clicked: clickedArray.includes(index) }"
-      >
-        {{ alternative.alternativeText }}
-        <div class="upright"></div>
-      </button>
-
-      <div id="tof-container" v-if="currentQuestion.alternatives === null">
-        <button @click="() => trueClicked()" class="alt" id="trueButton">
-          True
+  <QuizFrontPage v-if="frontPage" :quizId="quizId" @start-quiz="startQuiz" />
+  <div v-else>
+    <div class="container">
+      <div id="header">{{ currentQuestion.questionText }}</div>
+      <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
+      <div class="button-container">
+        <button
+          v-for="(alternative, index) in currentQuestion.alternatives"
+          :key="index"
+          class="alt"
+          @click="() => clicked(index)"
+          :id="'button-' + index"
+          :class="{ clicked: clickedArray.includes(index) }"
+        >
+          {{ alternative.alternativeText }}
           <div class="upright"></div>
         </button>
 
-        <button @click="() => falseClicked()" :class="{ alt: true }" id="falseButton">
-          False
-          <div class="upright"></div>
-        </button>
+        <div id="tof-container" v-if="currentQuestion.alternatives === null">
+          <button @click="() => trueClicked()" class="alt" id="trueButton">
+            True
+            <div class="upright"></div>
+          </button>
+
+          <button @click="() => falseClicked()" :class="{ alt: true }" id="falseButton">
+            False
+            <div class="upright"></div>
+          </button>
+        </div>
       </div>
+      <button class="submit" @click="toggleButtonState">
+        {{ buttonText }}
+      </button>
     </div>
-    <button class="submit" @click="toggleButtonState">
-      {{ buttonText }}
-    </button>
-  </div>
 
-  <div class="score-display">
-    {{ scoreDisplay.scoreText }}
+    <div class="score-display">
+      {{ scoreDisplay.scoreText }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import QuizFrontPage from '@/components/QuizFrontPage.vue'
 import { useRouter } from 'vue-router'
 import type { Question } from '@/types/Question'
 import type { Alternative } from '@/types/Alternative'
@@ -87,7 +91,12 @@ const quizAttemptRequest = {
   questionAttempts: questionAttempts
 }
 
-const clickedArray: number[] = [] // Array to store clicked alternative indexes
+const clickedArray: number[] = [] // Array to store clicked alternative indexes'
+const frontPage = ref(true)
+
+const startQuiz = () => {
+  frontPage.value = false
+}
 
 const toggleButtonState = async () => {
   if (buttonState.value === 'submit') {
@@ -154,9 +163,6 @@ const fetchQuestions = async () => {
   }
 
   questions = await getQuestionsFromQuizId(quizId)
-  if (questions) {
-    showQuestion(0)
-  }
 }
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {

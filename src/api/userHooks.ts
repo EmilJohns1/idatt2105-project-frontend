@@ -127,3 +127,13 @@ export const getQuizzesByUsername = async (username: string): Promise<any[] | nu
     return null
   }
 }
+
+export const getUserByUserId = async (userId: number): Promise<any | null> => {
+  try {
+    const response = await api.get(`/user/${userId}`)
+    return response.data || null
+  } catch (error) {
+    console.error('Error getting user by user ID:', error)
+    return null
+  }
+}

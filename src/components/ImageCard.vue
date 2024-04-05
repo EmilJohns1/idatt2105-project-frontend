@@ -42,6 +42,10 @@ const getImageUrl = computed(() => {
   max-width: fit-content;
 }
 
+.card:hover {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
 .card-title {
   font-size: 18px;
   margin-bottom: 10px;
@@ -68,6 +72,6 @@ const getImageUrl = computed(() => {
 }
 
 .custom-background {
-  background-image: linear-gradient(to bottom right, #ffffff, #fafafa);
+  background-image: linear-gradient(to bottom right, #ffffff, #ffffff);
 }
 </style>
