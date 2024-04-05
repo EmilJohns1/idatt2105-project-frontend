@@ -218,6 +218,37 @@ export const fetchAllQuizzes = async (
   }
 }
 
+export const fetchQuizzesByTags = async (
+  tags: string[],
+  page: number,
+  size: number,
+  sort: string
+): Promise<Page<QuizDto> | null> => {
+  const fetchUrl = `/quizzes/filter-by-tags`;
+  const requestBody = JSON.stringify(tags); // Ensure tags are correctly serialized
+  const queryParams = new URLSearchParams({ page: String(page), size: String(size), sort }).toString();
+  const fullUrl = `${fetchUrl}?${queryParams}`;
+
+  try {
+    const response = await api.post(fullUrl, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 200 && response.data) {
+      console.log('Quizzes by tags:', response.data);
+      return response.data;
+    } else {
+      console.error(`Failed to fetch quizzes by tags. Status: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Failed to fetch quizzes by tags: ${error}`);
+    return null;
+  }
+};
+
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
     const response = await api.get(`/question/get/all/${quizId}`, {})

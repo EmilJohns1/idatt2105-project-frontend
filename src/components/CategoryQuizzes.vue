@@ -20,6 +20,7 @@
             placeholder="Search Tags..."
             class="input-tag"
           />
+          <button @click="searchQuizzesByTags">Search by Tags</button>
           <button @click="addTag" class="add-tag-btn">Add tag</button>
         </div>
         <ul class="tags-list">
@@ -68,6 +69,7 @@ import { useRoute, useRouter } from 'vue-router'
 import CardItem from './CardItem.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
+import { fetchQuizzesByTags } from '@/api/quizHooks'
 
 const authorName = (quiz: QuizDto) => {
   return quiz.userDTOs.length > 0 ? quiz.userDTOs[0].username : 'Unknown'
@@ -88,8 +90,12 @@ const searchTags = ref<string[]>([]);
 
 // Sort options for quizzes
 const sortOptions = [
-  { value: 'creationDate', text: 'Sort by Creation Date' },
-  { value: 'lastModifiedDate', text: 'Sort by Last Modified Date' }
+  { value: 'creationDate,desc', text: 'Newest Creation Date' },
+  { value: 'creationDate,asc', text: 'Oldest Creation Date' },
+  //{ value: 'lastModifiedDate,desc', text: 'Newest Modified Date' },
+  //{ value: 'lastModifiedDate,asc', text: 'Oldest Modified Date' },
+  { value: 'title,asc', text: 'Title (A-Z)' },
+  { value: 'title,desc', text: 'Title (Z-A)' }
   // Add more options here
 ];
 
@@ -107,33 +113,64 @@ const capitalizeCategoryName = () => {
 
 // Fetch quizzes based on the category
 const fetchQuizzes = async () => {
-  let response;
-  const sort = `${selectedSort.value},asc`;
-  if (categoryName.value === 'All') {
-    response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage, sort /*, searchTerm.value */); 
+  if (searchTags.value.length > 0) {
+    // If there are tags specified, fetch quizzes by tags
+    await searchQuizzesByTags();
   } else {
-    response = await fetchQuizzesByCategory(categoryName.value, currentPage.value - 1, quizzesPerPage, sort /*, searchTerm.value */);
-  }
+    // Existing logic for fetching quizzes without tag filters
+    let response;
+    const sort = `${selectedSort.value},desc`;
+    if (categoryName.value === 'All') {
+      response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage, selectedSort.value);
+    } else {
+      response = await fetchQuizzesByCategory(categoryName.value, currentPage.value - 1, quizzesPerPage, selectedSort.value);
+    }
   
-  if (response) {
-    quizzes.value = response.content;
-    totalPages.value = Math.ceil(response.totalElements / quizzesPerPage);
+    if (response) {
+      quizzes.value = response.content;
+      totalPages.value = Math.ceil(response.totalElements / quizzesPerPage);
+    } else {
+      console.error('Failed to fetch quizzes');
+      quizzes.value = [];
+      totalPages.value = 0;
+    }
+  }
+};
+const searchQuizzesByTags = async () => {
+  // Ensure there are tags to search for
+  if (searchTags.value.length > 0) {
+    const response = await fetchQuizzesByTags(searchTags.value, currentPage.value - 1, quizzesPerPage, selectedSort.value);
+    if (response && response.content) {
+      quizzes.value = response.content;
+      totalPages.value = Math.ceil(response.totalElements / quizzesPerPage);
+    } else {
+      quizzes.value = [];
+      totalPages.value = 0;
+      console.error('Failed to fetch quizzes by tags');
+    }
   } else {
-    console.error('Failed to fetch quizzes');
-    quizzes.value = [];
-    totalPages.value = 0;
+    // Handle the case where no tags are specified
+    console.log('No tags specified for search');
   }
 };
 
+watch([searchTags, currentPage], async () => {
+  if (searchTags.value.length > 0) {
+    await searchQuizzesByTags();
+  } else {
+    // Optionally, fetch all quizzes or handle empty tag search differently
+  }
+});
 
 const currentTag = ref('')
 
 const addTag = () => {
   if (currentTag.value && !searchTags.value.includes(currentTag.value)) {
-    searchTags.value.push(currentTag.value)
-    currentTag.value = ''
+    searchTags.value.push(currentTag.value);
+    currentTag.value = '';
+    searchQuizzesByTags(); 
   }
-}
+};
 
 const removeTag = (index: number) => {
   searchTags.value.splice(index, 1);
