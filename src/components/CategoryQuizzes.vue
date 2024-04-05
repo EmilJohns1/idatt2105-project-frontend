@@ -114,10 +114,8 @@ const capitalizeCategoryName = () => {
 // Fetch quizzes based on the category
 const fetchQuizzes = async () => {
   if (searchTags.value.length > 0) {
-    // If there are tags specified, fetch quizzes by tags
     await searchQuizzesByTags();
   } else {
-    // Existing logic for fetching quizzes without tag filters
     let response;
     const sort = `${selectedSort.value},desc`;
     if (categoryName.value === 'All') {
@@ -136,21 +134,32 @@ const fetchQuizzes = async () => {
     }
   }
 };
+
+// Fetch quizzes based on the tags
 const searchQuizzesByTags = async () => {
-  // Ensure there are tags to search for
   if (searchTags.value.length > 0) {
     const response = await fetchQuizzesByTags(searchTags.value, currentPage.value - 1, quizzesPerPage, selectedSort.value);
     if (response && response.content) {
-      quizzes.value = response.content;
-      totalPages.value = Math.ceil(response.totalElements / quizzesPerPage);
+      let filteredContent = response.content;
+
+      // Filter by that category except for all, 'All' is special
+      if (categoryName.value !== 'All') {
+        filteredContent = filteredContent.filter(quiz => quiz.categoryName === categoryName.value);
+      }
+
+      quizzes.value = filteredContent;
+      totalPages.value = Math.ceil(filteredContent.length / quizzesPerPage);
     } else {
       quizzes.value = [];
       totalPages.value = 0;
       console.error('Failed to fetch quizzes by tags');
     }
   } else {
-    // Handle the case where no tags are specified
     console.log('No tags specified for search');
+    // If no tags are specified, fetch quizzes as per the category selected
+    if (categoryName.value !== 'All') {
+      await fetchQuizzes();
+    }
   }
 };
 
@@ -158,7 +167,7 @@ watch([searchTags, currentPage], async () => {
   if (searchTags.value.length > 0) {
     await searchQuizzesByTags();
   } else {
-    // Optionally, fetch all quizzes or handle empty tag search differently
+    // Optionally
   }
 });
 
@@ -183,7 +192,7 @@ onMounted(() => {
 
 const changePage = async (newPage: number) => {
   currentPage.value = newPage;
-  await fetchQuizzes(); // Refetch quizzes for the new page
+  await fetchQuizzes(); 
 };
 
 function goToQuiz(quizId: string | number) {

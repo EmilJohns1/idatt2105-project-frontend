@@ -225,7 +225,7 @@ export const fetchQuizzesByTags = async (
   sort: string
 ): Promise<Page<QuizDto> | null> => {
   const fetchUrl = `/quizzes/filter-by-tags`;
-  const requestBody = JSON.stringify(tags); // Ensure tags are correctly serialized
+  const requestBody = JSON.stringify(tags); 
   const queryParams = new URLSearchParams({ page: String(page), size: String(size), sort }).toString();
   const fullUrl = `${fetchUrl}?${queryParams}`;
 
