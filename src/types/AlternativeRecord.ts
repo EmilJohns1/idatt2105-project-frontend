@@ -1,5 +1,5 @@
 export interface AlternativeRecord {
   alternativeText: string
-  wasCorrect: boolean
-  wasSelected: boolean
+  wasCorrect?: boolean
+  wasSelected?: boolean
 }
