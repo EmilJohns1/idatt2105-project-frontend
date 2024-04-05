@@ -3,16 +3,13 @@
     <div class="header">
       <h1>{{ categoryName }}</h1>
       <p>Try out all the quizzes made by our bustling community</p>
-      <div class="search-input-container">
-        <input type="text"
-          v-model="searchTerm"
-          @keyup.enter="searchQuizzes"
-          placeholder="Search Quiz Titles..."
-          button="Search"
-          />
-      <div>
-        <button @click="changeSort('creationDate')">Sort by Creation Date</button>
-        <button @click="changeSort('lastModifiedDate')">Sort by Last Modified Date</button>
+        <div class="sort-select-container">
+          <select v-model="selectedSort" @change="changeSort">
+            <option v-for="option in sortOptions" :key="option.value" :value="option.value">
+              {{ option.text }}
+            </option>
+          </select>
+        </div>
       </div>
       <div class="tags-input-container">
         <div class="tags-input">
@@ -63,8 +60,6 @@
       <button v-if="totalPages > 1" @click="changePage(totalPages)" :disabled="currentPage === totalPages">{{ totalPages }}</button>
       <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next ></button>
     </div>
-  </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -83,13 +78,26 @@ const route = useRoute();
 const router = useRouter();
 
 // Define reactive states
-const quizzes = ref<QuizDto[]>([]); // Use QuizDto directly here
-const searchTerm = ref('');
+const quizzes = ref<QuizDto[]>([]);
+//const searchTerm = ref(''); if we ever use it
 const categoryName = ref(route.params.category ? route.params.category.toString() : '');
 const quizzesPerPage = 6;
 const currentPage = ref(1);
 const totalPages = ref(0);
 const searchTags = ref<string[]>([]);
+
+// Sort options for quizzes
+const sortOptions = [
+  { value: 'creationDate', text: 'Sort by Creation Date' },
+  { value: 'lastModifiedDate', text: 'Sort by Last Modified Date' }
+  // Add more options here
+];
+
+const selectedSort = ref(sortOptions[0].value);
+
+const changeSort = async () => {
+  await fetchQuizzes();
+}
 
 // Function to capitalize the category name from the route parameter
 const capitalizeCategoryName = () => {
@@ -97,36 +105,26 @@ const capitalizeCategoryName = () => {
   return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
-const filteredQuizzes = computed(() => {
-  if (!searchTerm.value.trim()) {
-    return quizzes.value; // Return all quizzes if search term is empty
-  }
-  // Filter quizzes by title based on search term
-  return quizzes.value.filter(quiz => 
-    quiz.title.toLowerCase().includes(searchTerm.value.trim().toLowerCase())
-  );
-});
-const searchQuizzes = async () => {
-  await fetchQuizzes(); 
-};
-
+// Fetch quizzes based on the category
 const fetchQuizzes = async () => {
-  // Always start from the first page for a new search
-  currentPage.value = 1;
   let response;
+  const sort = `${selectedSort.value},asc`;
   if (categoryName.value === 'All') {
-    response = await fetchAllQuizzes(0, quizzesPerPage, searchTerm.value);
+    response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage, sort /*, searchTerm.value */); 
   } else {
-    response = await fetchQuizzesByCategory(categoryName.value, 0, quizzesPerPage, searchTerm.value);
+    response = await fetchQuizzesByCategory(categoryName.value, currentPage.value - 1, quizzesPerPage, sort /*, searchTerm.value */);
   }
+  
   if (response) {
     quizzes.value = response.content;
     totalPages.value = Math.ceil(response.totalElements / quizzesPerPage);
   } else {
-    quizzes.value = [];
     console.error('Failed to fetch quizzes');
+    quizzes.value = [];
+    totalPages.value = 0;
   }
 };
+
 
 const currentTag = ref('')
 
@@ -147,23 +145,24 @@ onMounted(() => {
 });
 
 const changePage = async (newPage: number) => {
-  currentPage.value = newPage
-  if (categoryName.value === 'All') {
-    const response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage)
-    if (response) {
-      quizzes.value = response.content
-      totalPages.value = response.totalPages
-    } else {
-      console.log('Error fetching quizzes')
-    }
-  } else {
-    await fetchQuizzesByCategory(categoryName.value, currentPage.value - 1, quizzesPerPage)
-  }
-}
+  currentPage.value = newPage;
+  await fetchQuizzes(); // Refetch quizzes for the new page
+};
 
 function goToQuiz(quizId: string | number) {
   router.push({ name: 'Quiz', params: { id: quizId } })
 }
+
+const filteredQuizzes = computed(() => quizzes.value);
+
+
+const searchQuizzes = async () => {
+  // Future me, implement functionality to search quizzes by title?
+  quizzes.value = []; // Clear current quizzes to ensure a fresh search
+  currentPage.value = 1; // Start from the first page
+  await fetchQuizzes(); 
+};
+
 </script>
 
 <style scoped>

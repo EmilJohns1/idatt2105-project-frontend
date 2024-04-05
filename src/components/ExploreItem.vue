@@ -53,7 +53,6 @@ const filteredCategories = computed(() => {
       category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   )
-
   return results
 })
 

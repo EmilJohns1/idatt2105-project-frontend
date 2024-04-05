@@ -176,9 +176,11 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
 export const fetchQuizzesByCategory = async (
   category: string,
   page: number,
-  size: number
+  size: number,
+  sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}`
+  const sortParam = `sort=${sort}`;
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
@@ -196,9 +198,11 @@ export const fetchQuizzesByCategory = async (
 
 export const fetchAllQuizzes = async (
   page: number,
-  size: number
+  size: number,
+  sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes?page=${page}&size=${size}`
+  const sortParam = `sort=${sort}`;
+  const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
