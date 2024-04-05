@@ -24,6 +24,7 @@
 <script setup lang="ts">
 import { defineEmits, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { sendEmail } from '@/api/emailHooks'
 
 const emit = defineEmits<{
   (e: 'close'): void
@@ -36,8 +37,7 @@ const router = useRouter()
 
 const submit = async () => {
   try {
-    // Simulate successful submission
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await sendEmail(email.value)
     alert('An email has been sent to your email address. Please check your inbox.')
     router.push('/')
     submissionSuccess.value = true

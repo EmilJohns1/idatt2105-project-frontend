@@ -32,8 +32,8 @@ import Card from '@/components/Card.vue'
 import Popup from '@/components/Popup.vue'
 import router from '@/router/index'
 import { ref } from 'vue'
-import { findTokenByEmail, resetPassword, deleteByEmail } from '@/api/resetPasswordHooks'
-import type { LoginRequest } from '@/types/LoginRequest'
+import { resetPassword } from '@/api/resetPasswordHooks'
+import type { ResetPasswordRequest } from '@/types/ResetPasswordRequest'
 
 const email = ref('')
 const password = ref('')
@@ -49,31 +49,23 @@ const submit = async () => {
   }
 
   const urlParams = new URLSearchParams(window.location.search)
-  const token = urlParams.get('token') // Access token from query string
+  const token = urlParams.get('token') ?? ''
 
   try {
-    const tokenInfo = await findTokenByEmail(email.value)
-
-    if (!tokenInfo || tokenInfo.token !== token) {
-      popupMessage.value = 'Invalid email or token.'
-      popupFontColor.value = 'red'
-      return
+    // Construct the reset request object with the email, password, and token
+    const resetRequest: ResetPasswordRequest = {
+      username: email.value ?? '',
+      password: password.value,
+      token: token
     }
 
-    // Check if the token has expired
-    const expirationDateTime = new Date(tokenInfo.expirationDateTime)
-    if (expirationDateTime <= new Date()) {
-      popupMessage.value = 'The token has expired.'
-      popupFontColor.value = 'red'
-      return
-    }
-
-    // Call the resetPassword API method to reset the password
-    const resetRequest: LoginRequest = { username: email.value, password: password.value }
+    // Call the resetPassword API method with the reset request object
+    console.log('Reset request:', resetRequest)
     await resetPassword(resetRequest)
-    popupMessage.value = 'Password reset successfully.'
+
+    // redirect to the login page after successful password reset
+    popupMessage.value = 'Password reset successful. Redirecting to login page...'
     popupFontColor.value = 'green'
-    deleteByEmail(email.value)
     setTimeout(() => {
       router.push('/login')
     }, 2000)
