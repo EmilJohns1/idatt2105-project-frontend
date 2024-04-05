@@ -35,7 +35,7 @@ export async function handleImport(file: File, quizId: number): Promise<boolean>
             await addAlternativeToQuestion({
               questionId: newQuestion.id,
               alternativeText: alternative.alternativeText,
-              correct: alternative.wasCorrect
+              correct: alternative.correct
             })
           }
         }
@@ -80,12 +80,12 @@ export function parseFile(text: string): Question[] {
         } else if (trimmedLine.startsWith('Alternatives:')) {
           currentQuestion.alternatives = []
         } else if (currentQuestion.type === 'multiple choice' && trimmedLine.startsWith('-')) {
-          const wasCorrect = trimmedLine.includes('(correct)')
+          const correct = trimmedLine.includes('(correct)')
           const alternativeText = trimmedLine.replace(/-/, '').replace('(correct)', '').trim()
           if (!currentQuestion.alternatives) {
             currentQuestion.alternatives = []
           }
-          currentQuestion.alternatives.push({ alternativeText, wasCorrect })
+          currentQuestion.alternatives.push({ alternativeText, correct })
         }
       }
     }
