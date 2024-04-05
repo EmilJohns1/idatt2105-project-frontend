@@ -20,7 +20,6 @@
             placeholder="Search Tags..."
             class="input-tag"
           />
-          <button @click="searchQuizzesByTags">Search by Tags</button>
           <button @click="addTag" class="add-tag-btn">Add tag</button>
         </div>
         <ul class="tags-list">
@@ -72,29 +71,30 @@ import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
 import { fetchAllTags } from '@/api/quizHooks'
 
+/**
+ * Retrieves the author's name for a given quiz.
+ * @param {QuizDto} quiz - The quiz object.
+ * @returns {string} The username of the quiz's author or 'Unknown' if not available.
+ */
 const authorName = (quiz: QuizDto) => {
   return quiz.userDTOs.length > 0 ? quiz.userDTOs[0].username : 'Unknown'
 }
 
-//Tags consts
-const currentTag = ref('');
-const tagSuggestions = ref([]);
-const allTags = ref([]);
-const availableTags = ref([]);
-
-
-// Use route and router for navigation and param retrieval
+// Reactive state declarations
+const quizzes = ref<QuizDto[]>([]);
 const route = useRoute();
 const router = useRouter();
-
-// Define reactive states
-const quizzes = ref<QuizDto[]>([]);
 //const searchTerm = ref(''); if we ever use it
 const categoryName = ref(route.params.category ? route.params.category.toString() : '');
 const quizzesPerPage = 6;
 const currentPage = ref(1);
 const totalPages = ref(0);
 const searchTags = ref<string[]>([]);
+const currentTag = ref('');
+const tagSuggestions = ref([]);
+const allTags = ref([]);
+const availableTags = ref([]);
+const selectedSort = ref('creationDate,desc'); // Default sort option
 
 // Sort options for quizzes
 const sortOptions = [
@@ -107,19 +107,22 @@ const sortOptions = [
   // Add more options here
 ];
 
-const selectedSort = ref(sortOptions[0].value);
 
 const changeSort = async () => {
   await fetchQuizzes();
 }
 
-// Function to capitalize the category name from the route parameter
+/**
+ * Capitalizes the first letter of the category name for display.
+ */
 const capitalizeCategoryName = () => {
   const name = route.params.category ? route.params.category.toString() : 'All';
   return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
-// Fetch quizzes based on the category
+/**
+ * Fetches quizzes based on the current category and page number.
+ */
 const fetchQuizzes = async () => {
   if (searchTags.value.length > 0) {
     await searchQuizzesByTags();
@@ -143,7 +146,9 @@ const fetchQuizzes = async () => {
   }
 };
 
-// Fetch quizzes based on the tags
+/**
+ * Fetches quizzes based on the current category and page number.
+ */
 const searchQuizzesByTags = async () => {
   if (searchTags.value.length > 0) {
     const response = await fetchQuizzesByTags(searchTags.value, currentPage.value - 1, quizzesPerPage, selectedSort.value);
@@ -171,15 +176,18 @@ const searchQuizzesByTags = async () => {
   }
 };
 
+/**
+ * Watches for changes in the search tags and current page number.
+ */
 watch([searchTags, currentPage], async () => {
   if (searchTags.value.length > 0) {
     await searchQuizzesByTags();
-  } else {
-    // Optionally
   }
 });
 
-
+/**
+ * Adds a tag to the searchTags array and triggers a search.
+ */
 const addTag = () => {
   if (currentTag.value && !searchTags.value.includes(currentTag.value)) {
     searchTags.value.push(currentTag.value);
@@ -188,6 +196,10 @@ const addTag = () => {
   }
 };
 
+/**
+ * Removes a tag from the searchTags array and triggers the search to update.
+ * @param {number} index - The index of the tag to remove.
+ */
 const removeTag = (index: number) => {
   searchTags.value.splice(index, 1);
   if (searchTags.value.length > 0) {
@@ -197,16 +209,28 @@ const removeTag = (index: number) => {
   }
 };
 
+/**
+ * Fetches quizzes on component mount based on category or tags.
+ */
 onMounted(() => {
   categoryName.value = capitalizeCategoryName();
   fetchQuizzes();
 });
 
+/**
+ * Changes the current page of quizzes.
+ * @param newPage - The new page number to navigate to.
+ */
 const changePage = async (newPage: number) => {
   currentPage.value = newPage;
   await fetchQuizzes(); 
 };
 
+/**
+ * Navigates to the quizzes page.
+ * @param {number} quizId - The ID of the quiz to navigate to.
+ * @param {string} quizTitle - The title of the quiz to navigate to.
+ */
 function goToQuiz(quizId: number, quizTitle: string) {
   const formattedTitle = encodeURIComponent(quizTitle.replace(/\s+/g, '-'));
   router.push(`/quiz/${quizId}-${formattedTitle}`);

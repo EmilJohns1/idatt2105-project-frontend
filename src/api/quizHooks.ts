@@ -249,6 +249,10 @@ export const fetchQuizzesByTags = async (
   }
 };
 
+/**
+ * 
+ * @returns 
+ */
 export const fetchAllTags = async (): Promise<Tag[] | null> => {
   try {
     const response = await api.get('/api/quizzes/all/tags');
