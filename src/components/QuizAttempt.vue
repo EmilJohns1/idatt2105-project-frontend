@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <RouterLink class="userButton" to="/user">Back to user page</RouterLink>
     <div v-if="quizAttempt.questionAttempts?.length" class="navButtons">
         <button v-if="currentQuestionIndex<quizAttempt.questionAttempts?.length-1" class="nav nxt" @click="next()">next</button>
         <button v-if="currentQuestionIndex>0" class="nav pre" @click="last()">previous</button>
@@ -26,9 +27,6 @@
 </div>
 
         </button>
-        <div class="score-display"> Score:
-      {{ score }} / {{ quizAttempt.score }}
-    </div>
       </template>
 
       <template v-else-if="currentQuestionAttempt.correctAnswer!==undefined">
@@ -60,6 +58,9 @@
       </template>
     </div>
   </div>
+  <div class="score-display"> Score:
+      {{ score }} / {{ quizAttempt.score }}
+    </div>
 </template>
 
 
@@ -148,6 +149,11 @@ const fetchQuizAttempt = async () => {
         score+=pointsForQuestion
       }
     }
+    else if(attempt.userAnswer!==undefined){
+      if(attempt.userAnswer===attempt.correctAnswer){
+        score+=attempt.points
+      }
+    }
   });
 }}
 
@@ -175,6 +181,14 @@ onMounted(fetchQuizAttempt)
     background-image: url("../assets/responsebackgrounds/unchecked_false.jpg");/* assets */
     background-size: cover;
     opacity: 0.5;
+  }
+  .userButton {
+    position: absolute;
+    top:68px;
+    left:0px;
+    padding:10px;
+    background-color: rgb(218, 218, 218);
+    color: #363636;
   }
   .score-display {
     position: absolute;
@@ -291,6 +305,11 @@ onMounted(fetchQuizAttempt)
   }
   
   @media (max-width: 750px) {
+    .userButton {
+    position: absolute;
+    top:700px;
+    left:unset;
+  }
     #image {
       width: 70%;
     }

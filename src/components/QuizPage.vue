@@ -47,10 +47,10 @@ import type { Question } from '@/types/Question'
 import type { Alternative } from '@/types/Alternative'
 import type { AlternativeRecord } from '@/types/AlternativeRecord'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
-import { ref, onMounted, computed } from 'vue'
+import { ref , computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
-import { getQuestionsFromQuizId, registerQuizAttempt } from '@/api/quizHooks'
+import { getQuestionsFromQuizId, registerQuizAttempt, getQuizByQuizId } from '@/api/quizHooks'
 import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg'
 import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg'
 import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg'
@@ -63,6 +63,8 @@ const buttonState = ref<'submit' | 'next'>('submit')
 const scoreDisplay = ref({
   scoreText: 'Score: 0'
 })
+const quiz = ref<any | null>(null)
+const isRandomized = ref<boolean | null>(null)
 
 const buttonText = computed(() => {
   return buttonState.value === 'submit' ? 'Submit Answer' : 'Next Question ->'
@@ -86,6 +88,7 @@ let maxScore = 0
 let tofClicked = true
 
 const quizAttemptRequest = {
+  title: '',
   score: 0,
   userId: 0,
   quizId: quizId,
@@ -95,10 +98,14 @@ const quizAttemptRequest = {
 const clickedArray: number[] = [] // Array to store clicked alternative indexes'
 const frontPage = ref(true)
 
-const startQuiz = () => {
+const startQuiz = async () => {
   frontPage.value = false
+  quiz.value = await getQuizByQuizId(quizId)
+  if(quiz.value){
+    quizAttemptRequest.title=quiz.value.title
+    isRandomized.value=quiz.value.isRandomized
+  }
   fetchQuestions()
-  console.log("check")
 }
 
 const toggleButtonState = async () => {

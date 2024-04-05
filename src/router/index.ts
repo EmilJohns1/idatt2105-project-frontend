@@ -123,12 +123,12 @@ const router = createRouter({
       component: QuizAttemptView,
       props: (route) => ({
         quiz_id: route.params.quiz_id,
-        quiz_title: route.params.quiz_title as string,
+        quiz_title: route.params.quiz_title as string, 
         quizattempt_id: route.params.quizattempt_id
       }),
       beforeEnter: async (to, from, next) => {
         const quizIdParam = to.params.quiz_id
-        const quizTitleParam = to.params.quiz_title.toString()
+        const quizTitleParam = to.params.quiz_title.toString() 
         const quizAttemptIdParam = to.params.quizattempt_id
         const quizAttemptId = Array.isArray(quizAttemptIdParam) ? quizAttemptIdParam[0] : quizAttemptIdParam
         const quizAttemptIdNumber = parseInt(quizAttemptId)
@@ -160,7 +160,7 @@ const router = createRouter({
             console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title)
             next('/404')
             return
-          }
+          } 
 
           next()
         } catch (error) {
