@@ -179,7 +179,6 @@ export const fetchQuizzesByCategory = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const sortParam = `sort=${sort}`;
   const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await api.get(fetchUrl)
@@ -201,7 +200,6 @@ export const fetchAllQuizzes = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const sortParam = `sort=${sort}`;
   const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await api.get(fetchUrl)

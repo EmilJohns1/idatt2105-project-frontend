@@ -48,7 +48,7 @@
       />
     </div>
     <div class="pagination-controls">
-      <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">< Previous</button>
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">&lt; Previous</button>
       <button @click="changePage(1)" :disabled="currentPage === 1">1</button>
 
       <span v-if="currentPage > 3" class="pagination-ellipsis">...</span>
@@ -58,7 +58,7 @@
       <span v-if="currentPage < totalPages - 2" class="pagination-ellipsis">...</span>
 
       <button v-if="totalPages > 1" @click="changePage(totalPages)" :disabled="currentPage === totalPages">{{ totalPages }}</button>
-      <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next ></button>
+      <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next &gt;</button>
     </div>
 </template>
 
@@ -91,9 +91,6 @@ const currentPage = ref(1);
 const totalPages = ref(0);
 const searchTags = ref<string[]>([]);
 const currentTag = ref('');
-const tagSuggestions = ref([]);
-const allTags = ref([]);
-const availableTags = ref([]);
 const selectedSort = ref('creationDate,desc'); // Default sort option
 
 // Sort options for quizzes
@@ -128,7 +125,6 @@ const fetchQuizzes = async () => {
     await searchQuizzesByTags();
   } else {
     let response;
-    const sort = `${selectedSort.value},desc`;
     if (categoryName.value === 'All') {
       response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage, selectedSort.value);
     } else {

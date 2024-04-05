@@ -53,7 +53,6 @@ type Props = {
   type?: 'quiz' | 'category'
 };
 
-const hover = ref(false);
 const props = defineProps<Props>();
 const emits = defineEmits(['clicked']);
 const latestDate = computed(() => {
