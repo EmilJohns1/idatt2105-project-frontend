@@ -228,3 +228,18 @@ export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[]
     return null
   }
 }
+
+export const getQuizAttemptById = async (id: number): Promise<QuizAttemptRequest | null> => {
+  try {
+    const response = await api.get(`/attempts/${id}`, {})
+    if (response.status === 200 ){
+    return response.data
+    } else{
+      console.error('Error fetching attempt')
+      return null
+    }
+  } catch (error) {
+    console.error('Error checking attemptId:', error)
+    return null
+  }
+}
