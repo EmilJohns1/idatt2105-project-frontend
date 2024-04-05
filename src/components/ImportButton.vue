@@ -2,12 +2,12 @@
   <div>
     <button class="additional-button collaborate-button">
       Import questions
-      <input type="file" @change="handleImport($event, quizId)" class="file-input" />
+      <input type="file" @change="handleFileChange" class="file-input" />
     </button>
     <Popup
-      v-if="popupErrorMessage"
-      :errorMessage="popupErrorMessage"
-      :fontColor="popupFontColor"
+      v-if="popupMessage.message"
+      :errorMessage="popupMessage.message"
+      :fontColor="popupMessage.color"
       @popup-closed="clearPopup"
     />
   </div>
@@ -16,149 +16,41 @@
 <script setup lang="ts">
 import Popup from '@/components/Popup.vue'
 import { defineProps, ref } from 'vue'
-import {
-  addQuestionToQuiz,
-  addAlternativeToQuestion,
-  updateTrueOrFalseQuestion,
-  updateQuestionAlternatives
-} from '@/api/questionHooks'
+import { handleImport } from '@/utils/functions'
+import type { PopupMessage } from '@/types/PopupMessage'
 
 const props = defineProps<{
   quizId: number
 }>()
 
-const popupErrorMessage = ref('')
-const popupFontColor = ref('')
+const popupMessage = ref<PopupMessage>({ message: '', color: '' })
 
-async function handleImport(event: Event, quizId: number) {
+const handleFileChange = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files![0]
-  const reader = new FileReader()
-
-  reader.onload = async (event) => {
-    const text = event.target?.result as string
-    const questions = parseFile(text)
-
-    for (const question of questions) {
-      if (question.type === 'true or false') {
-        question.type = 'true_or_false'
-      } else if (question.type === 'multiple choice') {
-        question.type = 'multiple_choice'
-      }
-      const questionData = {
-        questionText: question.title,
-        points: question.maxPoints,
-        type: question.type,
-        quizId: quizId,
-        mediaUrl: ''
-      }
-
-      try {
-        const newQuestion = await addQuestionToQuiz(questionData)
-        if (question.type === 'true_or_false') {
-          await updateTrueOrFalseQuestion(newQuestion.id, question.answer || false)
-        } else if (question.type === 'multiple_choice') {
-          for (const alternative of question.alternatives ?? []) {
-            await addAlternativeToQuestion({
-              questionId: newQuestion.id,
-              alternativeText: alternative.text,
-              correct: alternative.isCorrect
-            })
-          }
-        }
-      } catch (error) {
-        await setPopupMessage(
-          `Error adding questions. \n Press 'Help' to see how the format should look like`,
-          'red'
-        )
-        setTimeout(async () => {
-          window.location.reload()
-          return
-        }, 2000)
-      }
+  if (file) {
+    const isSuccess = await handleImport(file, props.quizId)
+    if (isSuccess) {
+      handlePopupMessage('Questions imported successfully!', 'green')
+      setTimeout(() => {
+        clearPopup()
+        window.location.reload()
+      }, 1500)
+    } else {
+      handlePopupMessage(
+        'Error importing questions. Press "Help" to see how the file should be formatted',
+        'red'
+      )
     }
-    await setPopupMessage('Questions imported!', 'green')
-    setTimeout(async () => {
-      window.location.reload()
-    }, 2000)
   }
-
-  reader.readAsText(file)
 }
 
-function setPopupMessage(message: string, color: string) {
-  popupErrorMessage.value = message
-  popupFontColor.value = color
+const handlePopupMessage = (message: string, color: string) => {
+  popupMessage.value = { message, color }
 }
 
-function clearPopup() {
-  popupErrorMessage.value = ''
-  popupFontColor.value = ''
-}
-
-interface Question {
-  title: string
-  maxPoints: number
-  type: string
-  answer?: boolean
-  alternatives?: Alternative[]
-}
-
-interface Alternative {
-  text: string
-  isCorrect: boolean
-}
-
-function parseFile(text: string): Question[] {
-  try {
-    const lines = text.split('\n')
-    const questions: Question[] = []
-    let currentQuestion: Question | null = null
-
-    for (const line of lines) {
-      const trimmedLine = line.trim()
-
-      if (trimmedLine.startsWith('Question title: ')) {
-        if (currentQuestion) {
-          questions.push(currentQuestion)
-        }
-        currentQuestion = {
-          title: trimmedLine.substring('Question title: '.length).trim(),
-          maxPoints: 0,
-          type: ''
-        }
-      } else if (currentQuestion) {
-        if (trimmedLine.startsWith('Max points: ')) {
-          currentQuestion.maxPoints = parseInt(
-            trimmedLine.substring('Max points: '.length).trim(),
-            10
-          )
-        } else if (trimmedLine.startsWith('Question type: ')) {
-          currentQuestion.type = trimmedLine.substring('Question type: '.length).trim()
-        } else if (trimmedLine.startsWith('Answer: ')) {
-          if (currentQuestion.type === 'true or false') {
-            currentQuestion.answer = trimmedLine.substring('Answer: '.length).trim() === 'true'
-          }
-        } else if (trimmedLine.startsWith('Alternatives:')) {
-          currentQuestion.alternatives = []
-        } else if (currentQuestion.type === 'multiple choice' && trimmedLine.startsWith('-')) {
-          const isCorrect = trimmedLine.includes('(correct)')
-          const text = trimmedLine.replace(/-/, '').replace('(correct)', '').trim()
-          if (!currentQuestion.alternatives) {
-            currentQuestion.alternatives = []
-          }
-          currentQuestion.alternatives.push({ text, isCorrect })
-        }
-      }
-    }
-
-    if (currentQuestion) {
-      questions.push(currentQuestion)
-    }
-
-    return questions
-  } catch (error) {
-    throw new Error('Error parsing file. Please ensure the file is in the correct format.')
-  }
+// Define the clearPopup function locally
+const clearPopup = () => {
+  popupMessage.value = { message: '', color: '' }
 }
 </script>
 

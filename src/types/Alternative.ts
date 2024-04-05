@@ -1,5 +1,6 @@
 export interface Alternative {
+  questionId?: number
   alternativeText: string
-  correct: boolean
-  clicked: boolean
+  correct?: boolean
+  clicked?: boolean
 }

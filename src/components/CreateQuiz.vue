@@ -3,6 +3,13 @@
     <div v-if="loading" class="loading-message">Creating quiz...</div>
     <div v-else>
       <h1 id="header">Create new quiz</h1>
+      <h3>Choose Template:</h3>
+      <select v-model="selectedTemplate" @change="applyTemplate">
+        <option disabled value="">Select a template</option>
+        <option v-for="template in templates" :key="template.name" :value="template">
+          {{ template.name }}
+        </option>
+      </select>
       <form @submit.prevent="submitForm">
         <h2>Title</h2>
         <input v-model="title" type="text" required class="input-field" />
@@ -42,13 +49,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, type Ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRegistration, getCategories, addUserToQuiz, addTagsToQuiz } from '@/api/quizHooks'
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { Tag } from '@/types/Tag'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import { templates } from '@/utils/templates'
+import { handleImport } from '@/utils/functions'
 
 const imageUrl = ref('')
 const placeholderImage = '/default.jpg'
@@ -58,6 +67,7 @@ const category = ref('')
 const tagArray = ref<string[]>([])
 const isPublic = ref(false)
 const isRandomized = ref(false)
+const fileName = ref('')
 const userStore = useUserStore()
 
 const { registerQuiz, clearError } = useRegistration()
@@ -65,9 +75,9 @@ const registrationError = ref('')
 
 const categories = ref<string[] | null>(null)
 
-const loading = ref(false) // Indicates whether quiz creation is in progress
+const loading = ref(false)
+const selectedTemplate: Ref<any> = ref(null)
 
-//fetch categories
 const fetchCategories = async () => {
   categories.value = await getCategories()
 }
@@ -105,6 +115,17 @@ const submitForm = async () => {
         await addUserToQuiz(quizId, userData.id)
       }
     }
+    if (fileName.value !== '') {
+      try {
+        const response = await fetch(`/templates/${fileName.value}`)
+        const text = await response.text()
+
+        const file = new File([text], fileName.value)
+        await handleImport(file, quizId)
+      } catch (error) {
+        console.error('Error fetching template file:', error)
+      }
+    }
     setTimeout(() => {
       loading.value = false
       redirect(quizId, quizData.title) // Redirect after all asynchronous operations are completed
@@ -119,23 +140,22 @@ const submitForm = async () => {
 const redirect = async (quiz_id: number, quiz_title: string) => {
   await router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
   setTimeout(() => {
-    setTimeout(() => {
-      window.scrollTo(0, 0)
-      window.location.reload()
-    }, 0)
+    window.location.reload()
   }, 250)
 }
 
 const addTagElement = () => {
-  const tag = document.createElement('li')
   const tagContent = input.value!.value.trim()
 
   if (tagContent !== '') {
     console.log(tagArray.value.length)
     tagArray.value.push(tagContent)
+
+    const tag = document.createElement('li')
     tag.innerText = tagContent
     tag.innerHTML += '<button class="delete-button">X</button>'
     tags.value?.appendChild(tag)
+
     input.value!.value = ''
   }
 }
@@ -178,6 +198,35 @@ onMounted(() => {
     }
   })
 })
+
+const applyTemplate = async () => {
+  if (selectedTemplate.value) {
+    const template = selectedTemplate.value
+    title.value = template.title
+    description.value = template.description
+    imageUrl.value = template.imageUrl
+    category.value = template.category
+    isPublic.value = template.isPublic
+    isRandomized.value = template.isRandomized
+
+    tags.value!.innerHTML = ''
+    tagArray.value = []
+
+    if (template.tags) {
+      for (const tag of template.tags) {
+        input.value!.value = tag
+
+        addTagElement()
+      }
+    }
+
+    if (template.name === 'None') {
+      fileName.value = ''
+    } else {
+      fileName.value = template.name.toLowerCase().replace(/ /g, '-') + '.txt'
+    }
+  }
+}
 </script>
 
 <style scoped>
