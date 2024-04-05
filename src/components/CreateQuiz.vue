@@ -271,7 +271,6 @@ h3 {
   text-align: center;
   justify-content: center;
   height: 100%;
-  margin-top: 20px;
 }
 #image {
   width: 320px;
