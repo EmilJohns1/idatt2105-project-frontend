@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '@/api/axiosConfig'
+import { getCategories } from '@/api/quizHooks'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import CardItem from '../components/CardItem.vue'
@@ -33,14 +33,14 @@ interface Category {
   name: string
 }
 onMounted(async () => {
-  try {
-    const response = await api.get('/quizzes/categories')
-    categories.value = response.data
-    console.log('Categories:', categories.value)
-  } catch (error) {
-    console.error('Failed to fetch categories:', error)
+  const fetchedCategories = await getCategories();
+  if (fetchedCategories) {
+    // Transform the string array to the expected object array format
+    categories.value = fetchedCategories.map((name) => ({ id: name, name }));
+  } else {
+    console.error('Could not fetch categories');
   }
-})
+});
 
 const filteredCategories = computed(() => {
   const results = []
@@ -53,7 +53,6 @@ const filteredCategories = computed(() => {
       category.name.toLowerCase().includes(searchTerm.value.toLowerCase())
     )
   )
-
   return results
 })
 

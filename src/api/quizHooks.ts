@@ -176,9 +176,10 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
 export const fetchQuizzesByCategory = async (
   category: string,
   page: number,
-  size: number
+  size: number,
+  sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}`
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
@@ -196,9 +197,10 @@ export const fetchQuizzesByCategory = async (
 
 export const fetchAllQuizzes = async (
   page: number,
-  size: number
+  size: number,
+  sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes?page=${page}&size=${size}`
+  const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`;
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
@@ -213,6 +215,57 @@ export const fetchAllQuizzes = async (
     return null
   }
 }
+
+export const fetchQuizzesByTags = async (
+  tags: string[],
+  page: number,
+  size: number,
+  sort: string
+): Promise<Page<QuizDto> | null> => {
+  const fetchUrl = `/quizzes/filter-by-tags`;
+  const requestBody = JSON.stringify(tags); 
+  const queryParams = new URLSearchParams({ page: String(page), size: String(size), sort }).toString();
+  const fullUrl = `${fetchUrl}?${queryParams}`;
+
+  try {
+    const response = await api.post(fullUrl, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status === 200 && response.data) {
+      console.log('Quizzes by tags:', response.data);
+      return response.data;
+    } else {
+      console.error(`Failed to fetch quizzes by tags. Status: ${response.status}`);
+      return null;
+    }
+  } catch (error) {
+    console.error(`Failed to fetch quizzes by tags: ${error}`);
+    return null;
+  }
+};
+
+/**
+ * 
+ * @returns 
+ */
+export const fetchAllTags = async (): Promise<Tag[] | null> => {
+  try {
+    const response = await api.get('/api/quizzes/all/tags');
+    if (response.status === 200) {
+      console.log('All tags:', response.data);
+      return response.data;
+    } else {
+      console.error('Failed to fetch all tags. Status:', response.status);
+      return null;
+    }
+  } catch (error) {
+    console.error('Failed to fetch all tags:', error);
+    return null;
+  }
+};
 
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
