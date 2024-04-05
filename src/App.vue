@@ -14,7 +14,7 @@ import NavBar from './components/NavBar.vue'
 .layout-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
 }
 header {
   line-height: 1.5;
