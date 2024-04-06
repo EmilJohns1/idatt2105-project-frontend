@@ -21,8 +21,7 @@ export const updateQuizById = async (quizId: number, quizData: QuizRequest): Pro
   try {
     const response = await api.put(`/quizzes/${quizId}`, quizData)
 
-    if (response.status === 200) {
-    } else {
+    if (response.status !== 200) {
       console.error('Failed to update quiz')
     }
   } catch (error) {
