@@ -23,10 +23,6 @@
         <button type="submit" class="submit-button">Sign up with email</button>
       </form>
       <p id="registration-error" v-if="registrationError">{{ registrationError }}</p>
-      <p>
-        By clicking continue, you agree to our <a href="/terms">Terms of Service</a> and
-        <a href="/privacy">Privacy Policy</a>
-      </p>
     </Card>
   </div>
 </template>
@@ -49,13 +45,22 @@ const submitForm = async () => {
     username: email.value,
     password: password.value
   }
-  const registrationSuccess = await registerUser(userData)
-  if (!registrationSuccess) {
+  const response = await registerUser(userData)
+  console.log(response)
+  if (response === null) {
+    registrationError.value = 'Connection to server failed, please try again.'
+    email.value = ''
+    password.value = ''
+  } else if (response.status === 200) {
+    redirect()
+  } else if (response.status === 409) {
     registrationError.value = 'Registration failed, a user with this email already exists.'
     email.value = ''
     password.value = ''
   } else {
-    redirect()
+    registrationError.value = 'Registration failed, please try again.'
+    email.value = ''
+    password.value = ''
   }
 }
 const redirect = () => {
