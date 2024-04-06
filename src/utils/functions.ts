@@ -23,7 +23,7 @@ export async function handleImport(file: File, quizId: number): Promise<boolean>
         points: question.points,
         type: question.type,
         quizId: quizId,
-        mediaUrl: ''
+        mediaUrl: question.mediaUrl
       }
 
       try {
@@ -70,6 +70,8 @@ export function parseFile(text: string): Question[] {
       } else if (currentQuestion) {
         if (trimmedLine.startsWith('Max points: ')) {
           currentQuestion.points = parseInt(trimmedLine.substring('Max points: '.length).trim(), 10)
+        } else if (trimmedLine.startsWith('Image url: ')) {
+          currentQuestion.mediaUrl = trimmedLine.substring('Image url: '.length).trim()
         } else if (trimmedLine.startsWith('Question type: ')) {
           currentQuestion.type = trimmedLine.substring('Question type: '.length).trim()
         } else if (trimmedLine.startsWith('Answer: ')) {
