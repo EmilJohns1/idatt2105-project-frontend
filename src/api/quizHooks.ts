@@ -8,10 +8,10 @@ import type { QuizDto } from '@/types/QuizDto'
 import type { Question } from '@/types/Question'
 
 /**
- * Fetches a quiz by its quizId.
+ * Fetches quiz details by its ID.
  * 
- * @param {number} quizId - The unique identifier for the quiz to fetch.
- * @returns {Promise<QuizDto | null>} A promise that resolves with the quiz data or null if the quiz cannot be found or an error occurs.
+ * @param {number} quizId - ID of the quiz to fetch.
+ * @returns {Promise<QuizDto | null>} Quiz details or null/error if not found.
  */
 export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   try {
@@ -24,12 +24,11 @@ export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
 }
 
 /**
- * Updates a quiz by quizId with new information.
+ * Updates the details of a specific quiz.
  * 
- * @param {number} quizId - The unique identifier for the quiz to update.
- * @param {QuizRequest} quizData - The data to update the quiz with.
- * @returns {Promise<void>} A promise that resolves when the quiz is updated successfully.
- * @throws {Error} Throws an error if the quiz cannot be updated.
+ * @param {number} quizId - The quiz's unique identifier.
+ * @param {QuizRequest} quizData - The new details for the quiz.
+ * @returns {Promise<void>} Resolves if the update is successful.
  */
 export const updateQuizById = async (quizId: number, quizData: QuizRequest): Promise<void> => {
   try {
@@ -47,9 +46,9 @@ export const updateQuizById = async (quizId: number, quizData: QuizRequest): Pro
 }
 
 /**
- * Register a new quiz with the provided quiz data.
+ * Provides registration functionality for a quiz.
  * 
- * @returns {Object} An object containing a `registrationError` ref string, `registerQuiz` method, and `clearError` method.
+ * @returns {Object} - Includes registration functions and error handling.
  */
 export const useRegistration = () => {
   const registrationError = ref('')
@@ -80,11 +79,12 @@ export const useRegistration = () => {
 
   return { registrationError, registerQuiz, clearError }
 }
+
 /**
- * Registers a new quiz attempt with provided quiz data.
+ * Registers an attempt for a quiz.
  * 
- * @param { QuizAttemptRequest } quizData - The data to register the quiz attempt with. 
- * @returns { Promise<number | null> } A promise that resolves with the quiz attempt ID or null if the attempt cannot be registered or an error occurs.
+ * @param {QuizAttemptRequest} quizData - The attempt data.
+ * @returns {Promise<number | null>} The attempt's ID or null if registration fails.
  */
 export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise<number | null> => {
   try {
@@ -105,12 +105,11 @@ export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise
 }
 
 /**
- * Adds a user to a quiz by their respective identifiers.
+ * Adds a user to a quiz.
  * 
- * @param {number} quizId - The unique identifier for the quiz.
- * @param {number} userId - The unique identifier for the user to add to the quiz.
- * @returns {Promise<void>} A promise that resolves when the user is added successfully.
- * @throws {Error} Throws an error if the user cannot be added to the quiz.
+ * @param {number} quizId - The quiz's ID.
+ * @param {number} userId - The user's ID.
+ * @returns {Promise<void>} Indicates successful addition.
  */
 export const addUserToQuiz = async (quizId: number, userId: number): Promise<void> => {
   try {
@@ -128,12 +127,11 @@ export const addUserToQuiz = async (quizId: number, userId: number): Promise<voi
 }
 
 /**
- * Deletes a user from a quiz by their respective identifiers.
+ * Removes a user from a quiz.
  * 
- * @param {number} quizId - Identifier for the quiz.
- * @param {number} userId - Identifier for the user to delete from the quiz.
- * @returns {Promise<void>} A promise that resolves when the user is deleted successfully.
- * @throws {Error} Throws an error if the user cannot be deleted from the quiz.
+ * @param {number} quizId - The quiz's ID.
+ * @param {number} userId - The user's ID to remove.
+ * @returns {Promise<void>} Indicates successful removal.
  */
 export const deleteUserFromQuiz = async (quizId: number, userId: number): Promise<void> => {
   try {
@@ -151,12 +149,11 @@ export const deleteUserFromQuiz = async (quizId: number, userId: number): Promis
 }
 
 /**
- * Adds tags to a quiz by its unique id.
+ * Adds tags to a quiz.
  * 
- * @param {Tag[]} tags - The tags to add to the quiz.
- * @param {number} quizId - The id for the quiz.
- * @returns {Promise<void>} A promise that resolves when the tags are added successfully.
- * @throws {Error} Throws an error if the tags cannot be added to the quiz.
+ * @param {Tag[]} tags - Tags to add.
+ * @param {number} quizId - The quiz's ID.
+ * @returns {Promise<void>} Indicates successful add.
  */
 export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
@@ -174,12 +171,11 @@ export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> 
 }
 
 /**
- * Updates tags for a quiz by its id.
+ * Updates a quiz's tags.
  * 
- * @param {Tag[]} tags - The updated tags for the quiz.
- * @param {number} quizId - The unique id for the quiz.
- * @returns {Promise<void>} A promise that resolves when the tags are updated successfully.
- * @throws {Error} Throws an error if the tags cannot be updated.
+ * @param {Tag[]} tags - New tags.
+ * @param {number} quizId - The quiz's ID.
+ * @returns {Promise<void>} Mean successful update.
  */
 export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
@@ -197,9 +193,9 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
 }
 
 /**
- * Fetches all categories.
+ * Retrieves all quiz categories.
  * 
- * @returns {Promise<string[] | null>} A promise that resolves with an array of category names or null if an error occurs.
+ * @returns {Promise<string[] | null>} List of category names or null.
  */
 export const getCategories = async (): Promise<string[] | null> => {
   try {
@@ -219,10 +215,10 @@ export const getCategories = async (): Promise<string[] | null> => {
 }
 
 /**
- * Fetches all users associated with a quiz by its id.
+ * Fetches all users associated with a quiz.
  * 
- * @param {number} quizId - The id for the quiz.
- * @returns {Promise<any[] | null>} A promise that resolves with an array of users or null if an error occurs.
+ * @param {number} quizId - The quiz's ID.
+ * @returns {Promise<any[] | null>} User data or null.
  */
 export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> => {
   try {
@@ -241,13 +237,13 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
 }
 
 /**
- * Fetches quizzes by category.
+ * Fetches quizzes by category with pagination and optional sorting.
  * 
- * @param {string} category - The category to filter quizzes by.
- * @param {number} page - The page number for pagination.
- * @param {number} size - The number of quizzes per page.
- * @param {string} sort - The sorting criteria.
- * @returns {Promise<Page<QuizDto> | null>} A promise that resolves with a page of quizzes or null if an error occurs.
+ * @param {string} category - Category name.
+ * @param {number} page - Page index.
+ * @param {number} size - Page size.
+ * @param {string} sort - Sorting criteria.
+ * @returns {Promise<Page<QuizDto> | null>} Paginated quiz data or null.
  */
 export const fetchQuizzesByCategory = async (
   category: string,
@@ -272,12 +268,12 @@ export const fetchQuizzesByCategory = async (
 }
 
 /**
- * Fetches all quizzes with optional pagination and sorting.
+ * Retrieves all quizzes with optional pagination and sorting.
  * 
- * @param {number} page - The page number for pagination.
- * @param {number} size - The number of quizzes per page.
- * @param {string} sort - The sorting criteria.
- * @returns {Promise<Page<QuizDto> | null>} A promise that resolves with a page of quizzes or null if an error occurs.
+ * @param {number} page - Page index.
+ * @param {number} size - Page size.
+ * @param {string} sort - Sorting criteria.
+ * @returns {Promise<Page<QuizDto> | null>} Paginated quiz data or null.
  */
 export const fetchAllQuizzes = async (
   page: number,
@@ -301,13 +297,13 @@ export const fetchAllQuizzes = async (
 }
 
 /**
- * Fetches quizzes filtered by tags.
+ * Fetches quizzes filtered by tags with pagination and sorting.
  * 
- * @param {string[]} tags - The tags to filter quizzes by.
- * @param {number} page - The page number for pagination.
- * @param {number} size - The number of quizzes per page.
- * @param {string} sort - The sorting criteria.
- * @returns {Promise<Page<QuizDto> | null>} A promise that resolves with a page of quizzes or null if an error occurs.
+ * @param {string[]} tags - Tags to filter by.
+ * @param {number} page - Page index.
+ * @param {number} size - Page size.
+ * @param {string} sort - Sorting criteria.
+ * @returns {Promise<Page<QuizDto> | null>} Paginated quiz data or null.
  */
 export const fetchQuizzesByTags = async (
   tags: string[],
@@ -341,9 +337,9 @@ export const fetchQuizzesByTags = async (
 };
 
 /**
- * Fetches all tags used in quizzes.
+ * Retrieves all tags used in quizzes.
  * 
- * @returns {Promise<Tag[] | null>} A promise that resolves with an array of tags or null if an error occurs.
+ * @returns {Promise<Tag[] | null>} List of tags or null.
  */
 export const fetchAllTags = async (): Promise<Tag[] | null> => {
   try {
@@ -362,10 +358,10 @@ export const fetchAllTags = async (): Promise<Tag[] | null> => {
 };
 
 /**
- * Fetches all questions for a given quiz by its id.
+ * Fetches all questions for a given quiz ID.
  * 
- * @param {number} quizId - The id for the quiz.
- * @returns {Promise<Question[] | null>} A promise that resolves with an array of questions or null if an error occurs.
+ * @param {number} quizId - The quiz's ID.
+ * @returns {Promise<Question[] | null>} List of questions or null.
  */
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
@@ -383,10 +379,10 @@ export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[]
 }
 
 /**
- * Fetches a quiz attempt by its id.
+ * Retrieves a specific quiz attempt by its ID.
  * 
- * @param {number} id - The id for the quiz-attempt.
- * @returns {Promise<QuizAttemptRequest | null>} A promise that resolves with the quiz attempt data or null if an error occurs.
+ * @param {number} id - The attempt's ID.
+ * @returns {Promise<QuizAttemptRequest | null>} Attempt details or null.
  */
 export const getQuizAttemptById = async (id: number): Promise<QuizAttemptRequest | null> => {
   try {
