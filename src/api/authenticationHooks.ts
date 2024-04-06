@@ -2,6 +2,9 @@ import { useApiStore } from '@/stores/apiStore'
 import { oauth2 } from '@/api/axiosConfig'
 import { useUserStore } from '@/stores/userStore'
 
+/**
+ * Initiates OAuth2 login by redirecting to the authorization URL with PKCE parameters.
+ */
 export const useLogin = async () => {
   const apiStore = useApiStore()
 
@@ -18,6 +21,11 @@ export const useLogin = async () => {
   window.location.href = authUrl
 }
 
+/**
+ * Exchanges an authorization code for tokens and sets them in the user store.
+ * 
+ * @param {string} code - Authorization code.
+ */
 export const getTokens = async (code: string) => {
   const apiStore = useApiStore()
   const userStore = useUserStore()
@@ -72,6 +80,12 @@ export const getTokens = async (code: string) => {
   }
 }
 
+/**
+ * Base64url encodes an ArrayBuffer.
+ * 
+ * @param {ArrayBuffer} arrayBuffer - Data to encode.
+ * @returns {string} Encoded string.
+ */
 function base64URLEncode(arrayBuffer: ArrayBuffer) {
   return btoa(String.fromCharCode.apply(null, Array.from(new Uint8Array(arrayBuffer))))
     .replace(/\+/g, '-')
@@ -79,6 +93,12 @@ function base64URLEncode(arrayBuffer: ArrayBuffer) {
     .replace(/=+$/, '')
 }
 
+/**
+ * Hashes a string with SHA-256.
+ * 
+ * @param {string} plain - String to hash.
+ * @returns {Promise<ArrayBuffer>} Hash as ArrayBuffer.
+ */
 async function sha256(plain: string) {
   const encoder = new TextEncoder()
   const data = encoder.encode(plain)
@@ -86,10 +106,21 @@ async function sha256(plain: string) {
   return hash
 }
 
+/**
+ * Generates a code verifier for OAuth2 PKCE.
+ * 
+ * @returns {string} Code verifier.
+ */
 export const generateCodeVerifier = () => {
   return base64URLEncode(crypto.getRandomValues(new Uint8Array(32)))
 }
 
+/**
+ * Generates a code challenge from a verifier.
+ * 
+ * @param {string} codeVerifier - Code verifier.
+ * @returns {Promise<string>} Code challenge.
+ */
 export const generateCodeChallenge = async (codeVerifier: string) => {
   return sha256(codeVerifier).then((hash) => {
     return base64URLEncode(hash)
