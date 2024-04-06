@@ -74,4 +74,16 @@ const getImageUrl = computed(() => {
 .custom-background {
   background-image: linear-gradient(to bottom right, #ffffff, #ffffff);
 }
+
+@media (max-width: 750px) {
+  .card-title{
+    white-space: nowrap  ;      /* Prevents text wrapping */
+    overflow: hidden;          /* Hides the overflowing content */
+    text-overflow: ellipsis;
+  }
+  .item-image{
+    max-width: 130px;
+    max-height: 100px ;
+  }
+}
 </style>

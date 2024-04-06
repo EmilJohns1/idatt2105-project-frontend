@@ -190,4 +190,12 @@ onMounted(async () => {
   margin-left: 20px;
   width: -webkit-fill-available;
 }
+@media (max-width: 750px) {
+  .calendar-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  margin-bottom: 20px; 
+}
+}
 </style>
