@@ -106,7 +106,6 @@ const shareQuiz = () => {
   navigator.clipboard
     .writeText(url)
     .then(() => {
-      console.log('URL copied to clipboard:', url)
       popupMessage.value = `Link Copied! Send the link to your friends to collaborate!`
       showErrorPopup.value = true
       fontColor.value = 'green'
@@ -140,7 +139,6 @@ const hideErrorPopup = () => {
 
 onMounted(() => {
   fetchCollaborators()
-  console.log('mounted')
 })
 </script>
 

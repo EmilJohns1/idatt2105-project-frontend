@@ -51,16 +51,16 @@ type Props = {
   tags?: Tag[]
   lastModifiedDate?: string
   type?: 'quiz' | 'category'
-};
+}
 
-const props = defineProps<Props>();
-const emits = defineEmits(['clicked']);
+const props = defineProps<Props>()
+const emits = defineEmits(['clicked'])
 const latestDate = computed(() => {
-  return props.creationDate && (!props.lastModifiedDate || new Date(props.creationDate) > new Date(props.lastModifiedDate))
+  return props.creationDate &&
+    (!props.lastModifiedDate || new Date(props.creationDate) > new Date(props.lastModifiedDate))
     ? props.creationDate
-    : props.lastModifiedDate;
-});
-
+    : props.lastModifiedDate
+})
 
 const handleClick = () => {
   if (props.clickable) {
@@ -117,7 +117,7 @@ const handleClick = () => {
 
 .tags-icon {
   cursor: cursor;
-  font-size: 1.75em; 
+  font-size: 1.75em;
 }
 .footer-content {
   display: flex;

@@ -3,63 +3,81 @@
     <div class="header">
       <h1>{{ categoryName }}</h1>
       <p>Try out all the quizzes made by our bustling community</p>
-        <div class="sort-select-container">
-          <select v-model="selectedSort" @change="changeSort">
-            <option v-for="option in sortOptions" :key="option.value" :value="option.value">
-              {{ option.text }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div class="tags-input-container">
-        <div class="tags-input">
-          <input
-            type="text"
-            v-model="currentTag"
-            @keyup.enter="addTag"
-            placeholder="Search Tags..."
-            class="input-tag"
-          />
-          <button @click="addTag" class="add-tag-btn">Add tag</button>
-        </div>
-        <ul class="tags-list">
-          <li v-for="(tag, index) in searchTags" :key="index" class="tag">
-            {{ tag }}
-            <button @click="removeTag(index)" class="remove-tag">x</button>
-          </li>
-        </ul>
+      <div class="sort-select-container">
+        <select v-model="selectedSort" @change="changeSort">
+          <option v-for="option in sortOptions" :key="option.value" :value="option.value">
+            {{ option.text }}
+          </option>
+        </select>
       </div>
     </div>
-    <div class="quizzes-grid">
-      <CardItem
-        v-for="quiz in filteredQuizzes"
-        :key="quiz.id"
-        :id="quiz.id"
-        :image="quiz.quizPictureUrl || '/defualt-quiz-image.jpg'"
-        :title="quiz.title"
-        :description="quiz.description"
-        :authorName="authorName(quiz)"
-        :tags="quiz.tags"
-        :date="quiz.creationDate"
-        :lastModifiedDate="quiz.lastModifiedDate"
-        :clickable="true"
-        :type="'quiz'"
-        @clicked="() => goToQuiz(quiz.id, quiz.title)"
-      />
+    <div class="tags-input-container">
+      <div class="tags-input">
+        <input
+          type="text"
+          v-model="currentTag"
+          @keyup.enter="addTag"
+          placeholder="Search Tags..."
+          class="input-tag"
+        />
+        <button @click="addTag" class="add-tag-btn">Add tag</button>
+      </div>
+      <ul class="tags-list">
+        <li v-for="(tag, index) in searchTags" :key="index" class="tag">
+          {{ tag }}
+          <button @click="removeTag(index)" class="remove-tag">x</button>
+        </li>
+      </ul>
     </div>
-    <div class="pagination-controls">
-      <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">&lt; Previous</button>
-      <button @click="changePage(1)" :disabled="currentPage === 1">1</button>
+  </div>
+  <div class="quizzes-grid">
+    <CardItem
+      v-for="quiz in filteredQuizzes"
+      :key="quiz.id"
+      :id="quiz.id"
+      :image="quiz.quizPictureUrl || '/default.jpg'"
+      :title="quiz.title"
+      :description="quiz.description"
+      :authorName="authorName(quiz)"
+      :tags="quiz.tags"
+      :date="quiz.creationDate"
+      :lastModifiedDate="quiz.lastModifiedDate"
+      :clickable="true"
+      :type="'quiz'"
+      @clicked="() => goToQuiz(quiz.id, quiz.title)"
+    />
+  </div>
+  <div class="pagination-controls">
+    <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">&lt; Previous</button>
+    <button @click="changePage(1)" :disabled="currentPage === 1">1</button>
 
-      <span v-if="currentPage > 3" class="pagination-ellipsis">...</span>
-      <button v-if="currentPage > 2" @click="changePage(currentPage - 1)">{{ currentPage - 1 }}</button>
-      <button v-if="currentPage > 1 && currentPage < totalPages" class="current-page" :disabled="true">{{ currentPage }}</button>
-      <button v-if="currentPage < totalPages - 1" @click="changePage(currentPage + 1)">{{ currentPage + 1 }}</button>
-      <span v-if="currentPage < totalPages - 2" class="pagination-ellipsis">...</span>
+    <span v-if="currentPage > 3" class="pagination-ellipsis">...</span>
+    <button v-if="currentPage > 2" @click="changePage(currentPage - 1)">
+      {{ currentPage - 1 }}
+    </button>
+    <button
+      v-if="currentPage > 1 && currentPage < totalPages"
+      class="current-page"
+      :disabled="true"
+    >
+      {{ currentPage }}
+    </button>
+    <button v-if="currentPage < totalPages - 1" @click="changePage(currentPage + 1)">
+      {{ currentPage + 1 }}
+    </button>
+    <span v-if="currentPage < totalPages - 2" class="pagination-ellipsis">...</span>
 
-      <button v-if="totalPages > 1" @click="changePage(totalPages)" :disabled="currentPage === totalPages">{{ totalPages }}</button>
-      <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next &gt;</button>
-    </div>
+    <button
+      v-if="totalPages > 1"
+      @click="changePage(totalPages)"
+      :disabled="currentPage === totalPages"
+    >
+      {{ totalPages }}
+    </button>
+    <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">
+      Next &gt;
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -81,17 +99,17 @@ const authorName = (quiz: QuizDto) => {
 }
 
 // Reactive state declarations
-const quizzes = ref<QuizDto[]>([]);
-const route = useRoute();
-const router = useRouter();
+const quizzes = ref<QuizDto[]>([])
+const route = useRoute()
+const router = useRouter()
 //const searchTerm = ref(''); if we ever use it
-const categoryName = ref(route.params.category ? route.params.category.toString() : '');
-const quizzesPerPage = 6;
-const currentPage = ref(1);
-const totalPages = ref(0);
-const searchTags = ref<string[]>([]);
-const currentTag = ref('');
-const selectedSort = ref('creationDate,desc'); // Default sort option
+const categoryName = ref(route.params.category ? route.params.category.toString() : '')
+const quizzesPerPage = 6
+const currentPage = ref(1)
+const totalPages = ref(0)
+const searchTags = ref<string[]>([])
+const currentTag = ref('')
+const selectedSort = ref('creationDate,desc') // Default sort option
 
 // Sort options for quizzes
 const sortOptions = [
@@ -102,125 +120,133 @@ const sortOptions = [
   { value: 'title,asc', text: 'Title (A-Z)' },
   { value: 'title,desc', text: 'Title (Z-A)' }
   // Add more options here
-];
-
+]
 
 const changeSort = async () => {
-  await fetchQuizzes();
+  await fetchQuizzes()
 }
 
 /**
  * Capitalizes the first letter of the category name for display.
  */
 const capitalizeCategoryName = () => {
-  const name = route.params.category ? route.params.category.toString() : 'All';
-  return name.charAt(0).toUpperCase() + name.slice(1);
-};
+  const name = route.params.category ? route.params.category.toString() : 'All'
+  return name.charAt(0).toUpperCase() + name.slice(1)
+}
 
 /**
  * Fetches quizzes based on the current category and page number.
  */
 const fetchQuizzes = async () => {
   if (searchTags.value.length > 0) {
-    await searchQuizzesByTags();
+    await searchQuizzesByTags()
   } else {
-    let response;
+    let response
     if (categoryName.value === 'All') {
-      response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage, selectedSort.value);
+      response = await fetchAllQuizzes(currentPage.value - 1, quizzesPerPage, selectedSort.value)
     } else {
-      response = await fetchQuizzesByCategory(categoryName.value, currentPage.value - 1, quizzesPerPage, selectedSort.value);
+      response = await fetchQuizzesByCategory(
+        categoryName.value,
+        currentPage.value - 1,
+        quizzesPerPage,
+        selectedSort.value
+      )
     }
-  
+
     if (response) {
-      quizzes.value = response.content;
-      totalPages.value = Math.ceil(response.totalElements / quizzesPerPage);
+      quizzes.value = response.content
+      totalPages.value = Math.ceil(response.totalElements / quizzesPerPage)
     } else {
-      console.error('Failed to fetch quizzes');
-      quizzes.value = [];
-      totalPages.value = 0;
+      console.error('Failed to fetch quizzes')
+      quizzes.value = []
+      totalPages.value = 0
     }
   }
-};
+}
 
 /**
  * Fetches quizzes based on the current category and page number.
  */
 const searchQuizzesByTags = async () => {
   if (searchTags.value.length > 0) {
-    const response = await fetchQuizzesByTags(searchTags.value, currentPage.value - 1, quizzesPerPage, selectedSort.value);
+    const response = await fetchQuizzesByTags(
+      searchTags.value,
+      currentPage.value - 1,
+      quizzesPerPage,
+      selectedSort.value
+    )
     if (response && response.content) {
-      let filteredContent = response.content;
+      let filteredContent = response.content
 
       // Filter by that category except for all, 'All' is special
       if (categoryName.value !== 'All') {
-        filteredContent = filteredContent.filter(quiz => quiz.categoryName === categoryName.value);
+        filteredContent = filteredContent.filter((quiz) => quiz.categoryName === categoryName.value)
       }
 
-      quizzes.value = filteredContent;
-      totalPages.value = Math.ceil(filteredContent.length / quizzesPerPage);
+      quizzes.value = filteredContent
+      totalPages.value = Math.ceil(filteredContent.length / quizzesPerPage)
     } else {
-      quizzes.value = [];
-      totalPages.value = 0;
-      console.error('Failed to fetch quizzes by tags');
+      quizzes.value = []
+      totalPages.value = 0
+      console.error('Failed to fetch quizzes by tags')
     }
   } else {
-    console.log('No tags specified for search');
     // If no tags are specified, fetch quizzes as per the category selected
     if (categoryName.value !== 'All') {
-      await fetchQuizzes();
+      await fetchQuizzes()
     }
   }
-};
+}
 
 /**
  * Watches for changes in the search tags and current page number.
  */
 watch([searchTags, currentPage], async () => {
   if (searchTags.value.length > 0) {
-    await searchQuizzesByTags();
+    await searchQuizzesByTags()
   }
-});
+})
 
 /**
  * Adds a tag to the searchTags array and triggers a search.
  */
 const addTag = () => {
   if (currentTag.value && !searchTags.value.includes(currentTag.value)) {
-    searchTags.value.push(currentTag.value);
-    currentTag.value = '';
-    searchQuizzesByTags(); 
+    searchTags.value.push(currentTag.value)
+    currentTag.value = ''
+    searchQuizzesByTags()
   }
-};
+}
 
 /**
  * Removes a tag from the searchTags array and triggers the search to update.
  * @param {number} index - The index of the tag to remove.
  */
 const removeTag = (index: number) => {
-  searchTags.value.splice(index, 1);
+  searchTags.value.splice(index, 1)
   if (searchTags.value.length > 0) {
-    searchQuizzesByTags();
+    searchQuizzesByTags()
   } else {
-    fetchQuizzes();
+    fetchQuizzes()
   }
-};
+}
 
 /**
  * Fetches quizzes on component mount based on category or tags.
  */
 onMounted(() => {
-  categoryName.value = capitalizeCategoryName();
-  fetchQuizzes();
-});
+  categoryName.value = capitalizeCategoryName()
+  fetchQuizzes()
+})
 
 /**
  * Changes the current page of quizzes.
  * @param newPage - The new page number to navigate to.
  */
 const changePage = async (newPage: number) => {
-  currentPage.value = newPage;
-  await fetchQuizzes(); 
-};
+  currentPage.value = newPage
+  await fetchQuizzes()
+}
 
 /**
  * Navigates to the quizzes page.
@@ -228,20 +254,18 @@ const changePage = async (newPage: number) => {
  * @param {string} quizTitle - The title of the quiz to navigate to.
  */
 function goToQuiz(quizId: number, quizTitle: string) {
-  const formattedTitle = encodeURIComponent(quizTitle.replace(/\s+/g, '-'));
-  router.push(`/quiz/${quizId}-${formattedTitle}`);
+  const formattedTitle = encodeURIComponent(quizTitle.replace(/\s+/g, '-'))
+  router.push(`/quiz/${quizId}-${formattedTitle}`)
 }
 
-const filteredQuizzes = computed(() => quizzes.value);
-
+const filteredQuizzes = computed(() => quizzes.value)
 
 const searchQuizzes = async () => {
   // Future me, implement functionality to search quizzes by title?
-  quizzes.value = []; // Clear current quizzes to ensure a fresh search
-  currentPage.value = 1; // Start from the first page
-  await fetchQuizzes(); 
-};
-
+  quizzes.value = [] // Clear current quizzes to ensure a fresh search
+  currentPage.value = 1 // Start from the first page
+  await fetchQuizzes()
+}
 </script>
 
 <style scoped>
@@ -310,9 +334,9 @@ const searchQuizzes = async () => {
   cursor: pointer;
 }
 
-
-
-.input-tag, .add-tag-btn, .search-btn {
+.input-tag,
+.add-tag-btn,
+.search-btn {
   height: 40px;
 }
 
@@ -342,23 +366,23 @@ const searchQuizzes = async () => {
   background-color: #f0f0f0;
 }
 
-.pagination-controls button.current-page, 
+.pagination-controls button.current-page,
 .pagination-controls button:disabled {
   background-color: black;
   color: white;
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .pagination-controls span {
-  user-select: none; 
+  user-select: none;
 }
 
 .pagination-controls .pagination-ellipsis {
   text-align: center;
-  padding: 8px 16px; 
+  padding: 8px 16px;
   margin: 0 5px;
   display: inline-block;
-  min-width: 36px; 
+  min-width: 36px;
 }
 
 .pagination-controls .pagination-ellipsis {

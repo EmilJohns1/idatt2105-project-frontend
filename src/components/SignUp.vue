@@ -46,7 +46,6 @@ const submitForm = async () => {
     password: password.value
   }
   const response = await registerUser(userData)
-  console.log(response)
   if (response === null) {
     registrationError.value = 'Connection to server failed, please try again.'
     email.value = ''

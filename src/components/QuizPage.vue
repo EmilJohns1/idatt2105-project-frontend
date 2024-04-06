@@ -48,7 +48,7 @@ import type { Question } from '@/types/Question'
 import type { Alternative } from '@/types/Alternative'
 import type { AlternativeRecord } from '@/types/AlternativeRecord'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
-import { ref , computed } from 'vue'
+import { ref, computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 import { getQuestionsFromQuizId, registerQuizAttempt, getQuizByQuizId } from '@/api/quizHooks'
@@ -102,9 +102,9 @@ const frontPage = ref(true)
 const startQuiz = async () => {
   frontPage.value = false
   quiz.value = await getQuizByQuizId(quizId)
-  if(quiz.value){
-    quizAttemptRequest.title=quiz.value.title
-    isRandomized.value=quiz.value.randomizedOrder
+  if (quiz.value) {
+    quizAttemptRequest.title = quiz.value.title
+    isRandomized.value = quiz.value.randomizedOrder
   }
   fetchQuestions()
 }
@@ -144,13 +144,11 @@ const clicked = async (index: number) => {
 
     const alternative = currentQuestion.value.alternatives[index]
     alternative.clicked = !alternative.clicked
-    console.log(currentQuestion.value.alternatives)
     if (alternativeIndex === -1) {
       clickedArray.push(index)
     } else {
       clickedArray.splice(alternativeIndex, 1)
     }
-    console.log(clickedArray)
     updateClickedClass()
   }
 }
@@ -167,7 +165,6 @@ const updateClickedClass = () => {
 }
 
 const fetchQuestions = async () => {
-  console.log("start")
   const username = userStore.getUserName
   if (username) {
     const userData = await getUserByUsername(username)
@@ -176,18 +173,19 @@ const fetchQuestions = async () => {
 
   questions = await getQuestionsFromQuizId(quizId)
 
-  if(isRandomized.value===true && questions!==null){
-    shuffle(questions)}
+  if (isRandomized.value === true && questions !== null) {
+    shuffle(questions)
+  }
   nextQuestion()
 }
 
-const shuffle = (array: Question[]) => { 
-  for (let i = array.length - 1; i > 0; i--) { 
-    const j = Math.floor(Math.random() * (i + 1)); 
-    [array[i], array[j]] = [array[j], array[i]]; 
-  } 
-  return array; 
-}; 
+const shuffle = (array: Question[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
 
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {
@@ -220,15 +218,16 @@ const nextQuestion = async () => {
     })
   } else {
     scoreDisplay.value.scoreText =
-      'Score: ' +
-      Math.floor(currentScore * 100) / 100 +
-      ' / ' +
-      Math.floor(maxScore * 100) / 100
+      'Score: ' + Math.floor(currentScore * 100) / 100 + ' / ' + Math.floor(maxScore * 100) / 100
     const container = document.querySelector('.container')
     const scoreDisplayElement = document.querySelector('.score-display')
     const exploreButton = document.querySelector('.exploreButton')
 
-    if (container instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement && exploreButton instanceof HTMLElement) {
+    if (
+      container instanceof HTMLElement &&
+      scoreDisplayElement instanceof HTMLElement &&
+      exploreButton instanceof HTMLElement
+    ) {
       container.style.display = 'none'
       scoreDisplayElement.style.left = '44%'
       exploreButton.style.display = 'inline'
@@ -260,7 +259,6 @@ const submit = async () => {
     let pointsForQuestion = 0
 
     questionAttempt.alternatives.forEach((alternative, index) => {
-      console.log(alternative)
       const button = document.getElementById(`button-${index}`)
 
       if (!button) {
@@ -355,13 +353,11 @@ const submit = async () => {
         falseButton.style.opacity = '0.5'
       }
     }
-    
+
     quizAttemptRequest.score += currentQuestion.value.points
     questionAttempts.push(questionAttempt)
   }
-  console.log(quizAttemptRequest)
   if (questions && currentQuestionIndex >= questions.length - 1) {
-    console.log('done!')
     await registerQuizAttempt(quizAttemptRequest)
   }
   numberOfCorrect = 0
@@ -394,7 +390,6 @@ const showQuestion = (index: number) => {
         correctAnswer: question.correctAnswer
       }
     }
-    console.log(currentQuestion.value)
   }
   updateClickedClass()
 }
@@ -416,7 +411,7 @@ const showQuestion = (index: number) => {
   display: none;
   position: absolute;
   top: 500px;
-  left:30%;
+  left: 30%;
   border: none;
   background-color: #000000;
   color: white;
@@ -555,9 +550,9 @@ const showQuestion = (index: number) => {
     font-size: 2vw;
   }
   .exploreButton {
-  top: 350px;
-  font-size: 2vw;
-}
+    top: 350px;
+    font-size: 2vw;
+  }
 
   #header {
     font-size: 20px;

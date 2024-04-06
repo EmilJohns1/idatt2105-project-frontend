@@ -153,13 +153,12 @@ const userStore = useUserStore()
 const questions = ref<any[]>([])
 const hoveredIndex = ref<number | null>(null)
 const originalPictureUrl = ref('')
-const popupMessage = ref<PopupMessage>({ message: '', color: '' });
-const isVisible = ref(false);
+const popupMessage = ref<PopupMessage>({ message: '', color: '' })
+const isVisible = ref(false)
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
   quiz.value = await getQuizByQuizId(quizId)
-  console.log('Quiz:', quiz.value)
   if (quiz.value) {
     editedQuiz.value.title = quiz.value.title
     editedQuiz.value.description = quiz.value.description
@@ -182,7 +181,6 @@ const fetchData = async () => {
     const username = userStore.getUserName
     userData.value = await getUserByUsername(username || '')
     categories.value = await getCategories()
-    console.log(questions.value)
   }
 }
 
@@ -196,15 +194,14 @@ const tagArray = computed(() =>
   editedQuiz.value.tags.map((tag: { tagName: string }) => tag.tagName)
 )
 
-
 // Update quiz details
 const updateQuiz = async () => {
-  if (!checkQuestionCount()&&editedQuiz.value.public===true) {
-    showPopup('You need at least 5 questions to make your quiz public!', 'red');
+  if (!checkQuestionCount() && editedQuiz.value.public === true) {
+    showPopup('You need at least 5 questions to make your quiz public!', 'red')
     setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-    return;
+      window.location.reload()
+    }, 2000)
+    return
   }
 
   await updateTags(editedQuiz.value.tags, quizId)
@@ -218,21 +215,21 @@ const updateQuiz = async () => {
     randomizedOrder: editedQuiz.value.randomizedOrder,
     public: editedQuiz.value.public
   }
-  try{
-    showPopup('Updating...', '');
+  try {
+    showPopup('Updating...', '')
     await updateQuizById(quizId, quizData)
     setTimeout(async () => {
       await redirectToPage(quizId, editedQuiz.value.title)
-      showPopup('Updated', 'green');
+      showPopup('Updated', 'green')
       setTimeout(async () => {
-        window.location.reload();
+        window.location.reload()
       }, 500)
     }, 1000)
-  }catch{
-    showPopup('Failed to update', 'red');
+  } catch {
+    showPopup('Failed to update', 'red')
     setTimeout(async () => {
-      window.location.reload();
-  }, 1000)
+      window.location.reload()
+    }, 1000)
   }
 }
 
@@ -319,7 +316,6 @@ const uploadPicture = async (): Promise<void> => {
           'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/'
         )
 
-        console.log('Deleting current profile picture:', modifiedPictureUrl)
         const deleteSuccess = await deletePicture(modifiedPictureUrl)
 
         if (!deleteSuccess) {
@@ -330,12 +326,10 @@ const uploadPicture = async (): Promise<void> => {
 
       // Upload the new profile picture
       const imageUrl: string | null = await uploadFile(file.value)
-      console.log('Uploaded profile picture:', imageUrl)
 
       if (imageUrl) {
         const modifiedImageUrl = imageUrl.replace('https://quiz-project-fullstack.', 'https://')
         editedQuiz.value.quizPictureUrl = modifiedImageUrl
-        console.log('Profile picture updated successfully.')
       } else {
         console.error('Failed to update profile picture.')
       }
@@ -389,17 +383,17 @@ const addQuestion = async () => {
 }
 
 const checkQuestionCount = () => {
-  return questions.value.length >= 5;
-};
+  return questions.value.length >= 5
+}
 
 const showPopup = (message: string, color: string) => {
-  popupMessage.value = { message, color };
-  isVisible.value = true;
-};
+  popupMessage.value = { message, color }
+  isVisible.value = true
+}
 </script>
 
 <style scoped>
-#popup{
+#popup {
   z-index: 2;
 }
 

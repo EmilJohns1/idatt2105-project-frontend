@@ -45,11 +45,14 @@
       <Card class="recent-activity-section">
         <h2 id="header">Recent activity</h2>
         <ul class="activity-list">
-          <RouterLink class="activity-router" v-for="attempt in user.recentActivity" :key="attempt.id" :to="`/quiz/${attempt.quizId}-${attempt.quizName}/attempt/${attempt.id}`" >
-    <li class="activity-link">
-        {{ attempt.quizName }} - {{ attempt.date }}
-    </li>
-</RouterLink>
+          <RouterLink
+            class="activity-router"
+            v-for="attempt in user.recentActivity"
+            :key="attempt.id"
+            :to="`/quiz/${attempt.quizId}-${attempt.quizName}/attempt/${attempt.id}`"
+          >
+            <li class="activity-link">{{ attempt.quizName }} - {{ attempt.date }}</li>
+          </RouterLink>
         </ul>
       </Card>
     </div>
@@ -124,15 +127,15 @@ interface Quiz {
 interface Activity {
   id: number
   quizId: number
-  quizName:string
+  quizName: string
   date: string
 }
 
 interface Attempt {
-  id: string;
-  title: string;
-  quizId: string;
-  attemptTime: string; 
+  id: string
+  title: string
+  quizId: string
+  attemptTime: string
 }
 
 const user: Ref<User> = ref({
@@ -140,8 +143,7 @@ const user: Ref<User> = ref({
   profilePicture: null,
   email: '',
   quizzes: [],
-  recentActivity: [
-  ]
+  recentActivity: []
 })
 const searchQuery = ref('')
 const file = ref<File | null>(null) // Define file type
@@ -168,7 +170,6 @@ const fetchUserData = async () => {
         user.value.id = userData.id
         user.value.profilePicture = userData.profilePictureUrl
         user.value.email = userData.username
-        console.log('User data:', user.value)
         const quizzesData = await getQuizzesByUserId(userData.id)
         if (quizzesData) {
           user.value.quizzes = quizzesData.map((quiz) => ({
@@ -176,7 +177,6 @@ const fetchUserData = async () => {
             title: quiz.title,
             quizPictureUrl: quiz.quizPictureUrl
           }))
-          console.log('Quizzes:', user.value.quizzes)
           await fetchQuizComments()
         } else {
           console.error('Failed to fetch quizzes for the user:', userData.username)
@@ -192,30 +192,38 @@ const fetchUserData = async () => {
 
 const fetchRecentActivity = async () => {
   if (user.value.id) {
-    const recentActivityData = await getAttemptsByUserId(user.value.id, 10, 0);
+    const recentActivityData = await getAttemptsByUserId(user.value.id, 10, 0)
     if (recentActivityData) {
-      
-      user.value.recentActivity = recentActivityData.content.map((attempt: Attempt) => {
-        if (!attempt.attemptTime) {
-          return null; 
-        }
-        const [datePart, timePart] = attempt.attemptTime.split('T');
-        const [year, month, day] = datePart.split('-');
-        const [hourMinuteSecond] = timePart.split('.');
-        const [hour, minute, second] = hourMinuteSecond.split(':');
-        const attemptDate = new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
-        const formattedDate = `${('0' + attemptDate.getHours()).slice(-2)}:${('0' + attemptDate.getMinutes()).slice(-2)} ${('0' + attemptDate.getDate()).slice(-2)}/${('0' + (attemptDate.getMonth() + 1)).slice(-2)}/${attemptDate.getFullYear()}`;
+      user.value.recentActivity = recentActivityData.content
+        .map((attempt: Attempt) => {
+          if (!attempt.attemptTime) {
+            return null
+          }
+          const [datePart, timePart] = attempt.attemptTime.split('T')
+          const [year, month, day] = datePart.split('-')
+          const [hourMinuteSecond] = timePart.split('.')
+          const [hour, minute, second] = hourMinuteSecond.split(':')
+          const attemptDate = new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day),
+            Number(hour),
+            Number(minute),
+            Number(second)
+          )
+          const formattedDate = `${('0' + attemptDate.getHours()).slice(-2)}:${('0' + attemptDate.getMinutes()).slice(-2)} ${('0' + attemptDate.getDate()).slice(-2)}/${('0' + (attemptDate.getMonth() + 1)).slice(-2)}/${attemptDate.getFullYear()}`
 
-        return {
-          id: attempt.id,
-          quizName: attempt.title,
-          quizId: attempt.quizId,
-          date: formattedDate
-        };
-      }).filter(Boolean) as Activity[]; 
+          return {
+            id: attempt.id,
+            quizName: attempt.title,
+            quizId: attempt.quizId,
+            date: formattedDate
+          }
+        })
+        .filter(Boolean) as Activity[]
     }
   }
-};
+}
 
 const uploadProfilePicture = async (): Promise<void> => {
   if (file.value) {
@@ -227,7 +235,6 @@ const uploadProfilePicture = async (): Promise<void> => {
           'https://quiz-project-fullstack.'
         )
 
-        console.log('Deleting current profile picture:', modifiedProfilePictureUrl)
         const deleteSuccess = await deletePicture(modifiedProfilePictureUrl)
 
         if (!deleteSuccess) {
@@ -238,7 +245,6 @@ const uploadProfilePicture = async (): Promise<void> => {
 
       // Upload the new profile picture
       const imageUrl: string | null = await uploadFile(file.value)
-      console.log('Uploaded profile picture:', imageUrl)
 
       if (imageUrl) {
         // Update the user's profile picture URL
@@ -246,7 +252,6 @@ const uploadProfilePicture = async (): Promise<void> => {
         if (success) {
           user.value.profilePicture = imageUrl
           window.location.reload()
-          console.log('Profile picture updated successfully.')
         } else {
           console.error('Failed to update profile picture.')
         }
@@ -288,7 +293,6 @@ const fetchQuizComments = async (): Promise<void> => {
   if (user.value.id) {
     try {
       const fetchedComments = await getCommentsByUserId(user.value.id)
-      console.log('Fetched comments:', fetchedComments)
       if (fetchedComments) {
         // Clear the existing quiz comments
         quizComments.value = {}
@@ -299,7 +303,6 @@ const fetchQuizComments = async (): Promise<void> => {
           }
           quizComments.value[comment.quizId].push(comment)
         })
-        console.log('Quiz comments:', quizComments.value)
         const firstQuizWithComments = Object.keys(quizComments.value)[0]
         if (firstQuizWithComments) {
           currentQuizId.value = firstQuizWithComments
@@ -321,7 +324,6 @@ const navigateToNextQuiz = (): void => {
     const currentIndex = quizIds.indexOf(currentQuizId.value)
     const nextIndex = (currentIndex + 1) % quizIds.length
     currentQuizId.value = quizIds[nextIndex]
-    console.log('Navigated to next quiz:', currentQuizId.value)
   }
 }
 
@@ -331,7 +333,6 @@ const navigateToPreviousQuiz = (): void => {
     const currentIndex = quizIds.indexOf(currentQuizId.value)
     const previousIndex = (currentIndex - 1 + quizIds.length) % quizIds.length
     currentQuizId.value = quizIds[previousIndex]
-    console.log('Navigated to previous quiz:', currentQuizId.value)
   }
 }
 
@@ -473,9 +474,9 @@ h3 {
   padding: 0;
 }
 
-.activity-link{
+.activity-link {
   text-decoration: none;
-  color:#333;
+  color: #333;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -483,7 +484,7 @@ h3 {
   cursor: pointer;
 }
 
-.activity-router{
+.activity-router {
   text-decoration: none;
 }
 

@@ -22,7 +22,6 @@ export const updateQuizById = async (quizId: number, quizData: QuizRequest): Pro
     const response = await api.put(`/quizzes/${quizId}`, quizData)
 
     if (response.status === 200) {
-      console.log('Quiz updated successfully')
     } else {
       console.error('Failed to update quiz')
     }
@@ -37,11 +36,9 @@ export const useRegistration = () => {
 
   const registerQuiz = async (quizData: QuizRequest): Promise<number | null> => {
     try {
-      console.log(quizData)
       const response = await api.post('/quizzes', quizData)
 
       if (response.status === 201 && response.data && response.data.id) {
-        console.log('Quiz registered successfully')
         return response.data.id
       } else {
         console.error('Registration failed:', response.data)
@@ -64,11 +61,9 @@ export const useRegistration = () => {
 
 export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise<number | null> => {
   try {
-    console.log(quizData)
     const response = await api.post('/attempts/add', quizData)
 
     if (response.status === 201 && response.data && response.data.id) {
-      console.log('Quiz registered successfully')
       return response.data.id
     } else {
       console.error('Registration failed:', response.data)
@@ -84,9 +79,7 @@ export const addUserToQuiz = async (quizId: number, userId: number): Promise<voi
   try {
     const response = await api.post(`/quizzes/${quizId}/users/${userId}`)
 
-    if (response.status === 201) {
-      console.log('User added to quiz successfully')
-    } else {
+    if (response.status !== 201) {
       console.error('Failed to add user to quiz')
     }
   } catch (error) {
@@ -99,9 +92,7 @@ export const deleteUserFromQuiz = async (quizId: number, userId: number): Promis
   try {
     const response = await api.delete(`/quizzes/${quizId}/users/${userId}`)
 
-    if (response.status === 200) {
-      console.log('User deleted from quiz successfully')
-    } else {
+    if (response.status !== 200) {
       console.error('Failed to delete user from quiz')
     }
   } catch (error) {
@@ -113,10 +104,7 @@ export const deleteUserFromQuiz = async (quizId: number, userId: number): Promis
 export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
     const response = await api.patch(`/quizzes/add/tags/${quizId}`, tags)
-    console.log(response)
-    if (response.status === 200) {
-      console.log('Tag added to quiz successfully')
-    } else {
+    if (response.status !== 200) {
       console.error('Failed to add tag to quiz')
     }
   } catch (error) {
@@ -129,9 +117,7 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
   try {
     const response = await api.patch(`/quizzes/${quizId}/tags`, tags)
 
-    if (response.status === 200) {
-      console.log('Tag updated successfully')
-    } else {
+    if (response.status !== 200) {
       console.error('Failed to update tag')
     }
   } catch (error) {
@@ -179,11 +165,10 @@ export const fetchQuizzesByCategory = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`;
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
-      console.log('Quizzes by category:', response.data.content)
       return response.data
     } else {
       console.error(`Failed to fetch quizzes by category: ${category}. Status: ${response.status}`)
@@ -200,11 +185,10 @@ export const fetchAllQuizzes = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`;
+  const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
-      console.log('All quizzes:', response.data.content)
       return response.data
     } else {
       console.error('Failed to fetch all quizzes. Status:', response.status)
@@ -222,50 +206,52 @@ export const fetchQuizzesByTags = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes/filter-by-tags`;
-  const requestBody = JSON.stringify(tags); 
-  const queryParams = new URLSearchParams({ page: String(page), size: String(size), sort }).toString();
-  const fullUrl = `${fetchUrl}?${queryParams}`;
+  const fetchUrl = `/quizzes/filter-by-tags`
+  const requestBody = JSON.stringify(tags)
+  const queryParams = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+    sort
+  }).toString()
+  const fullUrl = `${fetchUrl}?${queryParams}`
 
   try {
     const response = await api.post(fullUrl, requestBody, {
       headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+        'Content-Type': 'application/json'
+      }
+    })
 
     if (response.status === 200 && response.data) {
-      console.log('Quizzes by tags:', response.data);
-      return response.data;
+      return response.data
     } else {
-      console.error(`Failed to fetch quizzes by tags. Status: ${response.status}`);
-      return null;
+      console.error(`Failed to fetch quizzes by tags. Status: ${response.status}`)
+      return null
     }
   } catch (error) {
-    console.error(`Failed to fetch quizzes by tags: ${error}`);
-    return null;
+    console.error(`Failed to fetch quizzes by tags: ${error}`)
+    return null
   }
-};
+}
 
 /**
- * 
- * @returns 
+ *
+ * @returns
  */
 export const fetchAllTags = async (): Promise<Tag[] | null> => {
   try {
-    const response = await api.get('/api/quizzes/all/tags');
+    const response = await api.get('/api/quizzes/all/tags')
     if (response.status === 200) {
-      console.log('All tags:', response.data);
-      return response.data;
+      return response.data
     } else {
-      console.error('Failed to fetch all tags. Status:', response.status);
-      return null;
+      console.error('Failed to fetch all tags. Status:', response.status)
+      return null
     }
   } catch (error) {
-    console.error('Failed to fetch all tags:', error);
-    return null;
+    console.error('Failed to fetch all tags:', error)
+    return null
   }
-};
+}
 
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
@@ -285,9 +271,9 @@ export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[]
 export const getQuizAttemptById = async (id: number): Promise<QuizAttemptRequest | null> => {
   try {
     const response = await api.get(`/attempts/${id}`, {})
-    if (response.status === 200 ){
-    return response.data
-    } else{
+    if (response.status === 200) {
+      return response.data
+    } else {
       console.error('Error fetching attempt')
       return null
     }
