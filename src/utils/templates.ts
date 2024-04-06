@@ -16,7 +16,7 @@ export const templates = [
     imageUrl: 'template1.jpg',
     tags: ['tag1', 'tag2', 'tag3'],
     category: 'string',
-    isPublic: true,
+    isPublic: false,
     isRandomized: true
   },
   {

@@ -77,6 +77,12 @@
             Randomize Questions: <input type="checkbox" v-model="editedQuiz.randomizedOrder" />
           </h3>
           <h3>Make Public: <input type="checkbox" v-model="editedQuiz.public" /></h3>
+          <Popup
+            v-if="isVisible"
+            :error-message="popupMessage.message"
+            :font-color="popupMessage.color"
+            @popup-closed="isVisible = false"
+          />
           <div class="button-container">
             <button type="submit" class="submit-button">Update Quiz</button>
           </div>
@@ -102,6 +108,7 @@
 </template>
 
 <script setup lang="ts">
+import Popup from '@/components/Popup.vue'
 import CollaborateModal from '@/components/CollaborateModal.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import ExportButton from '@/components/ExportButton.vue'
@@ -119,6 +126,7 @@ import { uploadFile, deletePicture } from '@/api/imageHooks'
 import { getAllQuestionsByQuizId, deleteQuestionByQuestionId } from '@/api/questionHooks'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import { type PopupMessage } from '@/types/PopupMessage'
 
 const router = useRouter()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
@@ -144,6 +152,8 @@ const userStore = useUserStore()
 const questions = ref<any[]>([])
 const hoveredIndex = ref<number | null>(null)
 const originalPictureUrl = ref('')
+const popupMessage = ref<PopupMessage>({ message: '', color: '' });
+const isVisible = ref(false);
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
@@ -171,6 +181,7 @@ const fetchData = async () => {
     const username = userStore.getUserName
     userData.value = await getUserByUsername(username || '')
     categories.value = await getCategories()
+    console.log(questions.value)
   }
 }
 
@@ -186,6 +197,14 @@ const tagArray = computed(() =>
 
 // Update quiz details
 const updateQuiz = async () => {
+  if (!checkQuestionCount()) {
+    showPopup('You need more than 5 questions to make your quiz public!', 'red');
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
+    return;
+  }
+
   await updateTags(editedQuiz.value.tags, quizId)
   await uploadPicture()
 
@@ -365,6 +384,15 @@ const removeQuestion = async (index: number) => {
 const addQuestion = async () => {
   await redirectToQuestionPage(quizId, editedQuiz.value.title)
 }
+
+const checkQuestionCount = () => {
+  return questions.value.length >= 5;
+};
+
+const showPopup = (message: string, color: string) => {
+  popupMessage.value = { message, color };
+  isVisible.value = true;
+};
 </script>
 
 <style scoped>

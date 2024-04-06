@@ -39,7 +39,6 @@
           </select>
         </h3>
         <h3>Randomize Questions: <input type="checkbox" v-model="isRandomized" /></h3>
-        <h3>Make Public: <input type="checkbox" v-model="isPublic" /></h3>
         <div class="button-container">
           <button type="submit" class="submit-button">Create quiz</button>
         </div>
