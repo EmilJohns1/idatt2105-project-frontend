@@ -14,8 +14,10 @@
             </div>
             <div class="separator"></div>
             <div class="details">
+              <div class="quizText">
               <h2>{{ quiz.title }}</h2>
               <p class="description">{{ quiz.description }}</p>
+              </div>
               <div class="author">
                 <img
                   :src="author.profilePictureUrl ? author.profilePictureUrl : defaultProfilePicture"
@@ -262,12 +264,6 @@ const formatLastModifiedDateHeader = (): string => {
   padding: 1.5rem 2rem 1rem 2rem;
 }
 
-@media (max-width: 1080px) {
-  .container {
-    width: 100%;
-  }
-}
-
 h2 {
   font-size: 24px;
   margin-bottom: 10px;
@@ -300,7 +296,7 @@ h2 {
 }
 
 .quiz-header {
-  max-height: 260px;
+  max-height: 280px;
   display: flex;
   justify-content: start;
   gap: 20px;
@@ -308,6 +304,10 @@ h2 {
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
+}
+.quizText{
+  max-height: 200px;
+  overflow-y: scroll;
 }
 
 .header-section {
@@ -343,16 +343,12 @@ h2 {
   flex-grow: 1;
 }
 
-.author {
-  margin-top: 20px;
-}
-
 .author-image {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
-  margin-top: 2.5rem;
+  margin-top: 0.5rem;
   vertical-align: text-bottom;
   border: 1px solid #333;
 }
@@ -484,5 +480,37 @@ h2 {
 
 .start-button:hover {
   background-color: darkgreen;
+}
+@media (max-width: 850px) {
+  .quiz-header {
+    max-height: 600px;
+    display: flex;
+    justify-content: start;
+    gap: 20px;
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  .content-area{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .separator{
+    display: none;
+  }
+  .quizText{
+    width: 100%;
+  }
+  .frontpage-container{
+    width: 100%;
+    padding: 5px;
+  }
+  .quiz-image img {
+    max-height: 150px;
+
+  }
 }
 </style>
