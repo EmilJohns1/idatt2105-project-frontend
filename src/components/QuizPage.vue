@@ -37,6 +37,7 @@
     <div class="score-display">
       {{ scoreDisplay.scoreText }}
     </div>
+    <button class="exploreButton" @click="router.push('/explore')">Back to explore page</button>
   </div>
 </template>
 
@@ -47,10 +48,10 @@ import type { Question } from '@/types/Question'
 import type { Alternative } from '@/types/Alternative'
 import type { AlternativeRecord } from '@/types/AlternativeRecord'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
-import { ref, onMounted, computed } from 'vue'
+import { ref , computed } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
-import { getQuestionsFromQuizId, registerQuizAttempt } from '@/api/quizHooks'
+import { getQuestionsFromQuizId, registerQuizAttempt, getQuizByQuizId } from '@/api/quizHooks'
 import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg'
 import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg'
 import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg'
@@ -63,6 +64,8 @@ const buttonState = ref<'submit' | 'next'>('submit')
 const scoreDisplay = ref({
   scoreText: 'Score: 0'
 })
+const quiz = ref<any | null>(null)
+const isRandomized = ref<boolean | null>(null)
 
 const buttonText = computed(() => {
   return buttonState.value === 'submit' ? 'Submit Answer' : 'Next Question ->'
@@ -86,6 +89,7 @@ let maxScore = 0
 let tofClicked = true
 
 const quizAttemptRequest = {
+  title: '',
   score: 0,
   userId: 0,
   quizId: quizId,
@@ -95,10 +99,14 @@ const quizAttemptRequest = {
 const clickedArray: number[] = [] // Array to store clicked alternative indexes'
 const frontPage = ref(true)
 
-const startQuiz = () => {
+const startQuiz = async () => {
   frontPage.value = false
+  quiz.value = await getQuizByQuizId(quizId)
+  if(quiz.value){
+    quizAttemptRequest.title=quiz.value.title
+    isRandomized.value=quiz.value.randomizedOrder
+  }
   fetchQuestions()
-  console.log("check")
 }
 
 const toggleButtonState = async () => {
@@ -167,8 +175,20 @@ const fetchQuestions = async () => {
   }
 
   questions = await getQuestionsFromQuizId(quizId)
+
+  if(isRandomized.value===true && questions!==null){
+    shuffle(questions)}
   nextQuestion()
 }
+
+const shuffle = (array: Question[]) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
+
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {
     currentQuestionIndex++
@@ -206,10 +226,12 @@ const nextQuestion = async () => {
       Math.floor(maxScore * 100) / 100
     const container = document.querySelector('.container')
     const scoreDisplayElement = document.querySelector('.score-display')
+    const exploreButton = document.querySelector('.exploreButton')
 
-    if (container instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement) {
+    if (container instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement && exploreButton instanceof HTMLElement) {
       container.style.display = 'none'
-      scoreDisplayElement.style.left = '45%'
+      scoreDisplayElement.style.left = '44%'
+      exploreButton.style.display = 'inline'
     }
   }
 }
@@ -390,6 +412,21 @@ const showQuestion = (index: number) => {
   max-width: 20ch;
   z-index: 2;
 }
+.exploreButton {
+  display: none;
+  position: absolute;
+  top: 500px;
+  left:30%;
+  border: none;
+  background-color: #000000;
+  color: white;
+  border-radius: 20px;
+  font-size: 1.5vw;
+  cursor: pointer;
+  width: 40%;
+  margin-left: 10px;
+  margin-right: 10px;
+}
 .upright {
   position: absolute;
   top: 1px;
@@ -517,6 +554,10 @@ const showQuestion = (index: number) => {
   .score-display {
     font-size: 2vw;
   }
+  .exploreButton {
+  top: 350px;
+  font-size: 2vw;
+}
 
   #header {
     font-size: 20px;
