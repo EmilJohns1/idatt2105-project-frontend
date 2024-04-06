@@ -135,9 +135,8 @@ const fetchQuizAttempt = async () => {
       attempt.alternatives.forEach(alternative => {
         if(alternative.wasCorrect){
           correctAlternatives++
-        }
-      alternativePoints=Math.floor(currentQuestionAttempt.value.points/correctAlternatives*100)/100
-      });
+        }})
+      alternativePoints=Math.floor(attempt.points/correctAlternatives*100)/100
       attempt.alternatives.forEach(alternative => {
         if(alternative.wasCorrect&&alternative.wasSelected){
           pointsForQuestion+=alternativePoints
