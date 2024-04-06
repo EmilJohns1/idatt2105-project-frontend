@@ -18,7 +18,6 @@ export const uploadFile = async (file: File): Promise<string | null> => {
 }
 
 export const deletePicture = async (url: string): Promise<boolean> => {
-  console.log('url:', url)
   try {
     const response = await api.delete('/storage/deleteFile', {
       headers: {

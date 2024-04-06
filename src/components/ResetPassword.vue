@@ -60,7 +60,6 @@ const submit = async () => {
     }
 
     // Call the resetPassword API method with the reset request object
-    console.log('Reset request:', resetRequest)
     await resetPassword(resetRequest)
 
     // redirect to the login page after successful password reset

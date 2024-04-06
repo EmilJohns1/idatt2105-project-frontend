@@ -42,7 +42,6 @@ const showForgotPasswordModal = ref(false)
 const { loginUser, loginError } = useLogin() // Import loginError from useLogin
 
 const submitLogin = async () => {
-  console.log(email.value, password.value, 'logged in')
   const userData: LoginRequest = {
     username: email.value,
     password: password.value

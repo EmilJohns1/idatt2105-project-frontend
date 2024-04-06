@@ -79,10 +79,9 @@ const updateTimer = () => {
 const fetchActivityData = async () => {
   try {
     const userId = props.id
-    const attempts = (await getAttemptsByUserId(userId,100,0)) 
-    console.log('attempts:', attempts)
+    const attempts = await getAttemptsByUserId(userId, 100, 0)
 
-    const events: Event[] = attempts.content.map((attempt:Attempt) => ({
+    const events: Event[] = attempts.content.map((attempt: Attempt) => ({
       title: '✔',
       date: attempt.attemptTime // Use the attemptTime directly
     }))
@@ -113,8 +112,6 @@ const fetchActivityData = async () => {
         break
       }
     }
-
-    console.log('streak:', streak.value)
 
     // Convert unique days to attributes format
     attributes.value = Array.from(uniqueDays).map((day) => ({
@@ -151,7 +148,6 @@ resetTimerDaily()
 
 onMounted(async () => {
   await fetchActivityData()
-  console.log('calendarEvents:', calendarEvents.value)
 })
 </script>
 

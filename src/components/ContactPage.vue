@@ -81,7 +81,6 @@ export default {
           this.formData.userId = userData.id
           const success = await createFeedback(this.formData)
           if (success) {
-            console.log('Feedback submitted successfully.')
             this.resetForm()
             this.feedbackError = 'Feedback submitted successfully.'
           } else {

@@ -50,7 +50,6 @@ export const useLogin = () => {
       const response = await api.post('/user/login', userData)
 
       if (response.status === 200) {
-        console.log('User logged in successfully')
         return true
       } else {
         console.error('Login failed:', response.data)

@@ -33,14 +33,14 @@ interface Category {
   name: string
 }
 onMounted(async () => {
-  const fetchedCategories = await getCategories();
+  const fetchedCategories = await getCategories()
   if (fetchedCategories) {
     // Transform the string array to the expected object array format
-    categories.value = fetchedCategories.map((name) => ({ id: name, name }));
+    categories.value = fetchedCategories.map((name) => ({ id: name, name }))
   } else {
-    console.error('Could not fetch categories');
+    console.error('Could not fetch categories')
   }
-});
+})
 
 const filteredCategories = computed(() => {
   const results = []
@@ -58,11 +58,9 @@ const filteredCategories = computed(() => {
 
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
-    console.log('Navigating to All quizzes')
     router.push({ name: 'Category', params: { category: 'all' } })
   } else {
     const lowerCaseCategoryName = categoryName.toLowerCase()
-    console.log('Navigating to ', categoryName)
     router.push({
       name: 'Category',
       params: { category: lowerCaseCategoryName }

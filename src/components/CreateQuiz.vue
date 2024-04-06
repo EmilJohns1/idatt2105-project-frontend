@@ -147,7 +147,6 @@ const addTagElement = () => {
   const tagContent = input.value!.value.trim()
 
   if (tagContent !== '') {
-    console.log(tagArray.value.length)
     tagArray.value.push(tagContent)
 
     const tag = document.createElement('li')
