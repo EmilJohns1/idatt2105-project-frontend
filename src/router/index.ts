@@ -107,7 +107,17 @@ const router = createRouter({
     {
       path: '/quiz/create',
       name: 'createQuiz',
-      component: CreateQuizView
+      component: CreateQuizView,
+      beforeEnter: (to, from, next) => {
+        const userStore = useUserStore()
+        const currentUser = userStore.getUserName
+        if (!currentUser) {
+          console.error('User not logged in')
+          next('/login')
+          return
+        }
+        next()
+      }
     }
     ,
     {
