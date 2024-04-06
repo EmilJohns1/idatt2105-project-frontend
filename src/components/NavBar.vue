@@ -1,11 +1,10 @@
 <template>
   <div class="nav-container">
     <ul class="navbar">
-      <li id="logo" @click="goHome()">QuizApp</li>
+      <li id="logo" @click="goHome()">Qurious</li>
       <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
       <li><RouterLink to="/quiz/create" class="link">Create</RouterLink></li>
       <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
-      <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
       <li class="profile-pic" v-if="isLoggedIn">
         <RouterLink :to="isLoggedIn ? '/user' : '/login'">
           <img
@@ -116,6 +115,7 @@ ul {
   margin-right: 5%;
   margin-left: 2%;
   cursor: default;
+  font-family: 'Amita'
 }
 
 #logo:hover {

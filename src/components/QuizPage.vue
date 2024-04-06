@@ -37,6 +37,7 @@
     <div class="score-display">
       {{ scoreDisplay.scoreText }}
     </div>
+    <button class="exploreButton" @click="router.push('/explore')">Back to explore page</button>
   </div>
 </template>
 
@@ -103,7 +104,7 @@ const startQuiz = async () => {
   quiz.value = await getQuizByQuizId(quizId)
   if(quiz.value){
     quizAttemptRequest.title=quiz.value.title
-    isRandomized.value=quiz.value.isRandomized
+    isRandomized.value=quiz.value.randomizedOrder
   }
   fetchQuestions()
 }
@@ -174,8 +175,20 @@ const fetchQuestions = async () => {
   }
 
   questions = await getQuestionsFromQuizId(quizId)
+
+  if(isRandomized.value===true && questions!==null){
+    shuffle(questions)}
   nextQuestion()
 }
+
+const shuffle = (array: Question[]) => { 
+  for (let i = array.length - 1; i > 0; i--) { 
+    const j = Math.floor(Math.random() * (i + 1)); 
+    [array[i], array[j]] = [array[j], array[i]]; 
+  } 
+  return array; 
+}; 
+
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {
     currentQuestionIndex++
@@ -213,10 +226,12 @@ const nextQuestion = async () => {
       Math.floor(maxScore * 100) / 100
     const container = document.querySelector('.container')
     const scoreDisplayElement = document.querySelector('.score-display')
+    const exploreButton = document.querySelector('.exploreButton')
 
-    if (container instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement) {
+    if (container instanceof HTMLElement && scoreDisplayElement instanceof HTMLElement && exploreButton instanceof HTMLElement) {
       container.style.display = 'none'
-      scoreDisplayElement.style.left = '45%'
+      scoreDisplayElement.style.left = '44%'
+      exploreButton.style.display = 'inline'
     }
   }
 }
@@ -397,6 +412,21 @@ const showQuestion = (index: number) => {
   max-width: 20ch;
   z-index: 2;
 }
+.exploreButton {
+  display: none;
+  position: absolute;
+  top: 500px;
+  left:30%;
+  border: none;
+  background-color: #000000;
+  color: white;
+  border-radius: 20px;
+  font-size: 1.5vw;
+  cursor: pointer;
+  width: 40%;
+  margin-left: 10px;
+  margin-right: 10px;
+}
 .upright {
   position: absolute;
   top: 1px;
@@ -524,6 +554,10 @@ const showQuestion = (index: number) => {
   .score-display {
     font-size: 2vw;
   }
+  .exploreButton {
+  top: 350px;
+  font-size: 2vw;
+}
 
   #header {
     font-size: 20px;

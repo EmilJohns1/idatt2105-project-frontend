@@ -5,7 +5,7 @@ export const getAttemptsByUserId = async (userId: number, requestSize:number, pa
     const params = {
       page: pageNumber,
       size: requestSize,
-      sort: "id,asc"
+      sort: "id,desc"
     }
     const response = await api.get(`/attempts/all/${userId}`,{ params })
     console.log('response.data:', response.data)
