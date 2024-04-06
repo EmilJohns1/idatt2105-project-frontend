@@ -6,7 +6,6 @@ import type { Tag } from '@/types/Tag'
 import type { Page } from '@/types/Page'
 import type { QuizDto } from '@/types/QuizDto'
 import type { Question } from '@/types/Question'
-import type { Category } from '@/types/Category'
 
 export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   try {
@@ -141,25 +140,22 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
   }
 }
 
-export const getCategories = async (): Promise<Category[] | null> => {
+export const getCategories = async (): Promise<string[] | null> => {
   try {
-    const response = await api.get('/quizzes/categories');
+    const response = await api.get('/quizzes/categories', {})
 
     if (response.status === 200) {
-      // Directly return the array of category objects
-      return response.data.map((category: { id: number, name: string }) => ({
-        id: category.id,
-        name: category.name
-      }));
+      const categories = response.data.map((category: { name: string }) => category.name)
+      return categories
     } else {
-      console.error('Failed to fetch categories. Status:', response.status);
-      return null;
+      console.error('Failed to fetch categories. Status:', response.status)
+      return null
     }
   } catch (error) {
-    console.error('Error fetching categories:', error);
-    return null;
+    console.error('Error fetching categories:', error)
+    return null
   }
-};
+}
 
 export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> => {
   try {
