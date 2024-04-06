@@ -140,7 +140,6 @@ li a:hover {
 }
 .navbar {
   display: block;
-  min-width: 400px;
   border-bottom: solid 1px black;
 }
 .link {
