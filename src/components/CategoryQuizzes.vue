@@ -1,5 +1,5 @@
 <template>
-  <div class="category-quizzes-container">
+  <div class="category-quizzes-container primary-padding">
     <div class="header">
       <h1>{{ categoryName }}</h1>
       <p>Try out all the quizzes made by our bustling community</p>
@@ -20,6 +20,8 @@
             placeholder="Search Tags..."
             class="input-tag"
           />
+        </div>
+        <div>
           <button @click="addTag" class="add-tag-btn">Add tag</button>
         </div>
         <ul class="tags-list">
@@ -48,17 +50,7 @@
       />
     </div>
     <div class="pagination-controls">
-      <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">&lt; Previous</button>
-      <button @click="changePage(1)" :disabled="currentPage === 1">1</button>
-
-      <span v-if="currentPage > 3" class="pagination-ellipsis">...</span>
-      <button v-if="currentPage > 2" @click="changePage(currentPage - 1)">{{ currentPage - 1 }}</button>
-      <button v-if="currentPage > 1 && currentPage < totalPages" class="current-page" :disabled="true">{{ currentPage }}</button>
-      <button v-if="currentPage < totalPages - 1" @click="changePage(currentPage + 1)">{{ currentPage + 1 }}</button>
-      <span v-if="currentPage < totalPages - 2" class="pagination-ellipsis">...</span>
-
-      <button v-if="totalPages > 1" @click="changePage(totalPages)" :disabled="currentPage === totalPages">{{ totalPages }}</button>
-      <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">Next &gt;</button>
+      <PaginationComponent :currentPage="currentPage" :totalPages="totalPages" @changePage="changePage" />
     </div>
 </template>
 
@@ -69,7 +61,7 @@ import CardItem from './CardItem.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
-import { fetchAllTags } from '@/api/quizHooks'
+import PaginationComponent from './PaginationComponent.vue';
 
 /**
  * Retrieves the author's name for a given quiz.
@@ -245,9 +237,6 @@ const searchQuizzes = async () => {
 </script>
 
 <style scoped>
-.category-quizzes-container {
-  padding: 40px;
-}
 
 .tags-input-container {
   display: flex;
@@ -301,8 +290,6 @@ const searchQuizzes = async () => {
   background-color: transparent;
   cursor: pointer;
 }
-
-
 
 .input-tag, .add-tag-btn, .search-btn {
   height: 40px;

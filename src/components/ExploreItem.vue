@@ -1,5 +1,5 @@
 <template>
-  <div class="explore-container">
+  <div class="explore-container primary-padding">
     <h1>Explore</h1>
     <p>Choose your desired subject to start.</p>
     <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input" />
@@ -38,6 +38,7 @@ onMounted(async () => {
   if (fetchedCategories) {
     // Transform the string array to the expected object array format
     categories.value = fetchedCategories.map((name) => ({ id: name, name }));
+    console.log('Categories fetched:', categories.value);
   } else {
     console.error('Could not fetch categories');
   }
@@ -78,10 +79,7 @@ function goToCategory(categoryName: string) {
 }
 </script>
 
-<style>
-.explore-container {
-  padding: 40px;
-}
+<style scoped>
 
 .search-input {
   margin-bottom: 20px;

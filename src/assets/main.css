@@ -4,6 +4,9 @@
   display: grid;
   height: 100%;
 }
+.primary-padding {
+  padding: 40px;
+}
 
 .grid-layout {
   margin-top: 50px;
@@ -12,6 +15,14 @@
   gap: 40px;
   justify-content: center;
   align-items: start;
+}
+
+.input-shared {
+  margin-bottom: 20px;
+  width: 100%;
+  padding: var(--input-padding);
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
 }
 
 .link {
@@ -54,6 +65,7 @@
   display: flex;
   white-space: nowrap;
 }
+
 .tags-input .delete-button {
   background-color: none;
   border: none;
@@ -85,47 +97,3 @@
   outline: none;
 }
 
-/* Pagination Controls */
-.pagination-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-}
-
-.pagination-controls button {
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  background-color: white;
-  padding: 8px 16px;
-  margin: 0 5px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.pagination-controls button:hover:not(:disabled) {
-  background-color: #f0f0f0;
-}
-
-.pagination-controls button.current-page, 
-.pagination-controls button:disabled {
-  background-color: black;
-  color: white;
-  pointer-events: none; 
-}
-
-.pagination-controls span {
-  user-select: none; 
-}
-
-.pagination-controls .pagination-ellipsis {
-  text-align: center;
-  padding: 8px 16px; 
-  margin: 0 5px;
-  display: inline-block;
-  min-width: 36px; 
-}
-
-.pagination-controls .pagination-ellipsis {
-  cursor: default;
-}
