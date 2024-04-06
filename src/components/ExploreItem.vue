@@ -36,9 +36,8 @@ interface Category {
 onMounted(async () => {
   const fetchedCategories = await getCategories();
   if (fetchedCategories) {
-    // Transform the string array to the expected object array format
-    categories.value = fetchedCategories.map((name) => ({ id: name, name }));
-    console.log('Categories fetched:', categories.value);
+    categories.value = fetchedCategories;
+    console.log('Fetched categories', categories.value);
   } else {
     console.error('Could not fetch categories');
   }
