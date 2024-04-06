@@ -1,4 +1,10 @@
 <template>
+  <Popup class="popup"
+      v-if="popupErrorMessage"
+      :errorMessage="popupErrorMessage"
+      :fontColor="popupFontColor"
+      @popup-closed="clearPopup"
+    />
   <div class="container">
     <div class="sidebar">
       <div
@@ -154,6 +160,8 @@ const hoveredIndex = ref<number | null>(null)
 const originalPictureUrl = ref('')
 const popupMessage = ref<PopupMessage>({ message: '', color: '' });
 const isVisible = ref(false);
+const popupErrorMessage = ref('')
+const popupFontColor = ref('')
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
@@ -195,6 +203,11 @@ const tagArray = computed(() =>
   editedQuiz.value.tags.map((tag: { tagName: string }) => tag.tagName)
 )
 
+function clearPopup() {
+  popupErrorMessage.value = ''
+  popupFontColor.value = ''
+}
+
 // Update quiz details
 const updateQuiz = async () => {
   if (!checkQuestionCount()) {
@@ -216,16 +229,24 @@ const updateQuiz = async () => {
     randomizedOrder: editedQuiz.value.randomizedOrder,
     public: editedQuiz.value.public
   }
-
-  console.log('Updating quiz:', quizData)
-
-  await updateQuizById(quizId, quizData)
-
-  console.log('Edited quiz title:', editedQuiz.value.title)
-
-  setTimeout(async () => {
-    await redirectToPage(quizId, editedQuiz.value.title)
+  try{
+    popupErrorMessage.value="updating..."
+    await updateQuizById(quizId, quizData)
+    setTimeout(async () => {
+      await redirectToPage(quizId, editedQuiz.value.title)
+      popupErrorMessage.value="updated"
+      popupFontColor.value="green"
+      setTimeout(async () => {
+        clearPopup()
+      }, 500)
+    }, 1000)
+  }catch{
+    popupErrorMessage.value="failed to update"
+    popupFontColor.value="red"
+    setTimeout(async () => {
+    clearPopup()
   }, 1000)
+  }
 }
 
 const redirectToPage = async (quiz_id: number, quiz_title: string) => {
@@ -291,17 +312,12 @@ const validateImageSize = (event: Event) => {
     const maxSizeKB = 1024 * 3 // Max size in KB (3 MB)
 
     if (!validateImageFile(selectedFile)) {
-      // Show an alert if file type is not valid
       window.alert('Invalid file type. Please select a PNG, JPG, or JPEG file.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else if (fileSize > maxSizeKB) {
-      // Show an alert if file size exceeds the maximum limit
       window.alert('File size exceeds the maximum limit. Maximum 3 MB allowed.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else {
-      // Update the file variable with the selected file
       file.value = selectedFile
     }
   }
@@ -396,6 +412,10 @@ const showPopup = (message: string, color: string) => {
 </script>
 
 <style scoped>
+.popup{
+  z-index: 2;
+}
+
 .tags-input {
   height: 100px;
 }
