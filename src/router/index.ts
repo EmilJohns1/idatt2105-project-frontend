@@ -130,21 +130,10 @@ const router = createRouter({
         quizattempt_id: route.params.quizattempt_id
       }),
       beforeEnter: async (to, from, next) => {
-        const quizIdParam = to.params.quiz_id
-        const quizTitleParam = to.params.quiz_title.toString() 
         const quizAttemptIdParam = to.params.quizattempt_id
         const quizAttemptId = Array.isArray(quizAttemptIdParam) ? quizAttemptIdParam[0] : quizAttemptIdParam
         const quizAttemptIdNumber = parseInt(quizAttemptId)
-        const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
-        const quizIdNumber = parseInt(quizId)
         try {
-          const quizDetails = await getQuizByQuizId(quizIdNumber)
-          console.log('quizDetails:', quizDetails)
-          if (!quizDetails) {
-            console.error('Quiz not found:', quizIdNumber)
-            next('/404')
-            return
-          }
 
           const quizAttemptDetails = await getQuizAttemptById(quizAttemptIdNumber)
           console.log('quizDetails:', quizAttemptDetails)
@@ -153,17 +142,6 @@ const router = createRouter({
             next('/404')
             return
           }
-
-
-          const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-')
-          const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-')
-          const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam
-
-          if (!quizTitleMatches) {
-            console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title)
-            next('/404')
-            return
-          } 
 
           next()
         } catch (error) {
