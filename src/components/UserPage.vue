@@ -213,8 +213,6 @@ const fetchRecentActivity = async () => {
           date: formattedDate
         };
       }).filter(Boolean) as Activity[]; 
-
-      user.value.recentActivity.reverse();
     }
   }
 };
