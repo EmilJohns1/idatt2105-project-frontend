@@ -5,7 +5,6 @@
       <li><RouterLink to="/explore" class="link">Explore</RouterLink></li>
       <li><RouterLink to="/quiz/create" class="link">Create</RouterLink></li>
       <li><RouterLink to="/contact" class="link">Contact</RouterLink></li>
-      <li><RouterLink to="/faq" class="link">FAQ</RouterLink></li>
       <li class="profile-pic" v-if="isLoggedIn">
         <RouterLink :to="isLoggedIn ? '/user' : '/login'">
           <img
