@@ -1,10 +1,4 @@
 <template>
-  <Popup class="popup"
-      v-if="popupErrorMessage"
-      :errorMessage="popupErrorMessage"
-      :fontColor="popupFontColor"
-      @popup-closed="clearPopup"
-    />
   <div class="container">
     <div class="sidebar">
       <div
@@ -84,6 +78,7 @@
           </h3>
           <h3>Make Public: <input type="checkbox" v-model="editedQuiz.public" /></h3>
           <Popup
+            id="popup"
             v-if="isVisible"
             :error-message="popupMessage.message"
             :font-color="popupMessage.color"
@@ -160,8 +155,6 @@ const hoveredIndex = ref<number | null>(null)
 const originalPictureUrl = ref('')
 const popupMessage = ref<PopupMessage>({ message: '', color: '' });
 const isVisible = ref(false);
-const popupErrorMessage = ref('')
-const popupFontColor = ref('')
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
@@ -203,15 +196,11 @@ const tagArray = computed(() =>
   editedQuiz.value.tags.map((tag: { tagName: string }) => tag.tagName)
 )
 
-function clearPopup() {
-  popupErrorMessage.value = ''
-  popupFontColor.value = ''
-}
 
 // Update quiz details
 const updateQuiz = async () => {
-  if (!checkQuestionCount()) {
-    showPopup('You need more than 5 questions to make your quiz public!', 'red');
+  if (!checkQuestionCount()&&editedQuiz.value.public===true) {
+    showPopup('You need at least 5 questions to make your quiz public!', 'red');
     setTimeout(() => {
       window.location.reload();
     }, 2000);
@@ -230,21 +219,19 @@ const updateQuiz = async () => {
     public: editedQuiz.value.public
   }
   try{
-    popupErrorMessage.value="updating..."
+    showPopup('Updating...', '');
     await updateQuizById(quizId, quizData)
     setTimeout(async () => {
       await redirectToPage(quizId, editedQuiz.value.title)
-      popupErrorMessage.value="updated"
-      popupFontColor.value="green"
+      showPopup('Updated', 'green');
       setTimeout(async () => {
-        clearPopup()
+        window.location.reload();
       }, 500)
     }, 1000)
   }catch{
-    popupErrorMessage.value="failed to update"
-    popupFontColor.value="red"
+    showPopup('Failed to update', 'red');
     setTimeout(async () => {
-    clearPopup()
+      window.location.reload();
   }, 1000)
   }
 }
@@ -412,7 +399,7 @@ const showPopup = (message: string, color: string) => {
 </script>
 
 <style scoped>
-.popup{
+#popup{
   z-index: 2;
 }
 
