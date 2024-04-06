@@ -7,6 +7,12 @@ import type { Page } from '@/types/Page'
 import type { QuizDto } from '@/types/QuizDto'
 import type { Question } from '@/types/Question'
 
+/**
+ * Fetches a quiz by its quizId.
+ * 
+ * @param {number} quizId - The unique identifier for the quiz to fetch.
+ * @returns {Promise<QuizDto | null>} A promise that resolves with the quiz data or null if the quiz cannot be found or an error occurs.
+ */
 export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   try {
     const response = await api.get(`/quizzes/${quizId}`)
@@ -17,6 +23,14 @@ export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
   }
 }
 
+/**
+ * Updates a quiz by quizId with new information.
+ * 
+ * @param {number} quizId - The unique identifier for the quiz to update.
+ * @param {QuizRequest} quizData - The data to update the quiz with.
+ * @returns {Promise<void>} A promise that resolves when the quiz is updated successfully.
+ * @throws {Error} Throws an error if the quiz cannot be updated.
+ */
 export const updateQuizById = async (quizId: number, quizData: QuizRequest): Promise<void> => {
   try {
     const response = await api.put(`/quizzes/${quizId}`, quizData)
@@ -32,6 +46,11 @@ export const updateQuizById = async (quizId: number, quizData: QuizRequest): Pro
   }
 }
 
+/**
+ * Register a new quiz with the provided quiz data.
+ * 
+ * @returns {Object} An object containing a `registrationError` ref string, `registerQuiz` method, and `clearError` method.
+ */
 export const useRegistration = () => {
   const registrationError = ref('')
 
@@ -61,7 +80,12 @@ export const useRegistration = () => {
 
   return { registrationError, registerQuiz, clearError }
 }
-
+/**
+ * Registers a new quiz attempt with provided quiz data.
+ * 
+ * @param { QuizAttemptRequest } quizData - The data to register the quiz attempt with. 
+ * @returns { Promise<number | null> } A promise that resolves with the quiz attempt ID or null if the attempt cannot be registered or an error occurs.
+ */
 export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise<number | null> => {
   try {
     console.log(quizData)
@@ -80,6 +104,14 @@ export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise
   }
 }
 
+/**
+ * Adds a user to a quiz by their respective identifiers.
+ * 
+ * @param {number} quizId - The unique identifier for the quiz.
+ * @param {number} userId - The unique identifier for the user to add to the quiz.
+ * @returns {Promise<void>} A promise that resolves when the user is added successfully.
+ * @throws {Error} Throws an error if the user cannot be added to the quiz.
+ */
 export const addUserToQuiz = async (quizId: number, userId: number): Promise<void> => {
   try {
     const response = await api.post(`/quizzes/${quizId}/users/${userId}`)
@@ -95,6 +127,14 @@ export const addUserToQuiz = async (quizId: number, userId: number): Promise<voi
   }
 }
 
+/**
+ * Deletes a user from a quiz by their respective identifiers.
+ * 
+ * @param {number} quizId - Identifier for the quiz.
+ * @param {number} userId - Identifier for the user to delete from the quiz.
+ * @returns {Promise<void>} A promise that resolves when the user is deleted successfully.
+ * @throws {Error} Throws an error if the user cannot be deleted from the quiz.
+ */
 export const deleteUserFromQuiz = async (quizId: number, userId: number): Promise<void> => {
   try {
     const response = await api.delete(`/quizzes/${quizId}/users/${userId}`)
@@ -110,6 +150,14 @@ export const deleteUserFromQuiz = async (quizId: number, userId: number): Promis
   }
 }
 
+/**
+ * Adds tags to a quiz by its unique id.
+ * 
+ * @param {Tag[]} tags - The tags to add to the quiz.
+ * @param {number} quizId - The id for the quiz.
+ * @returns {Promise<void>} A promise that resolves when the tags are added successfully.
+ * @throws {Error} Throws an error if the tags cannot be added to the quiz.
+ */
 export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
     const response = await api.patch(`/quizzes/add/tags/${quizId}`, tags)
@@ -125,6 +173,14 @@ export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> 
   }
 }
 
+/**
+ * Updates tags for a quiz by its id.
+ * 
+ * @param {Tag[]} tags - The updated tags for the quiz.
+ * @param {number} quizId - The unique id for the quiz.
+ * @returns {Promise<void>} A promise that resolves when the tags are updated successfully.
+ * @throws {Error} Throws an error if the tags cannot be updated.
+ */
 export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => {
   try {
     const response = await api.patch(`/quizzes/${quizId}/tags`, tags)
@@ -140,6 +196,11 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
   }
 }
 
+/**
+ * Fetches all categories.
+ * 
+ * @returns {Promise<string[] | null>} A promise that resolves with an array of category names or null if an error occurs.
+ */
 export const getCategories = async (): Promise<string[] | null> => {
   try {
     const response = await api.get('/quizzes/categories', {})
@@ -157,6 +218,12 @@ export const getCategories = async (): Promise<string[] | null> => {
   }
 }
 
+/**
+ * Fetches all users associated with a quiz by its id.
+ * 
+ * @param {number} quizId - The id for the quiz.
+ * @returns {Promise<any[] | null>} A promise that resolves with an array of users or null if an error occurs.
+ */
 export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> => {
   try {
     const response = await api.get(`/quizzes/users/${quizId}`)
@@ -173,6 +240,15 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
   }
 }
 
+/**
+ * Fetches quizzes by category.
+ * 
+ * @param {string} category - The category to filter quizzes by.
+ * @param {number} page - The page number for pagination.
+ * @param {number} size - The number of quizzes per page.
+ * @param {string} sort - The sorting criteria.
+ * @returns {Promise<Page<QuizDto> | null>} A promise that resolves with a page of quizzes or null if an error occurs.
+ */
 export const fetchQuizzesByCategory = async (
   category: string,
   page: number,
@@ -195,6 +271,14 @@ export const fetchQuizzesByCategory = async (
   }
 }
 
+/**
+ * Fetches all quizzes with optional pagination and sorting.
+ * 
+ * @param {number} page - The page number for pagination.
+ * @param {number} size - The number of quizzes per page.
+ * @param {string} sort - The sorting criteria.
+ * @returns {Promise<Page<QuizDto> | null>} A promise that resolves with a page of quizzes or null if an error occurs.
+ */
 export const fetchAllQuizzes = async (
   page: number,
   size: number,
@@ -216,6 +300,15 @@ export const fetchAllQuizzes = async (
   }
 }
 
+/**
+ * Fetches quizzes filtered by tags.
+ * 
+ * @param {string[]} tags - The tags to filter quizzes by.
+ * @param {number} page - The page number for pagination.
+ * @param {number} size - The number of quizzes per page.
+ * @param {string} sort - The sorting criteria.
+ * @returns {Promise<Page<QuizDto> | null>} A promise that resolves with a page of quizzes or null if an error occurs.
+ */
 export const fetchQuizzesByTags = async (
   tags: string[],
   page: number,
@@ -248,8 +341,9 @@ export const fetchQuizzesByTags = async (
 };
 
 /**
+ * Fetches all tags used in quizzes.
  * 
- * @returns 
+ * @returns {Promise<Tag[] | null>} A promise that resolves with an array of tags or null if an error occurs.
  */
 export const fetchAllTags = async (): Promise<Tag[] | null> => {
   try {
@@ -267,6 +361,12 @@ export const fetchAllTags = async (): Promise<Tag[] | null> => {
   }
 };
 
+/**
+ * Fetches all questions for a given quiz by its id.
+ * 
+ * @param {number} quizId - The id for the quiz.
+ * @returns {Promise<Question[] | null>} A promise that resolves with an array of questions or null if an error occurs.
+ */
 export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[] | null> => {
   try {
     const response = await api.get(`/question/get/all/${quizId}`, {})
@@ -282,6 +382,12 @@ export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[]
   }
 }
 
+/**
+ * Fetches a quiz attempt by its id.
+ * 
+ * @param {number} id - The id for the quiz-attempt.
+ * @returns {Promise<QuizAttemptRequest | null>} A promise that resolves with the quiz attempt data or null if an error occurs.
+ */
 export const getQuizAttemptById = async (id: number): Promise<QuizAttemptRequest | null> => {
   try {
     const response = await api.get(`/attempts/${id}`, {})

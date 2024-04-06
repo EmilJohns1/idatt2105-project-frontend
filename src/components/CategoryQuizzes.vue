@@ -92,7 +92,9 @@ const sortOptions = [
   //{ value: 'lastModifiedDate,desc', text: 'Newest Modified Date' },
   //{ value: 'lastModifiedDate,asc', text: 'Oldest Modified Date' },
   { value: 'title,asc', text: 'Title (A-Z)' },
-  { value: 'title,desc', text: 'Title (Z-A)' }
+  { value: 'title,desc', text: 'Title (Z-A)' },
+  { value: 'isPublic,desc', text: 'Public Quizzes' },
+  { value: 'isPublic,asc', text: 'Private Quizzes' }
   // Add more options here
 ];
 
