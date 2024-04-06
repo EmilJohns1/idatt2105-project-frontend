@@ -600,25 +600,24 @@ h3 {
   color: inherit;
 }
 @media (max-width: 750px) {
-    .quizzes-section {
+  .quizzes-section {
   display: grid;
   align-items: baseline;
   overflow-x: scroll;
   width: 100%;
   padding: 10px;
-}
+  }
   .quizzes-recent-activity {
   grid-template-columns: 1fr;
   gap: 20px;
   max-height: 100%;
   margin-bottom: 60px;
-}
-.recent-activity-section{
-  height:300px;
-  overflow-y: scroll;
-  padding: 10px;
-}
-
+  }
+  .recent-activity-section{
+    height:300px;
+    overflow-y: scroll;
+    padding: 10px;
+  }
   .quiz-list{
     grid-auto-flow: column;
     padding-left: 0px;
@@ -634,43 +633,43 @@ h3 {
   place-items: center;
   grid-template-columns: 1fr;
   gap: 20px;
-}
-.comments-card {
-  width: 80%;
-  height: 200px;
-  max-height: 80%;
-  min-height: 240px;
-  overflow-y: auto;
-}
-.comment-and-button-container {
-  display: flex;
-  align-items: center;
-  width:100%;
-  flex-direction: column;
-}
-.profile-section{
-  padding: 3px;
-  
-}
-.profile-picture{
-  width: 75px;
-  height: 75px;
-  margin-right: 5px;
-}
-.email{
-  font-size: 17px;
-  white-space: nowrap;       /* Prevents text wrapping */
-    overflow: hidden;          /* Hides the overflowing content */
+  }
+  .comments-card {
+    width: 80%;
+    height: 200px;
+    max-height: 80%;
+    min-height: 240px;
+    overflow-y: auto;
+  }
+  .comment-and-button-container {
+    display: flex;
+    align-items: center;
+    width:100%;
+    flex-direction: column;
+  }
+  .profile-section{
+    padding: 3px;
+    
+  }
+  .profile-picture{
+    width: 75px;
+    height: 75px;
+    margin-right: 5px;
+  }
+  .email{
+    font-size: 17px;
+    white-space: nowrap;
+    overflow: hidden; 
     text-overflow: ellipsis;
-}
-.comment-card {
-  padding: 10px;
-}
-.calendar-card {
-  padding: 10px;
-}
-.user-page{
-  padding:0px
-}
+  }
+  .comment-card {
+    padding: 10px;
+  }
+  .calendar-card {
+    padding: 10px;
+  }
+  .user-page{
+    padding:0px
+  }
 }
 </style>

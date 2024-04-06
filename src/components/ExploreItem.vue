@@ -6,6 +6,7 @@
     <div class="category-grid">
       <CardItem
         v-for="category in filteredCategories"
+        class="categoryCard"
         :key="category.id"
         :id="category.id"
         :image="`/categoryimage/${category.name.toLowerCase()}.png`"
@@ -90,5 +91,14 @@ function goToCategory(categoryName: string) {
   gap: 40px;
   justify-content: center;
   align-items: start;
+}
+
+.categoryCard{
+  cursor: pointer;
+}
+@media (max-width: 750px) {
+  .explore-container {
+  padding: 0px;
+}
 }
 </style>

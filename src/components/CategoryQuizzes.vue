@@ -33,6 +33,7 @@
   <div class="quizzes-grid">
     <CardItem
       v-for="quiz in filteredQuizzes"
+      class="quizCard"
       :key="quiz.id"
       :id="quiz.id"
       :image="quiz.quizPictureUrl || '/default.jpg'"
@@ -87,7 +88,6 @@ import CardItem from './CardItem.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
-import { fetchAllTags } from '@/api/quizHooks'
 
 /**
  * Retrieves the author's name for a given quiz.
@@ -259,13 +259,6 @@ function goToQuiz(quizId: number, quizTitle: string) {
 }
 
 const filteredQuizzes = computed(() => quizzes.value)
-
-const searchQuizzes = async () => {
-  // Future me, implement functionality to search quizzes by title?
-  quizzes.value = [] // Clear current quizzes to ensure a fresh search
-  currentPage.value = 1 // Start from the first page
-  await fetchQuizzes()
-}
 </script>
 
 <style scoped>
@@ -388,5 +381,7 @@ const searchQuizzes = async () => {
 .pagination-controls .pagination-ellipsis {
   cursor: default;
 }
+.quizCard{
+  cursor: pointer;
+}
 </style>
-@/types/QuizDTO
