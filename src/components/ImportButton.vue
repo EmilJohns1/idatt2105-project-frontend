@@ -25,6 +25,10 @@ const props = defineProps<{
 
 const popupMessage = ref<PopupMessage>({ message: '', color: '' })
 
+/**
+ * Handle file change event triggered by the file input.
+ * @param event - The file change event containing the uploaded file.
+ */
 const handleFileChange = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files![0]
   if (file) {
@@ -44,11 +48,18 @@ const handleFileChange = async (event: Event) => {
   }
 }
 
+/**
+ * Set the popup message and its color.
+ * @param message - The message to display in the popup.
+ * @param color - The color of the popup (e.g., 'green' for success, 'red' for error).
+ */
 const handlePopupMessage = (message: string, color: string) => {
   popupMessage.value = { message, color }
 }
 
-// Define the clearPopup function locally
+/**
+ * Clear the popup message, resetting it to its initial state.
+ */
 const clearPopup = () => {
   popupMessage.value = { message: '', color: '' }
 }

@@ -127,7 +127,7 @@ const onFileChange = (event: Event) => {
 }
 
 const validateImageFile = (file: File): boolean => {
-  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
+  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 

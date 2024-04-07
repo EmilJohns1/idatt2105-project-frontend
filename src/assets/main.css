@@ -96,3 +96,9 @@
 .tags-input input[type='text']:focus {
   outline: none;
 }
+
+@media (max-width: 750px) {
+  .primary-padding{
+    padding:0px;
+  }
+}

@@ -36,7 +36,7 @@ export const updateQuizById = async (quizId: number, quizData: QuizRequest): Pro
 
     if (response.status !== 200) {
       console.error('Failed to update quiz')
-    } 
+    }
   } catch (error) {
     console.error('Error updating quiz:', error)
     throw new Error('Failed to update quiz')

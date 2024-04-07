@@ -1,0 +1,41 @@
+Question title: Which country has won the most Olympic gold medals in the history of the Summer Olympics?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/4c3bc7ed-76ab-4b45-b39e-8bbf1e055985_summer-olympics.png
+Question type: multiple choice
+Alternatives:
+-United States (correct)
+-China
+-Russia
+-Germany
+
+Question title: Which country has won the most Olympic gold medals in the history of the Winter Olympics?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/0dac5457-69b1-41e4-8d61-b721aaff8942_winder-olympics.jpeg
+Question type: multiple choice
+Alternatives:
+-Norway (correct)
+-United States
+-Canada
+-Russia
+
+Question title: Did Brazil win the FIFA World Cup in 2018?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/427e7da0-b57e-472f-bd1c-ea1a65cbdbe6_world-cup.jpg
+Question type: true or false
+Answer: false
+
+Question title: Is Usain Bolt considered the fastest man in the world?
+Max points: 2
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/a1f2b29f-6bbb-4191-a3b4-8dcd08d8ab27_usain-bolt.jpg
+Question type: true or false
+Answer: true
+
+Question title: Who won the 2019 Ballon d'Or?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/5841f517-a55d-429c-938e-686c01b339b6_ballon-d-dor.webp
+Question type: multiple choice
+Alternatives:
+-Lionel Messi (correct)
+-Cristiano Ronaldo
+-Virgil van Dijk
+-Mohamed Salah

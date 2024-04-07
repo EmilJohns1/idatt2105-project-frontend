@@ -1,7 +1,7 @@
 <template>
   <QuizFrontPage v-if="frontPage" :quizId="quizId" @start-quiz="startQuiz" />
   <div v-else>
-    <div class="container">
+    <div v-if="finished==false" class="container">
       <div id="header">{{ currentQuestion.questionText }}</div>
       <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
       <div class="button-container">
@@ -32,10 +32,18 @@
       <button class="submit" @click="toggleButtonState">
         {{ buttonText }}
       </button>
+      <div class="score-display">
+        {{ scoreDisplay.scoreText }}
+      </div>
     </div>
-
-    <div class="score-display">
+  </div>
+  <div v-if="finished" class="center-container">
+    <h1 id="finishedHeader">You finished the quiz 🎉</h1>
+    <div id="finalScore">
       {{ scoreDisplay.scoreText }}
+    </div>
+    <div class="feedback">
+      {{ feedback }}
     </div>
     <button class="exploreButton" @click="router.push('/explore')">Back to explore page</button>
   </div>
@@ -49,6 +57,7 @@ import type { Alternative } from '@/types/Alternative'
 import type { AlternativeRecord } from '@/types/AlternativeRecord'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
 import { ref, computed } from 'vue'
+import confetti from 'canvas-confetti';
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 import { getQuestionsFromQuizId, registerQuizAttempt, getQuizByQuizId } from '@/api/quizHooks'
@@ -56,6 +65,7 @@ import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg'
 import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg'
 import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg'
 import uncheckedFalse from '@/assets/responsebackgrounds/unchecked_false.jpg'
+
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -66,6 +76,7 @@ const scoreDisplay = ref({
 })
 const quiz = ref<any | null>(null)
 const isRandomized = ref<boolean | null>(null)
+const feedback = ref('')
 
 const buttonText = computed(() => {
   return buttonState.value === 'submit' ? 'Submit Answer' : 'Next Question ->'
@@ -87,6 +98,8 @@ let pointsPerQuestion = 0
 let currentScore = 0
 let maxScore = 0
 let tofClicked = true
+let scorePercentage = 0
+let finished = false
 
 const quizAttemptRequest = {
   title: '',
@@ -99,6 +112,9 @@ const quizAttemptRequest = {
 const clickedArray: number[] = [] // Array to store clicked alternative indexes'
 const frontPage = ref(true)
 
+/**
+ * Starts the quiz by fetching the quiz data and questions.
+ */
 const startQuiz = async () => {
   frontPage.value = false
   quiz.value = await getQuizByQuizId(quizId)
@@ -109,6 +125,9 @@ const startQuiz = async () => {
   fetchQuestions()
 }
 
+/**
+ * Toggles the state of the quiz button between 'submit' and 'next'.
+ */
 const toggleButtonState = async () => {
   if (buttonState.value === 'submit') {
     await submit()
@@ -119,6 +138,9 @@ const toggleButtonState = async () => {
   }
 }
 
+/**
+ * Handles the click event for the 'True' button.
+ */
 const trueClicked = async () => {
   const trueButton = document.getElementById('trueButton')
   const falseButton = document.getElementById('falseButton')
@@ -128,6 +150,10 @@ const trueClicked = async () => {
     trueButton.style.backgroundColor = '#4c4694'
   }
 }
+
+/**
+ * Handles the click event for the 'False' button.
+ */
 const falseClicked = async () => {
   const trueButton = document.getElementById('trueButton')
   const falseButton = document.getElementById('falseButton')
@@ -138,6 +164,10 @@ const falseClicked = async () => {
   }
 }
 
+/**
+ * Handles the click event for an alternative button.
+ * @param index - The index of the clicked alternative.
+ */
 const clicked = async (index: number) => {
   if (questions && currentQuestion.value.alternatives) {
     const alternativeIndex = clickedArray.indexOf(index)
@@ -153,6 +183,9 @@ const clicked = async (index: number) => {
   }
 }
 
+/**
+ * Updates the class of clicked alternative buttons.
+ */
 const updateClickedClass = () => {
   const buttons = document.querySelectorAll('.alt')
   buttons.forEach((button, index) => {
@@ -164,6 +197,9 @@ const updateClickedClass = () => {
   })
 }
 
+/**
+ * Fetches the questions for the quiz and starts the quiz.
+ */
 const fetchQuestions = async () => {
   const username = userStore.getUserName
   if (username) {
@@ -179,6 +215,10 @@ const fetchQuestions = async () => {
   nextQuestion()
 }
 
+/**
+ * Shuffles an array using the Fisher-Yates algorithm.
+ * @param array - The array to shuffle.
+ */
 const shuffle = (array: Question[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -187,6 +227,22 @@ const shuffle = (array: Question[]) => {
   return array
 }
 
+// Function to trigger the confetti effect
+const triggerConfetti = () => {
+  const config = {
+    particleCount: 100,
+    spread: 500,
+    colors: ['#05dae6', '#e5fc38', '#ba1a02'],
+    origin: { y: 0}
+  };
+
+  // Trigger the confetti effect
+  confetti(config);
+};
+
+/**
+ * Moves to the next question in the quiz.
+ */
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {
     currentQuestionIndex++
@@ -217,24 +273,26 @@ const nextQuestion = async () => {
       }
     })
   } else {
+    finished=true
+    scorePercentage = currentScore/maxScore*100
+    if(scorePercentage>75){
+      triggerConfetti()
+      feedback.value = "Amazingly done!"
+    } else if(scorePercentage>50){
+      feedback.value = "Good job!"
+    } else if(scorePercentage>25){
+      feedback.value = "Could have been worse."
+    } else {
+      feedback.value = "Better luck next time..."
+    }
     scoreDisplay.value.scoreText =
       'Score: ' + Math.floor(currentScore * 100) / 100 + ' / ' + Math.floor(maxScore * 100) / 100
-    const container = document.querySelector('.container')
-    const scoreDisplayElement = document.querySelector('.score-display')
-    const exploreButton = document.querySelector('.exploreButton')
-
-    if (
-      container instanceof HTMLElement &&
-      scoreDisplayElement instanceof HTMLElement &&
-      exploreButton instanceof HTMLElement
-    ) {
-      container.style.display = 'none'
-      scoreDisplayElement.style.left = '44%'
-      exploreButton.style.display = 'inline'
-    }
   }
 }
 
+/**
+ * Submits the user's answer for the current question.
+ */
 const submit = async () => {
   if (currentQuestion.value.correctAnswer === null) {
     const alternativeAttempts = [] as AlternativeRecord[]
@@ -364,6 +422,10 @@ const submit = async () => {
   scoreDisplay.value.scoreText = 'Score: ' + Math.floor(currentScore * 100) / 100
 }
 
+/**
+ * Displays the specified question.
+ * @param index - The index of the question to display.
+ */
 const showQuestion = (index: number) => {
   if (questions) {
     const question = questions[index]
@@ -407,21 +469,51 @@ const showQuestion = (index: number) => {
   max-width: 20ch;
   z-index: 2;
 }
-.exploreButton {
-  display: none;
-  position: absolute;
-  top: 500px;
-  left: 30%;
-  border: none;
-  background-color: #000000;
-  color: white;
-  border-radius: 20px;
-  font-size: 1.5vw;
-  cursor: pointer;
-  width: 40%;
-  margin-left: 10px;
-  margin-right: 10px;
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh; /* Adjust based on your requirement */
+    background-color: #f4f4f4; /* Optional: Adding a background color for visibility */
+    padding: 20px; /* Optional: Adding some padding around the child elements */
 }
+
+#finishedHeader{
+  margin-top: 30px;
+}
+
+.feedback {
+  margin-top: 10px;
+    font-size: 22px;
+    margin-bottom: 20px; /* Optional: Adding some space between elements */
+}
+
+#finalScore {
+  margin-top: 150px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #333; /* Optional: Changing text color */
+    margin-bottom: 20px; /* Optional: Adding some space between elements */
+}
+
+.exploreButton {
+  margin-top: 100px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #000000; /* Optional: Setting a button color */
+    color: #fff; /* Optional: Setting button text color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 250px;
+    transition: background-color 0.3s ease; /* Optional: Adding a transition effect */
+}
+
+.exploreButton:hover {
+    background-color: rgb(35, 36, 36); /* Optional: Changing button color on hover */
+}
+
 .upright {
   position: absolute;
   top: 1px;

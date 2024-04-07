@@ -31,6 +31,7 @@
   <div class="grid-layout">
     <CardItem
       v-for="quiz in filteredQuizzes"
+      class="quizCard"
       :key="quiz.id"
       :id="quiz.id"
       :image="quiz.quizPictureUrl || '/defualt-quiz-image.jpg'"
@@ -62,7 +63,6 @@ import PaginationComponent from './PaginationComponent.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
-import { fetchAllTags } from '@/api/quizHooks'
 
 /**
  * Retrieves the author's name for a given quiz.

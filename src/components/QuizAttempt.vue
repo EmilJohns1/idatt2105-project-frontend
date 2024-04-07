@@ -61,8 +61,8 @@
             id="trueButton"
           >
             True
-            <div v-if="currentQuestionAttempt.userAnswer === true" class="upright">
-              {{ currentQuestionAttempt.correctAnswer ? '+' : '-' }}
+            <div v-if="currentQuestionAttempt.userAnswer === true && currentQuestionAttempt.correctAnswer===true" class="upright">
+              + 
               {{ currentQuestionAttempt.points }} score
             </div>
           </button>
@@ -86,7 +86,10 @@
             id="falseButton"
           >
             False
-            <div v-if="currentQuestionAttempt.userAnswer === false" class="upright"></div>
+            <div v-if="currentQuestionAttempt.userAnswer === false && currentQuestionAttempt.correctAnswer===false" class="upright">
+              + 
+              {{ currentQuestionAttempt.points }} score
+            </div>
           </button>
         </div>
       </template>
@@ -120,6 +123,10 @@ const currentQuestionAttempt = ref<QuestionAttempt>({
   points: 0
 })
 
+/**
+ * Calculate points per alternative based on the provided alternatives.
+ * @param alternatives - An array of AlternativeRecord objects.
+ */
 const findPoints = async (alternatives: AlternativeRecord[]) => {
   let correctAlternatives = 0
   alternatives.forEach((alternative) => {
@@ -131,6 +138,9 @@ const findPoints = async (alternatives: AlternativeRecord[]) => {
   })
 }
 
+/**
+ * Navigate to the next question in the quiz attempt.
+ */
 const next = async () => {
   if (quizAttempt.value.questionAttempts) {
     currentQuestionIndex++
@@ -140,6 +150,10 @@ const next = async () => {
     }
   }
 }
+
+/**
+ * Navigate to the previous question in the quiz attempt.
+ */
 const last = async () => {
   if (quizAttempt.value.questionAttempts) {
     currentQuestionIndex--
@@ -150,6 +164,9 @@ const last = async () => {
   }
 }
 
+/**
+ * Fetch the quiz attempt details based on the current route's quiz attempt ID.
+ */
 const fetchQuizAttempt = async () => {
   const quizAttemptId = parseInt(router.currentRoute.value.params.quizattempt_id as string)
   const quizAttemptData = await getQuizAttemptById(quizAttemptId)

@@ -42,10 +42,16 @@ const isLoggedIn = computed(() => userStore.getIsLoggedIn)
 const profilePicture = ref('')
 const defaultProfilePicture = '/default_pfp.svg.png'
 
+/**
+ * Navigate to the home page.
+ */
 function goHome() {
   router.push('/')
 }
 
+/**
+ * Fetch the user's profile picture based on the logged-in user's username.
+ */
 const fetchUserProfilePicture = async () => {
   if (isLoggedIn.value) {
     while (!userStore.getUserName) {
@@ -58,6 +64,9 @@ const fetchUserProfilePicture = async () => {
 }
 watch(isLoggedIn, fetchUserProfilePicture)
 
+/**
+ * Logout the user by revoking the token, clearing session storage, and redirecting to the logout URL.
+ */
 const logout = () => {
   oauth2.post('/oauth2/revoke', {
     token: userStore.getAccessToken

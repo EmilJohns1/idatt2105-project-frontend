@@ -130,6 +130,19 @@ export default {
   margin-bottom: 20px;
 }
 
+/* Media queries for adjusting padding based on screen width */
+@media screen and (min-width: 768px) {
+  .contact-card {
+    padding: 30px;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .contact-card {
+    padding: 30px 100px 40px 100px;
+  }
+}
+
 label {
   font-weight: bold;
 }
