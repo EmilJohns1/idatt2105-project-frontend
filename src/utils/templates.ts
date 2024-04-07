@@ -30,5 +30,16 @@ export const templates = [
     category: 'Geography',
     isPublic: false,
     isRandomized: false
+  },
+  {
+    name: 'Science Quiz',
+    title: 'Science Quiz',
+    description: 'This is a science quiz that tests your basic knowledge of science.',
+    imageUrl:
+      'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/398638c3-de46-4731-87f2-e776be5732ce_science.jpg',
+    tags: ['science', 'advanced', 'physics'],
+    category: 'Science',
+    isPublic: false,
+    isRandomized: false
   }
 ]

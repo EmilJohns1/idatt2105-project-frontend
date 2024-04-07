@@ -336,6 +336,7 @@ const applyTemplate = async () => {
   flex-wrap: wrap; 
   align-items: flex-start; 
   max-height: -webkit-fill-available;
+  margin-bottom: 20px;
 }
 
 #input-tag {
@@ -404,13 +405,12 @@ const applyTemplate = async () => {
 #category {
   min-width: 150px;
 }
-h3 {
-  margin-top: 20px;
-}
+
 .description {
   height: 100px;
   resize: none;
 }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -419,10 +419,12 @@ h3 {
   justify-content: center;
   height: 100%;
 }
+
 #image {
   width: 320px;
   height: 200px;
 }
+
 #header {
   font-size: 3rem;
   margin-bottom: 20px;
@@ -446,7 +448,7 @@ h3 {
 }
 
 .button-container {
-  margin-top: 10px;
+  margin-top: 20px;
   display: grid;
   grid-template-rows: 1fr;
   grid-gap: 5px;
@@ -528,6 +530,7 @@ select {
   border-radius: 0.5em;
   cursor: pointer;
   transition: box-shadow 0.3s;
+  margin-bottom: 20px;
 
   &::-ms-expand {
     display: none;

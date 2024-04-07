@@ -37,6 +37,11 @@
 <script setup>
 const emits = defineEmits(['changePage'])
 
+const props = defineProps({
+  currentPage: Number,
+  totalPages: Number
+})
+
 function emitChangePage(newPage) {
   emits('changePage', newPage)
 }
