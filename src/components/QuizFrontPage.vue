@@ -149,10 +149,16 @@ const emit = defineEmits<{
   (e: 'start-quiz'): void
 }>()
 
+/**
+ * Emit a 'start-quiz' event.
+ */
 const startQuiz = () => {
   emit('start-quiz')
 }
 
+/**
+ * Fetch quiz data based on the provided quizId prop.
+ */
 const fetchQuiz = async () => {
   const quizData = await getQuizByQuizId(props.quizId)
   if (quizData) {
@@ -160,6 +166,9 @@ const fetchQuiz = async () => {
   }
 }
 
+/**
+ * Fetch the author's data using the authorId from the quiz data.
+ */
 const fetchAuthor = async () => {
   if (quiz.value && quiz.value.authorId) {
     const authorData = await getUserByUserId(quiz.value.authorId)
@@ -169,6 +178,9 @@ const fetchAuthor = async () => {
   }
 }
 
+/**
+ * Fetch questions related to the quiz.
+ */
 const fetchQuestions = async () => {
   const questionsData = await getAllQuestionsByQuizId(props.quizId)
   if (questionsData) {
@@ -176,7 +188,10 @@ const fetchQuestions = async () => {
   }
 }
 
-// added ts ignore to fix bug
+/**
+ * Fetch comments related to the quiz.
+ * @param page - The page number for pagination.
+ */
 const fetchComments = async (page: number) => {
   const size = 10
   const sort = ['lastModifiedDate,desc']
@@ -211,6 +226,9 @@ onMounted(async () => {
   await fetchComments(0)
 })
 
+/**
+ * Post a new comment for the quiz.
+ */
 const postComment = async () => {
   if (newComment.value.trim() === '') {
     return
@@ -240,11 +258,20 @@ const postComment = async () => {
   }
 }
 
+/**
+ * Format the last modified date of a comment.
+ * @param dateString - The date string to format.
+ * @returns Formatted date string.
+ */
 const formatLastModifiedDateComment = (dateString: string): string => {
   const date = new Date(dateString)
   return date.toLocaleDateString()
 }
 
+/**
+ * Format the last modified date of the quiz.
+ * @returns Formatted date string.
+ */
 const formatLastModifiedDateHeader = (): string => {
   if (quiz.value && quiz.value.lastModifiedDate) {
     const date = new Date(quiz.value.lastModifiedDate)

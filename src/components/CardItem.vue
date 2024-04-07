@@ -82,6 +82,9 @@ const latestDate = computed(() => {
   return formatDate(latest.toISOString())
 })
 
+/**
+ * Handle click event.
+ */
 const handleClick = () => {
   if (props.clickable) {
     emits('clicked', props.id)

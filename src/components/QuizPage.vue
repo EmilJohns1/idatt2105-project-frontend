@@ -99,6 +99,9 @@ const quizAttemptRequest = {
 const clickedArray: number[] = [] // Array to store clicked alternative indexes'
 const frontPage = ref(true)
 
+/**
+ * Starts the quiz by fetching the quiz data and questions.
+ */
 const startQuiz = async () => {
   frontPage.value = false
   quiz.value = await getQuizByQuizId(quizId)
@@ -109,6 +112,9 @@ const startQuiz = async () => {
   fetchQuestions()
 }
 
+/**
+ * Toggles the state of the quiz button between 'submit' and 'next'.
+ */
 const toggleButtonState = async () => {
   if (buttonState.value === 'submit') {
     await submit()
@@ -119,6 +125,9 @@ const toggleButtonState = async () => {
   }
 }
 
+/**
+ * Handles the click event for the 'True' button.
+ */
 const trueClicked = async () => {
   const trueButton = document.getElementById('trueButton')
   const falseButton = document.getElementById('falseButton')
@@ -128,6 +137,10 @@ const trueClicked = async () => {
     trueButton.style.backgroundColor = '#4c4694'
   }
 }
+
+/**
+ * Handles the click event for the 'False' button.
+ */
 const falseClicked = async () => {
   const trueButton = document.getElementById('trueButton')
   const falseButton = document.getElementById('falseButton')
@@ -138,6 +151,10 @@ const falseClicked = async () => {
   }
 }
 
+/**
+ * Handles the click event for an alternative button.
+ * @param index - The index of the clicked alternative.
+ */
 const clicked = async (index: number) => {
   if (questions && currentQuestion.value.alternatives) {
     const alternativeIndex = clickedArray.indexOf(index)
@@ -153,6 +170,9 @@ const clicked = async (index: number) => {
   }
 }
 
+/**
+ * Updates the class of clicked alternative buttons.
+ */
 const updateClickedClass = () => {
   const buttons = document.querySelectorAll('.alt')
   buttons.forEach((button, index) => {
@@ -164,6 +184,9 @@ const updateClickedClass = () => {
   })
 }
 
+/**
+ * Fetches the questions for the quiz and starts the quiz.
+ */
 const fetchQuestions = async () => {
   const username = userStore.getUserName
   if (username) {
@@ -179,6 +202,10 @@ const fetchQuestions = async () => {
   nextQuestion()
 }
 
+/**
+ * Shuffles an array using the Fisher-Yates algorithm.
+ * @param array - The array to shuffle.
+ */
 const shuffle = (array: Question[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
@@ -187,6 +214,9 @@ const shuffle = (array: Question[]) => {
   return array
 }
 
+/**
+ * Moves to the next question in the quiz.
+ */
 const nextQuestion = async () => {
   if (questions && currentQuestionIndex < questions.length - 1) {
     currentQuestionIndex++
@@ -235,6 +265,9 @@ const nextQuestion = async () => {
   }
 }
 
+/**
+ * Submits the user's answer for the current question.
+ */
 const submit = async () => {
   if (currentQuestion.value.correctAnswer === null) {
     const alternativeAttempts = [] as AlternativeRecord[]
@@ -364,6 +397,10 @@ const submit = async () => {
   scoreDisplay.value.scoreText = 'Score: ' + Math.floor(currentScore * 100) / 100
 }
 
+/**
+ * Displays the specified question.
+ * @param index - The index of the question to display.
+ */
 const showQuestion = (index: number) => {
   if (questions) {
     const question = questions[index]

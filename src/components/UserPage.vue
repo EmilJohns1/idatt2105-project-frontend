@@ -160,6 +160,9 @@ interface Comment {
   lastModifiedDate: string
 }
 
+/**
+ * Fetch user data from the API and update the user ref.
+ */
 const fetchUserData = async () => {
   const userStore = useUserStore()
   const username = userStore.getUserName
@@ -190,6 +193,9 @@ const fetchUserData = async () => {
   }
 }
 
+/**
+ * Fetch recent activity for the user from the API and update the user ref.
+ */
 const fetchRecentActivity = async () => {
   if (user.value.id) {
     const recentActivityData = await getAttemptsByUserId(user.value.id, 10, 0)
@@ -225,6 +231,9 @@ const fetchRecentActivity = async () => {
   }
 }
 
+/**
+ * Uploads a new profile picture for the user.
+ */
 const uploadProfilePicture = async (): Promise<void> => {
   if (file.value) {
     try {
@@ -266,6 +275,10 @@ const uploadProfilePicture = async (): Promise<void> => {
   }
 }
 
+/**
+ * Validates the size of the selected image file.
+ * @param event - The input event containing the selected file.
+ */
 const validateImageSize = (event: Event) => {
   const target = event.target as HTMLInputElement
   const selectedFile = target.files?.[0]
@@ -284,11 +297,19 @@ const validateImageSize = (event: Event) => {
   }
 }
 
+/**
+ * Formats a date string using date-fns library.
+ * @param dateString - The date string to format.
+ * @returns The formatted date string.
+ */
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString)
   return format(date, 'MMMM dd, yyyy HH:mm:ss')
 }
 
+/**
+ * Fetches comments for the user's quizzes from the API and updates the quizComments ref.
+ */
 const fetchQuizComments = async (): Promise<void> => {
   if (user.value.id) {
     try {
@@ -318,6 +339,9 @@ const fetchQuizComments = async (): Promise<void> => {
   }
 }
 
+/**
+ * Navigates to the next quiz based on the currentQuizId ref.
+ */
 const navigateToNextQuiz = (): void => {
   if (currentQuizId.value !== null) {
     const quizIds = Object.keys(quizComments.value)
@@ -327,6 +351,9 @@ const navigateToNextQuiz = (): void => {
   }
 }
 
+/**
+ * Navigates to the previous quiz based on the currentQuizId ref.
+ */
 const navigateToPreviousQuiz = (): void => {
   if (currentQuizId.value !== null) {
     const quizIds = Object.keys(quizComments.value)
@@ -336,6 +363,9 @@ const navigateToPreviousQuiz = (): void => {
   }
 }
 
+/**
+ * Fetches quizzes with comments from the API and updates the fetchedQuizzes ref.
+ */
 const fetchQuizzesWithComments = async (): Promise<void> => {
   const quizzesToFetch: Set<number> = new Set()
 

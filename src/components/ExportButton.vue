@@ -22,6 +22,10 @@ const props = defineProps<{
 const popupErrorMessage = ref('')
 const popupFontColor = ref('')
 
+/**
+ * Export questions related to the quiz with the given quiz ID.
+ * Generates a text file containing question details and initiates the download.
+ */
 async function exportQuestions() {
   try {
     const questions = await getAllQuestionsByQuizId(props.quizId)
@@ -66,11 +70,19 @@ async function exportQuestions() {
   }
 }
 
+/**
+ * Set the message and font color for the popup.
+ * @param message - The message to display in the popup.
+ * @param color - The font color for the popup message.
+ */
 function setPopupMessage(message: string, color: string) {
   popupErrorMessage.value = message
   popupFontColor.value = color
 }
 
+/**
+ * Clear the error message and font color for the popup.
+ */
 function clearPopup() {
   popupErrorMessage.value = ''
   popupFontColor.value = ''

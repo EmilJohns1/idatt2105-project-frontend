@@ -35,6 +35,10 @@ const errorMessage = ref('')
 const submissionSuccess = ref(false)
 const router = useRouter()
 
+/**
+ * Send email using the provided email address.
+ * Display success message upon successful submission or handle errors.
+ */
 const submit = async () => {
   try {
     await sendEmail(email.value)
@@ -47,10 +51,16 @@ const submit = async () => {
   }
 }
 
+/**
+ * Close the current view and navigate back to the home page.
+ */
 function close() {
   router.push('/')
 }
 
+/**
+ * Clear any displayed error message.
+ */
 const clearErrorMessage = () => {
   errorMessage.value = ''
 }

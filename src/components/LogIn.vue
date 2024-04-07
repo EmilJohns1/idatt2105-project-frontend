@@ -41,6 +41,10 @@ const password = ref('')
 const showForgotPasswordModal = ref(false)
 const { loginUser, loginError } = useLogin() // Import loginError from useLogin
 
+/**
+ * Submit the user's login credentials for authentication.
+ * If successful, navigate to the '/explore' route; otherwise, display an error message.
+ */
 const submitLogin = async () => {
   const userData: LoginRequest = {
     username: email.value,
@@ -65,14 +69,23 @@ const submitLogin = async () => {
   }
 }
 
+/**
+ * Navigate to the registration page.
+ */
 const goToRegister = () => {
   router.push('/signup')
 }
 
+/**
+ * Open the forgot password modal.
+ */
 const openForgotPasswordModal = () => {
   showForgotPasswordModal.value = true
 }
 
+/**
+ * Close the forgot password modal.
+ */
 const closeForgotPasswordModal = () => {
   showForgotPasswordModal.value = false
 }
