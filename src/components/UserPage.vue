@@ -19,6 +19,7 @@
               @change="validateImageSize($event)"
             />
             <label for="fileInput">Choose a file</label>
+            <p id="selected-filename">{{ fileName }}</p>
             <button @click="uploadProfilePicture" class="blackButton edit-profile-pic">Edit Profile Picture</button>
           </div>
         </div>
@@ -154,6 +155,7 @@ const quizComments = ref<{ [key: number]: Comment[] }>({}) // Define quizComment
 const fetchedQuizzes = ref<Quiz[]>([]) // Define fetchedQuizzes type
 const currentQuiz = ref<Quiz | null>(null) // Define currentQuiz type
 const defaultProfilePicture = '/default_pfp.svg.png'
+const fileName = ref('No file selected')
 
 interface Comment {
   id: number
@@ -295,6 +297,7 @@ const validateImageSize = (event: Event) => {
     } else {
       // Update the file variable with the selected file
       file.value = selectedFile
+      fileName.value = selectedFile.name
     }
   }
 }
@@ -440,6 +443,12 @@ onMounted(async () => {
   border-bottom: 1px solid #ccc;
   padding: 40px;
   margin-bottom: 20px;
+  overflow: hidden;
+}
+
+#selected-filename {
+  font-size: 16px;
+  font-family: inherit;
 }
 
 .profile-section h2 {
@@ -730,6 +739,7 @@ h3 {
   }
   .profile-section {
     padding: 3px;
+    max-width: 100vw;
   }
   .profile-picture {
     width: 75px;
