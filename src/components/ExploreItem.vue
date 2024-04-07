@@ -97,4 +97,8 @@ function goToCategory(categoryName: string) {
   justify-content: center;
   align-items: start;
 }
+
+.categoryCard {
+  cursor: pointer;
+}
 </style>

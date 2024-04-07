@@ -108,6 +108,7 @@ const handleClick = () => {
 
 .card-item:hover {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .card-item-image {
