@@ -79,7 +79,6 @@ const authorName = (quiz: QuizDto) => {
 const quizzes = ref<QuizDto[]>([])
 const route = useRoute()
 const router = useRouter()
-//const searchTerm = ref(''); if we ever use it
 const categoryName = ref(route.params.category ? route.params.category.toString() : '')
 const quizzesPerPage = 6
 const currentPage = ref(1)
@@ -94,8 +93,6 @@ const sortOptions = [
   { value: 'creationDate,asc', text: 'Oldest Creation Date' },
   { value: 'title,asc', text: 'Title (A-Z)' },
   { value: 'title,desc', text: 'Title (Z-A)' },
-  { value: 'isPublic,desc', text: 'Public Quizzes' },
-  { value: 'isPublic,asc', text: 'Private Quizzes' }
   // Add more options here
 ]
 
@@ -236,13 +233,6 @@ function goToQuiz(quizId: number, quizTitle: string) {
 }
 
 const filteredQuizzes = computed(() => quizzes.value)
-
-const searchQuizzes = async () => {
-  // Future me, implement functionality to search quizzes by title?
-  quizzes.value = [] // Clear current quizzes to ensure a fresh search
-  currentPage.value = 1 // Start from the first page
-  await fetchQuizzes()
-}
 </script>
 
 <style scoped>
