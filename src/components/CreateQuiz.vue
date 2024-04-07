@@ -408,6 +408,7 @@ h3 {
   margin-top: 20px;
 }
 .description {
+  font-family: inherit;
   height: 100px;
   resize: none;
 }

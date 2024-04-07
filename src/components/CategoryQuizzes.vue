@@ -11,9 +11,11 @@
           <button @click="addTag" :disabled="!currentTag" class="add-tag-button">Add Tag</button>
         </div>
         <div class="sort-select-container">
+          <p>Sort by:</p>
+
           <select v-model="selectedSort" @change="changeSort">
             <option v-for="option in sortOptions" :key="option.value" :value="option.value">
-              {{ option.text }} ▼
+              {{ option.text }}
             </option>
           </select>
         </div>
@@ -90,8 +92,6 @@ const selectedSort = ref('creationDate,desc') // Default sort option
 const sortOptions = [
   { value: 'creationDate,desc', text: 'Newest Creation Date' },
   { value: 'creationDate,asc', text: 'Oldest Creation Date' },
-  //{ value: 'lastModifiedDate,desc', text: 'Newest Modified Date' },
-  //{ value: 'lastModifiedDate,asc', text: 'Oldest Modified Date' },
   { value: 'title,asc', text: 'Title (A-Z)' },
   { value: 'title,desc', text: 'Title (Z-A)' },
   { value: 'isPublic,desc', text: 'Public Quizzes' },
@@ -335,32 +335,6 @@ const searchQuizzes = async () => {
   user-select: none;
 }
 
-.pagination-controls button:hover:not(:disabled) {
-  background-color: #f0f0f0;
-}
-
-.pagination-controls button.current-page,
-.pagination-controls button:disabled {
-  background-color: black;
-  color: white;
-  pointer-events: none;
-}
-
-.pagination-controls span {
-  user-select: none;
-}
-
-.pagination-controls .pagination-ellipsis {
-  text-align: center;
-  padding: 8px 16px;
-  margin: 0 5px;
-  display: inline-block;
-  min-width: 36px;
-}
-
-.pagination-controls .pagination-ellipsis {
-  cursor: default;
-}
 .quizCard {
   cursor: pointer;
 }

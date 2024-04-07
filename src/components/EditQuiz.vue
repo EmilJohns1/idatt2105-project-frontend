@@ -141,6 +141,9 @@
       </button>
       <ImportButton :quizId="quizId" />
       <ExportButton :quizId="quizId" />
+      <button @click="redirectToHelp" class="additional-button collaborate-button">
+        Help
+      </button>
     </div>
     <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
   </div>
@@ -428,6 +431,10 @@ const showPopup = (message: string, color: string) => {
   popupMessage.value = { message, color }
   isVisible.value = true
 }
+
+const redirectToHelp = () => {
+  window.open('https://github.com/1Cezzo/idatt2105-project-backend/wiki/Import-format');
+}
 </script>
 
 <style scoped>
@@ -510,6 +517,7 @@ h3 {
 }
 
 .input-field {
+  font-family: inherit;
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -527,14 +535,18 @@ h3 {
 }
 
 .additional-buttons {
-  grid-column: 3;
+  flex-direction: row;
+  grid-column: 4;
   display: flex;
   flex-direction: column;
   justify-content: start;
+  margin-right: 10px;
 }
 
 .additional-buttons button {
   margin-bottom: 10px;
+  padding: 10px;
+  margin-left: 10px;
 }
 
 .submit-button,
@@ -697,9 +709,9 @@ form {
 .question-title {
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to two lines */
+  -webkit-line-clamp: 2; 
   -webkit-box-orient: vertical;
-  white-space: normal; /* Ensures text wraps within the limited lines */
+  white-space: normal; 
   padding: 5px;
 }
 
@@ -749,16 +761,13 @@ form {
   width: 40%;
 }
 select {
+  padding: 12px;
+  border-radius: 4px;
   appearance: none;
-  border: 0;
-  outline: 0;
-  font: inherit;
-  width: 15rem;
-  padding: 1rem 4rem 1rem 1rem;
-  color: black;
-  border-radius: 0.5em;
+  position: relative;
+  font-size: 16px;
   cursor: pointer;
-  transition: box-shadow 0.3s;
+  user-select: none;
 
   &::-ms-expand {
     display: none;
