@@ -48,8 +48,9 @@ const getImageUrl = computed(() => {
 
 .card-title {
   font-size: 18px;
+  font-weight: 700;
   margin-bottom: 10px;
-  font-family: 'Luckiest Guy', cursive;
+  font-family: inherit;
 }
 
 .separator {

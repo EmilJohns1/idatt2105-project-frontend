@@ -471,7 +471,8 @@ onMounted(async () => {
 
 .email {
   font-size: 24px;
-  font-family: 'Luckiest Guy', cursive;
+  font-weight: 700;
+  font-family: inherit;
 }
 
 .quizzes-recent-activity {
@@ -593,7 +594,7 @@ h3 {
 
 #comment-content {
   font-size: 16px;
-  font-family: 'Luckiest Guy', cursive;
+  font-family: inherit;
   overflow-wrap: anywhere;
 }
 
