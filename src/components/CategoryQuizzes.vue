@@ -13,7 +13,7 @@
         <div class="sort-select-container">
           <select v-model="selectedSort" @change="changeSort">
             <option v-for="option in sortOptions" :key="option.value" :value="option.value">
-              {{ option.text }} ▼
+              {{ option.text }}
             </option>
           </select>
         </div>
@@ -333,32 +333,6 @@ const searchQuizzes = async () => {
   user-select: none;
 }
 
-.pagination-controls button:hover:not(:disabled) {
-  background-color: #f0f0f0;
-}
-
-.pagination-controls button.current-page,
-.pagination-controls button:disabled {
-  background-color: black;
-  color: white;
-  pointer-events: none;
-}
-
-.pagination-controls span {
-  user-select: none;
-}
-
-.pagination-controls .pagination-ellipsis {
-  text-align: center;
-  padding: 8px 16px;
-  margin: 0 5px;
-  display: inline-block;
-  min-width: 36px;
-}
-
-.pagination-controls .pagination-ellipsis {
-  cursor: default;
-}
 .quizCard {
   cursor: pointer;
 }

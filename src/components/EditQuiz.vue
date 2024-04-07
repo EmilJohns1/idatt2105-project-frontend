@@ -743,16 +743,13 @@ form {
   width: 40%;
 }
 select {
+  padding: 12px;
+  border-radius: 4px;
   appearance: none;
-  border: 0;
-  outline: 0;
-  font: inherit;
-  width: 15rem;
-  padding: 1rem 4rem 1rem 1rem;
-  color: black;
-  border-radius: 0.5em;
+  position: relative;
+  font-size: 16px;
   cursor: pointer;
-  transition: box-shadow 0.3s;
+  user-select: none;
 
   &::-ms-expand {
     display: none;

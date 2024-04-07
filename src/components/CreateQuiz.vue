@@ -332,4 +332,14 @@ form {
   border-radius: 8px;
   border: 1px solid #333;
 }
+
+select {
+  padding: 12px;
+  border-radius: 4px;
+  appearance: none;
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+  user-select: none;
+}
 </style>
