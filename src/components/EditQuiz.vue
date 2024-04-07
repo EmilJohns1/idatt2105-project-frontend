@@ -54,7 +54,13 @@
 
             <div class="title-desc-container">
               <h2>Title</h2>
-              <input v-model="editedQuiz.title" type="text" required class="input-field" maxLength="100" />
+              <input
+                v-model="editedQuiz.title"
+                type="text"
+                required
+                class="input-field"
+                maxLength="100"
+              />
               <h2>Description</h2>
               <textarea
                 v-model="editedQuiz.description"

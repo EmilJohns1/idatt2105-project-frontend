@@ -16,20 +16,40 @@
           <option disabled value="">Select a category</option>
           <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
         </select>
-        
+
         <div class="top-row-container">
           <div class="image-container">
             <h2>Display image</h2>
             <img :src="imageUrl || placeholderImage" id="image" class="quiz-image" /><br />
-            <input accept="image/*" name="file" type="file" id="file" class="inputfile" @change="previewImage"/>
+            <input
+              accept="image/*"
+              name="file"
+              type="file"
+              id="file"
+              class="inputfile"
+              @change="previewImage"
+            />
             <label for="file">Choose a file</label>
           </div>
 
           <div class="title-desc-container">
             <h2>Title</h2>
-            <input v-model="title" type="text" required class="input-field" spellcheck="false" maxLength="100"/>
+            <input
+              v-model="title"
+              type="text"
+              required
+              class="input-field"
+              spellcheck="false"
+              maxLength="100"
+            />
             <h2>Description</h2>
-            <textarea v-model="description" type="text" class="input-field description" spellcheck="false" maxLength="255"></textarea>
+            <textarea
+              v-model="description"
+              type="text"
+              class="input-field description"
+              spellcheck="false"
+              maxLength="255"
+            ></textarea>
           </div>
         </div>
 
@@ -48,15 +68,15 @@
             </button>
           </div>
         </div>
-        
-        <h3>Randomize Questions:</h3> 
+
+        <h3>Randomize Questions:</h3>
         <label class="switch">
           <input type="checkbox" v-model="isRandomized" />
           <span class="slider round"></span>
         </label>
-          <div class="button-container">
-            <button type="submit" class="submit-button">Create quiz</button>
-          </div>
+        <div class="button-container">
+          <button type="submit" class="submit-button">Create quiz</button>
+        </div>
       </form>
     </div>
   </div>
@@ -77,7 +97,7 @@ const imageUrl = ref('')
 const placeholderImage = '/default.jpg'
 const title = ref('')
 const description = ref('')
-const category = ref("Hello")
+const category = ref('Hello')
 const tagArray = ref<string[]>([])
 const isPublic = ref(false)
 const isRandomized = ref(false)
