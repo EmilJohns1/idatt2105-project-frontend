@@ -51,6 +51,7 @@ export default {
 
 .message {
   font-size: 2rem;
-  font-family: 'Luckiest Guy', cursive;
+  font-weight:500;
+  font-family: inherit;
 }
 </style>
