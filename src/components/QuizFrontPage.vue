@@ -45,15 +45,15 @@
     </div>
     <div class="card-container questions" v-if="questions">
       <h3>Questions:</h3>
-      <Card v-for="(question, index) in questions" :key="index" class="card">
+      <ComponentCard v-for="(question, index) in questions" :key="index" class="card">
         <div class="question">
           <p>{{ question.questionText }}</p>
         </div>
-      </Card>
+      </ComponentCard>
     </div>
     <div class="card-container comments">
       <h3>Comments:</h3>
-      <Card v-for="(comment, index) in comments" :key="index">
+      <ComponentCard v-for="(comment, index) in comments" :key="index">
         <div class="comment-grid">
           <div class="author-info">
             <img
@@ -74,7 +74,7 @@
           </div>
           <p class="comment-content">{{ comment.content }}</p>
         </div>
-      </Card>
+      </ComponentCard>
       <div class="pagination" v-if="comments.totalPages">
         <button @click="fetchComments(comments.number - 1)" :disabled="comments.number === 0">
           Previous
@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/Card.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
 import { ref, onMounted, defineEmits } from 'vue'
 import { getAllQuestionsByQuizId } from '@/api/questionHooks'
 import { getQuizByQuizId } from '@/api/quizHooks'
@@ -342,7 +342,7 @@ h2 {
   align-items: center;
 }
 
-#header2{
+#header2 {
   overflow-wrap: anywhere;
 }
 

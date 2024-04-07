@@ -1,5 +1,5 @@
 <template>
-  <Card class="forgot-password-card">
+  <ComponentCard class="forgot-password-card">
     <div class="password-reset-page">
       <h2 id="header">Password Reset</h2>
       <form @submit.prevent="submit">
@@ -17,19 +17,19 @@
         </div>
         <button type="submit">Reset Password</button>
       </form>
-      <Popup
+      <ComponentPopup
         :errorMessage="popupMessage"
         :fontColor="popupFontColor"
         v-if="popupMessage"
         @popup-closed="popupMessage = ''"
       />
     </div>
-  </Card>
+  </ComponentCard>
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/Card.vue'
-import Popup from '@/components/Popup.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 import router from '@/router/index'
 import { ref } from 'vue'
 import { resetPassword } from '@/api/resetPasswordHooks'

@@ -1,6 +1,6 @@
 <template>
   <div class="user-page">
-    <Card class="profile-section">
+    <ComponentCard class="profile-section">
       <h2 id="header">Your profile</h2>
       <div class="profile-info">
         <img
@@ -20,13 +20,15 @@
             />
             <label for="fileInput">Choose a file</label>
             <p id="selected-filename">{{ fileName }}</p>
-            <button @click="uploadProfilePicture" class="blackButton edit-profile-pic">Edit Profile Picture</button>
+            <button @click="uploadProfilePicture" class="blackButton edit-profile-pic">
+              Edit Profile Picture
+            </button>
           </div>
         </div>
       </div>
-    </Card>
+    </ComponentCard>
     <div class="quizzes-recent-activity">
-      <Card class="quizzes-section">
+      <ComponentCard class="quizzes-section">
         <h2 id="header">Your quizzes</h2>
         <input
           type="text"
@@ -41,11 +43,11 @@
             :to="`/quiz/${quiz.id}-${quiz.title.toLowerCase().replace(/ /g, '-')}/edit`"
             class="router-link-hidden"
           >
-            <ImageCard class="quiz-section-card" :quiz="quiz" :item="quiz" />
+            <ComponentImageCard class="quiz-section-card" :quiz="quiz" :item="quiz" />
           </RouterLink>
         </ul>
-      </Card>
-      <Card class="recent-activity-section">
+      </ComponentCard>
+      <ComponentCard class="recent-activity-section">
         <h2 id="header">Recent activity</h2>
         <ul class="activity-list">
           <RouterLink
@@ -57,13 +59,13 @@
             <li class="activity-link">{{ attempt.quizName }} - {{ attempt.date }}</li>
           </RouterLink>
         </ul>
-      </Card>
+      </ComponentCard>
     </div>
-    <Card class="comment-card">
+    <ComponentCard class="comment-card">
       <h2 id="header">Your comments</h2>
       <div class="quizzes-comments-container">
         <div v-if="currentQuizId !== null" class="comment-grid">
-          <ImageCard
+          <ComponentImageCard
             class="comments-card"
             v-for="quiz in filteredQuizzes"
             :key="quiz.id"
@@ -73,7 +75,7 @@
           />
           <div class="comment-and-button-container">
             <!-- Display comments for the current quiz -->
-            <Card class="comments-card">
+            <ComponentCard class="comments-card">
               <h3>Comments for Quiz {{ currentQuizId }}</h3>
               <ul v-if="currentQuiz">
                 <li v-for="comment in quizComments[currentQuiz.id]" :key="comment.id">
@@ -83,7 +85,7 @@
                 </li>
               </ul>
               <p v-else>No quiz selected.</p>
-            </Card>
+            </ComponentCard>
             <div class="button-container">
               <button @click="navigateToPreviousQuiz" class="previous-quiz-button">
                 <icon class="icon" name="angle-left"></icon>
@@ -95,15 +97,15 @@
           </div>
         </div>
       </div>
-    </Card>
-    <Calendar class="calendar-card" v-if="user.id" :id="user.id" />
+    </ComponentCard>
+    <UserCalendar class="calendar-card" v-if="user.id" :id="user.id" />
   </div>
 </template>
 
 <script setup lang="ts">
-import Calendar from '@/components/Calendar.vue'
-import Card from '@/components/Card.vue'
-import ImageCard from '@/components/ImageCard.vue'
+import UserCalendar from '@/components/UserCalendar.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
+import ComponentImageCard from '@/components/ComponentImageCard.vue'
 import { format } from 'date-fns'
 import { ref, onMounted, computed, watch, type Ref } from 'vue'
 import { getCommentsByUserId } from '@/api/commentHooks'

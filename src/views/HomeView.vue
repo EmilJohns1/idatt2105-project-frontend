@@ -4,7 +4,7 @@
       <h1>Discover</h1>
       <div class="category-cards" ref="cardsContainer">
         <TransitionGroup name="list">
-          <CardItem
+          <ComponentCardItem
             class="category-card"
             v-for="category in categories"
             :key="category.id"
@@ -27,7 +27,9 @@
         <RouterLink to="/signup" class="signup-button purpleButton button">Sign up</RouterLink>
         <RouterLink to="/login" class="blackButton button">Log in</RouterLink>
       </div>
-      <RouterLink to="/quiz/create" class="blackButton button create" v-else>Create a quiz</RouterLink>
+      <RouterLink to="/quiz/create" class="blackButton button create" v-else
+        >Create a quiz</RouterLink
+      >
     </div>
     <div class="aligner"></div>
   </div>
@@ -36,7 +38,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import CardItem from '@/components/CardItem.vue'
+import ComponentCardItem from '@/components/ComponentCardItem.vue'
 import { api } from '@/api/axiosConfig'
 import type { Category } from '@/types/Category'
 import { useUserStore } from '@/stores/userStore'

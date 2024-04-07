@@ -118,18 +118,12 @@ const selectedTemplate: Ref<any> = ref(null)
 const file = ref<File | null>(null)
 const newImage = ref('')
 
-/**
- * Fetches categories for the quiz.
- */
 const fetchCategories = async () => {
   categories.value = await getCategories()
 }
 
 onMounted(fetchCategories)
 
-/**
- * Submits the quiz registration form.
- */
 const submitForm = async () => {
   clearError()
 
@@ -185,12 +179,6 @@ const submitForm = async () => {
   }
 }
 
-/**
- * Redirects to the quiz edit page.
- *
- * @param {number} quiz_id - The ID of the quiz.
- * @param {string} quiz_title - The title of the quiz.
- */
 const redirect = async (quiz_id: number, quiz_title: string) => {
   await router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
   setTimeout(() => {
@@ -198,9 +186,6 @@ const redirect = async (quiz_id: number, quiz_title: string) => {
   }, 250)
 }
 
-/**
- * Adds a tag element to the DOM and the tag array.
- */
 const addTagElement = () => {
   const tagContent = input.value!.value.trim()
 
@@ -222,11 +207,6 @@ const addTagElement = () => {
   }
 }
 
-/**
- * Previews the selected image.
- *
- * @param {Event} event - The change event.
- */
 const previewImage = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
@@ -236,22 +216,11 @@ const previewImage = (event: Event) => {
   }
 }
 
-/**
- * Validates the selected image file.
- *
- * @param {File} file - The selected file.
- * @returns {boolean} - True if the file is valid; otherwise, false.
- */
 const validateImageFile = (file: File): boolean => {
   const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 
-/**
- * Validates the size of the selected image.
- *
- * @param {Event} event - The change event.
- */
 const validateImageSize = (event: Event) => {
   const target = event.target as HTMLInputElement
   const selectedFile = target.files?.[0]
@@ -272,19 +241,11 @@ const validateImageSize = (event: Event) => {
   }
 }
 
-/**
- * Handles the file change event.
- *
- * @param {Event} event - The change event.
- */
 const onFileChange = (event: Event) => {
   validateImageSize(event)
   previewImage(event)
 }
 
-/**
- * Uploads the selected image.
- */
 const uploadPicture = async (): Promise<void> => {
   if (file.value) {
     try {
@@ -334,9 +295,6 @@ onMounted(() => {
   })
 })
 
-/**
- * Applies the selected template to the form.
- */
 const applyTemplate = async () => {
   if (selectedTemplate.value) {
     const template = selectedTemplate.value
@@ -450,7 +408,6 @@ h3 {
   margin-top: 20px;
 }
 .description {
-  font-family: inherit;
   height: 100px;
   resize: none;
 }
@@ -478,7 +435,6 @@ h3 {
   box-sizing: border-box;
   border: 0;
   border-radius: 0.5em;
-  margin-right: 50px;
 }
 
 .input-field:hover {

@@ -13,6 +13,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-/* Your component's scoped styles here */
-</style>
+<style scoped></style>

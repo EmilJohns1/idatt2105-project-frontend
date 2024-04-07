@@ -1,11 +1,11 @@
 <template>
   <div clas="sign-up-view">
-    <SignUp />
+    <UserSignUp />
   </div>
 </template>
 
 <script setup>
-import SignUp from '@/components/SignUp.vue'
+import UserSignUp from '@/components/UserSignUp.vue'
 </script>
 
 <style scoped>

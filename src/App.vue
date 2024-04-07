@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import NavBar from './components/NavBar.vue'
+import ComponentNavBar from './components/ComponentNavBar.vue'
 </script>
 
 <template>
   <div class="layout-container">
-    <NavBar></NavBar>
+    <ComponentNavBar></ComponentNavBar>
     <RouterView></RouterView>
   </div>
 </template>

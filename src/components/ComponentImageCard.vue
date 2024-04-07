@@ -1,15 +1,15 @@
 <template>
-  <Card class="quiz-card custom-background">
+  <ComponentCard class="quiz-card custom-background">
     <h3 class="card-title">{{ isQuiz ? item.title : item.questionText }}</h3>
     <div class="separator"></div>
     <div class="image-container">
       <img :src="getImageUrl" alt="Image" class="item-image" />
     </div>
-  </Card>
+  </ComponentCard>
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/Card.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
 import { defineProps, computed } from 'vue'
 
 const props = defineProps({

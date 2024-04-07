@@ -1,7 +1,7 @@
 <template>
   <div>
     <button class="additional-button" @click="exportQuestions">Export questions</button>
-    <Popup
+    <ComponentPopup
       v-if="popupErrorMessage"
       :errorMessage="popupErrorMessage"
       :fontColor="popupFontColor"
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import Popup from '@/components/Popup.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 import { defineProps, ref } from 'vue'
 import { getAllQuestionsByQuizId } from '@/api/questionHooks'
 

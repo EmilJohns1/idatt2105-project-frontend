@@ -1,7 +1,7 @@
 <template>
   <QuizFrontPage v-if="frontPage" :quizId="quizId" @start-quiz="startQuiz" />
   <div v-else>
-    <div v-if="finished==false" class="container">
+    <div v-if="finished == false" class="container">
       <div id="header">{{ currentQuestion.questionText }}</div>
       <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
       <div class="button-container">
@@ -57,7 +57,7 @@ import type { Alternative } from '@/types/Alternative'
 import type { AlternativeRecord } from '@/types/AlternativeRecord'
 import type { QuestionAttempt } from '@/types/QuestionAttempt'
 import { ref, computed } from 'vue'
-import confetti from 'canvas-confetti';
+import confetti from 'canvas-confetti'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
 import { getQuestionsFromQuizId, registerQuizAttempt, getQuizByQuizId } from '@/api/quizHooks'
@@ -65,7 +65,6 @@ import checkedCorrect from '@/assets/responsebackgrounds/correct_marked.jpg'
 import uncheckedCorrect from '@/assets/responsebackgrounds/correct_unmarked.jpg'
 import checkedFalse from '@/assets/responsebackgrounds/false_checked.jpg'
 import uncheckedFalse from '@/assets/responsebackgrounds/unchecked_false.jpg'
-
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -233,12 +232,12 @@ const triggerConfetti = () => {
     particleCount: 100,
     spread: 500,
     colors: ['#05dae6', '#e5fc38', '#ba1a02'],
-    origin: { y: 0}
-  };
+    origin: { y: 0 }
+  }
 
   // Trigger the confetti effect
-  confetti(config);
-};
+  confetti(config)
+}
 
 /**
  * Moves to the next question in the quiz.
@@ -273,17 +272,17 @@ const nextQuestion = async () => {
       }
     })
   } else {
-    finished=true
-    scorePercentage = currentScore/maxScore*100
-    if(scorePercentage>75){
+    finished = true
+    scorePercentage = (currentScore / maxScore) * 100
+    if (scorePercentage > 75) {
       triggerConfetti()
-      feedback.value = "Amazingly done!"
-    } else if(scorePercentage>50){
-      feedback.value = "Good job!"
-    } else if(scorePercentage>25){
-      feedback.value = "Could have been worse."
+      feedback.value = 'Amazingly done!'
+    } else if (scorePercentage > 50) {
+      feedback.value = 'Good job!'
+    } else if (scorePercentage > 25) {
+      feedback.value = 'Could have been worse.'
     } else {
-      feedback.value = "Better luck next time..."
+      feedback.value = 'Better luck next time...'
     }
     scoreDisplay.value.scoreText =
       'Score: ' + Math.floor(currentScore * 100) / 100 + ' / ' + Math.floor(maxScore * 100) / 100
@@ -470,48 +469,48 @@ const showQuestion = (index: number) => {
   z-index: 2;
 }
 .center-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh; /* Adjust based on your requirement */
-    background-color: #f4f4f4; /* Optional: Adding a background color for visibility */
-    padding: 20px; /* Optional: Adding some padding around the child elements */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh; /* Adjust based on your requirement */
+  background-color: #f4f4f4; /* Optional: Adding a background color for visibility */
+  padding: 20px; /* Optional: Adding some padding around the child elements */
 }
 
-#finishedHeader{
+#finishedHeader {
   margin-top: 30px;
 }
 
 .feedback {
   margin-top: 10px;
-    font-size: 22px;
-    margin-bottom: 20px; /* Optional: Adding some space between elements */
+  font-size: 22px;
+  margin-bottom: 20px; /* Optional: Adding some space between elements */
 }
 
 #finalScore {
   margin-top: 150px;
-    font-size: 30px;
-    font-weight: bold;
-    color: #333; /* Optional: Changing text color */
-    margin-bottom: 20px; /* Optional: Adding some space between elements */
+  font-size: 30px;
+  font-weight: bold;
+  color: #333; /* Optional: Changing text color */
+  margin-bottom: 20px; /* Optional: Adding some space between elements */
 }
 
 .exploreButton {
   margin-top: 100px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #000000; /* Optional: Setting a button color */
-    color: #fff; /* Optional: Setting button text color */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 250px;
-    transition: background-color 0.3s ease; /* Optional: Adding a transition effect */
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #000000; /* Optional: Setting a button color */
+  color: #fff; /* Optional: Setting button text color */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 250px;
+  transition: background-color 0.3s ease; /* Optional: Adding a transition effect */
 }
 
 .exploreButton:hover {
-    background-color: rgb(35, 36, 36); /* Optional: Changing button color on hover */
+  background-color: rgb(35, 36, 36); /* Optional: Changing button color on hover */
 }
 
 .upright {

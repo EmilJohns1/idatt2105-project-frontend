@@ -8,7 +8,14 @@
 
     <h2 class="header">Image or Video</h2>
     <img :src="imageUrl || placeholderImage" id="image" /><br />
-    <input accept="image/*" type="file" id="file" name="file" @change="onFileChange" class="inputfile" /><label for="file">Choose a file</label><br />
+    <input
+      accept="image/*"
+      type="file"
+      id="file"
+      name="file"
+      @change="onFileChange"
+      class="inputfile"
+    /><label for="file">Choose a file</label><br />
 
     <div class="max-points-slider">
       <label for="maxPoints">Max Points</label>
@@ -31,7 +38,12 @@
 
     <div class="choice" v-if="selectedQuestionType === 'mc'">
       <div v-for="(alternativeObj, index) in alternatives" :key="index">
-        <input type="text" class="choiceInput inputField alt" :placeholder="generatePlaceholder(index)" v-model="alternativeObj.text" />
+        <input
+          type="text"
+          class="choiceInput inputField alt"
+          :placeholder="generatePlaceholder(index)"
+          v-model="alternativeObj.text"
+        />
         <label class="container">
           <input type="checkbox" v-model="alternativeObj.checked" />
           <span class="checkmark"></span> </label
@@ -48,25 +60,29 @@
     <div class="choice" id="tof" v-if="selectedQuestionType === 'tof'">
       Answer:<br />
       <div id="tofAnswers">
-      <label class="tofLabel" for="true">True</label>
-      <label class="container"
-        ><input type="radio" name="tof" id="true" value="true" v-model="selectedTofOption" /><span
-          class="checkmark"
-        ></span></label><br />
+        <label class="tofLabel" for="true">True</label>
+        <label class="container"
+          ><input type="radio" name="tof" id="true" value="true" v-model="selectedTofOption" /><span
+            class="checkmark"
+          ></span></label
+        ><br />
 
-      <label class="tofLabel" for="false">False</label>
-      <label class="container"
-        ><input type="radio" name="tof" id="false" value="false" v-model="selectedTofOption" /><span
-          class="checkmark"
-        ></span></label
-      >
+        <label class="tofLabel" for="false">False</label>
+        <label class="container"
+          ><input
+            type="radio"
+            name="tof"
+            id="false"
+            value="false"
+            v-model="selectedTofOption" /><span class="checkmark"></span
+        ></label>
       </div>
     </div>
 
     <button class="submitButton" @click="editMode ? saveChanges() : addToQuiz()">
       {{ editMode ? 'Confirm' : 'Add Question to quiz' }}
     </button>
-    <Popup
+    <ComponentPopup
       v-if="popupVisible"
       :error-message="popupMessage"
       :font-color="popupFontColor"
@@ -89,7 +105,7 @@ import {
   deleteQuestionByQuestionId
 } from '@/api/questionHooks'
 import { uploadFile, deletePicture } from '@/api/imageHooks'
-import Popup from '@/components/Popup.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 
 interface Alternative {
   text: string
@@ -117,7 +133,7 @@ const originalPictureUrl = ref('')
 
 /**
  * Preview uploaded image.
- * 
+ *
  * @param {Event} event - The input change event.
  */
 const previewImage = (event: Event) => {
@@ -130,7 +146,7 @@ const previewImage = (event: Event) => {
 
 /**
  * Handle file input change.
- * 
+ *
  * @param {Event} event - The input change event.
  */
 const onFileChange = (event: Event) => {
@@ -140,7 +156,7 @@ const onFileChange = (event: Event) => {
 
 /**
  * Validate if the uploaded file is an image.
- * 
+ *
  * @param {File} file - The uploaded file.
  * @returns {boolean} - True if the file is a valid image; otherwise, false.
  */
@@ -151,17 +167,17 @@ const validateImageFile = (file: File): boolean => {
 
 /**
  * Generate a placeholder for the alternative input based on its index.
- * 
+ *
  * @param {number} index - The index of the alternative.
  * @returns {string} - The generated placeholder text.
  */
 const generatePlaceholder = (index: number): string => {
-  return `Alternative ${index + 1}`;
+  return `Alternative ${index + 1}`
 }
 
 /**
  * Validate the size of the uploaded image.
- * 
+ *
  * @param {Event} event - The input change event.
  */
 const validateImageSize = (event: Event) => {
@@ -220,7 +236,7 @@ const uploadPicture = async (): Promise<void> => {
 
 /**
  * Handle change in question type.
- * 
+ *
  * @param {Event} event - The select change event.
  */
 const handleQuestionTypeChange = (event: Event) => {
@@ -244,7 +260,7 @@ const returnToQuiz = () => {
 
 /**
  * Get the question type based on the selected question type.
- * 
+ *
  * @returns {string} - The question type.
  */
 const getQuestionType = () => {
@@ -257,7 +273,7 @@ const getQuestionType = () => {
 
 /**
  * Validate user inputs.
- * 
+ *
  * @returns {boolean} - True if all inputs are valid; otherwise, false.
  */
 const checkIfValidInputs = () => {
@@ -372,7 +388,7 @@ const removeAlternative = () => {
 
 /**
  * Display a popup message.
- * 
+ *
  * @param {string} message - The message to display.
  * @param {string} fontColor - The color of the message font.
  */
@@ -433,7 +449,7 @@ const saveChanges = async () => {
       return {
         alternativeText: alternative.text,
         correct: alternative.checked,
-        id: alternative.id 
+        id: alternative.id
       }
     })
 
@@ -492,9 +508,8 @@ onMounted(async () => {
 })
 </script>
 
-
 <style scoped>
-.inputField{
+.inputField {
   width: 50%;
   padding: 10px;
   margin-bottom: 10px;
@@ -576,9 +591,9 @@ onMounted(async () => {
   margin-top: 40px;
 }
 
-#QuestionType{
+#QuestionType {
   background-color: white;
-  padding:10px;
+  padding: 10px;
   border: #000 solid 1px;
   border-radius: 10px;
 }
@@ -691,11 +706,11 @@ onMounted(async () => {
   cursor: pointer;
   padding: 5px;
 }
-.tofLabel{
-  width:70px;
+.tofLabel {
+  width: 70px;
   display: inline-block;
 }
-#tofAnswers{
+#tofAnswers {
   margin-top: 10px;
   margin-left: 27px;
 }
@@ -708,10 +723,11 @@ onMounted(async () => {
     top: 60px;
     left: 5px;
   }
-  .inputField{
+  .inputField {
     width: 80%;
   }
-  .choice, .qType{
+  .choice,
+  .qType {
     margin-left: 10px;
   }
 }

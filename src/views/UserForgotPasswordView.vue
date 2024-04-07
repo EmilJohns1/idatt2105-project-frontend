@@ -1,11 +1,11 @@
 <template>
   <div class="container">
-    <ForgotPasswordModal />
+    <UserForgotPasswordModal />
   </div>
 </template>
 
 <script setup>
-import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
+import UserForgotPasswordModal from '@/components/UserForgotPasswordModal.vue'
 </script>
 
 <style scoped>

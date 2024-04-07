@@ -8,8 +8,7 @@
 
 <script>
 export default {
-  // eslint-disable-next-line vue/multi-word-component-names
-  name: 'Popup',
+  name: 'ComponentPopup',
   props: {
     errorMessage: String,
     fontColor: String
@@ -51,7 +50,7 @@ export default {
 
 .message {
   font-size: 2rem;
-  font-weight:500;
+  font-weight: 500;
   font-family: inherit;
 }
 </style>
