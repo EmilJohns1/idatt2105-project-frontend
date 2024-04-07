@@ -20,7 +20,7 @@ const showContent = ref(false)
   background-color: white;
   border-radius: 4px;
   padding: 10px;
-  width: 200px;
+  width: auto;
 }
 
 .hover-card:hover .hover-card-content {
