@@ -77,6 +77,9 @@ function goToCategory(categoryName: string) {
 </script>
 
 <style scoped>
+.categoryCard{
+  cursor: pointer;
+}
 .search-input {
   margin-bottom: 20px;
   width: 100%;
