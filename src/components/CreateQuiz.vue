@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div v-if="loading" class="loading-message">Creating quiz...</div>
-    <div v-else>
+    <div v-else class="quiz-present-container">
       <h1 id="header">Create new quiz</h1>
       <h3>Choose Template:</h3>
       <select v-model="selectedTemplate" @change="applyTemplate">
@@ -11,37 +11,52 @@
         </option>
       </select>
       <form @submit.prevent="submitForm">
-        <h2>Title</h2>
-        <input v-model="title" type="text" required class="input-field" />
-        <h2>Description</h2>
-        <textarea v-model="description" type="text" class="input-field description"></textarea>
-        <h2>Display image</h2>
-        <img :src="imageUrl || placeholderImage" id="image" class="quiz-image" /><br />
-        <input accept="image/*" type="file" @change="previewImage" /><br />
-        <h3>Add tags</h3>
-        <div class="tags-input">
-          <ul id="tags"></ul>
-          <input type="text" id="input-tag" placeholder="Enter tag (e.g. difficult)" />
-          <button
-            type="button"
-            @click="addTagElement"
-            :disabled="tagArray.length > 2"
-            id="addTagButton"
-          >
-            Create tag
-          </button>
+        <h3>Category:</h3>
+        <select v-model="category" required>
+          <option disabled value="">Select a category</option>
+          <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+        </select>
+        
+        <div class="top-row-container">
+          <div class="image-container">
+            <h2>Display image</h2>
+            <img :src="imageUrl || placeholderImage" id="image" class="quiz-image" /><br />
+            <input accept="image/*" name="file" type="file" id="file" class="inputfile" @change="previewImage"/>
+            <label for="file">Choose a file</label>
+          </div>
+
+          <div class="title-desc-container">
+            <h2>Title</h2>
+            <input v-model="title" type="text" required class="input-field" spellcheck="false" maxLength="100"/>
+            <h2>Description</h2>
+            <textarea v-model="description" type="text" class="input-field description" spellcheck="false" maxLength="255"></textarea>
+          </div>
         </div>
-        <h3>
-          Category:
-          <select v-model="category" required>
-            <option disabled value="">Select a category</option>
-            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-          </select>
-        </h3>
-        <h3>Randomize Questions: <input type="checkbox" v-model="isRandomized" /></h3>
-        <div class="button-container">
-          <button type="submit" class="submit-button">Create quiz</button>
+
+        <div class="tag-div">
+          <h3>Add tags</h3>
+          <div class="tags-input">
+            <ul id="tags"></ul>
+            <input type="text" id="input-tag" placeholder="Enter tag (e.g. difficult)" />
+            <button
+              type="button"
+              @click="addTagElement"
+              :disabled="tagArray.length > 2"
+              id="addTagButton"
+            >
+              Create tag
+            </button>
+          </div>
         </div>
+        
+        <h3>Randomize Questions:</h3> 
+        <label class="switch">
+          <input type="checkbox" v-model="isRandomized" />
+          <span class="slider round"></span>
+        </label>
+          <div class="button-container">
+            <button type="submit" class="submit-button">Create quiz</button>
+          </div>
       </form>
     </div>
   </div>
@@ -62,7 +77,7 @@ const imageUrl = ref('')
 const placeholderImage = '/default.jpg'
 const title = ref('')
 const description = ref('')
-const category = ref('')
+const category = ref("Hello")
 const tagArray = ref<string[]>([])
 const isPublic = ref(false)
 const isRandomized = ref(false)
@@ -284,6 +299,9 @@ h3 {
   padding: 10px;
   margin-bottom: 10px;
   box-sizing: border-box;
+  border: 0;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.5em;
 }
 
 .button-container {
@@ -320,7 +338,10 @@ h3 {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 form {
-  width: 470px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   padding-bottom: 20px;
 }
 
@@ -331,5 +352,153 @@ form {
   height: auto;
   border-radius: 8px;
   border: 1px solid #333;
+}
+
+.quiz-present-container {
+  width: 100%;
+}
+
+.top-row-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+.title-desc-container {
+  margin-left: 10px;
+  width: 50%;
+}
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+select {
+  appearance: none;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  width: 15rem;
+  height: 2rem;
+  padding: 0 1em 0 0.5em;
+  color: black;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+
+  &::-ms-expand {
+    display: none;
+  }
+  option {
+    color: inherit;
+    background-color: var(--option-bg);
+  }
+}
+select:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+}
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  font-size: 1em;
+  font-weight: 700;
+  display: inline-block;
+  color: white;
+  background-color: #000000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.inputfile + label {
+  cursor: pointer; /* "hand" cursor */
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.tag-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+}
+.quiz-present-container {
+  width: 100%;
 }
 </style>

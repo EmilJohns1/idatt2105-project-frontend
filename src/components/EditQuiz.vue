@@ -54,12 +54,13 @@
 
             <div class="title-desc-container">
               <h2>Title</h2>
-              <input v-model="editedQuiz.title" type="text" required class="input-field" />
+              <input v-model="editedQuiz.title" type="text" required class="input-field" maxLength="100" />
               <h2>Description</h2>
               <textarea
                 v-model="editedQuiz.description"
                 type="text"
                 class="input-field description"
+                maxLength="255"
               ></textarea>
             </div>
           </div>
@@ -314,7 +315,7 @@ const onFileChange = (event: Event) => {
 }
 
 const validateImageFile = (file: File): boolean => {
-  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
+  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 
@@ -637,7 +638,7 @@ form {
 .remove-icon {
   position: absolute;
   top: 5px;
-  right: 32px;
+  right: 40px;
   width: 20px;
   height: 20px;
   cursor: pointer;
