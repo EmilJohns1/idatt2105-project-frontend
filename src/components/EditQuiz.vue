@@ -35,37 +35,29 @@
     </div>
     <div class="edit-quiz">
       <h1 id="header1">Edit Quiz</h1>
-      <div v-if="quiz">
+      <div v-if="quiz" class="quiz-is-present-container">
         <form @submit.prevent="updateQuiz" class="edit-quiz-form">
-          <h2>Title</h2>
-          <input v-model="editedQuiz.title" type="text" required class="input-field" />
-          <h2>Description</h2>
-          <textarea
-            v-model="editedQuiz.description"
-            type="text"
-            class="input-field description"
-          ></textarea>
-          <h2>Display image</h2>
-          <img :src="editedQuiz.quizPictureUrl || placeholderImage" class="quiz-image" /><br />
-          <input accept="image/*" type="file" @change="onFileChange" /><br />
-          <h3>Add tags</h3>
-          <div class="tags-input">
-            <ul id="tags">
-              <li v-for="(tag, index) in tagArray" :key="index">
-                {{ tag }}
-                <button class="delete-button" @click="removeTag(index)">X</button>
-              </li>
-            </ul>
-            <input
-              type="text"
-              v-model="tagInput"
-              @keydown.enter="addTag"
-              placeholder="Enter tag (e.g. difficult)"
-            />
-            <button type="button" @click="addTag" :disabled="tagArray.length > 2" id="addTagButton">
-              Create tag
-            </button>
+
+          <div class="top-row-container">
+            <div class="image-container">
+              <h2>Display image</h2>
+              <img :src="editedQuiz.quizPictureUrl || placeholderImage" class="quiz-image" /><br />
+              <input accept="image/*" name="file" type="file" id="file" class="inputfile" @change="onFileChange" />
+              <label for="file">Choose a file</label>
+            </div>
+
+            <div class="title-desc-container">
+              <h2>Title</h2>
+              <input v-model="editedQuiz.title" type="text" required class="input-field" />
+              <h2>Description</h2>
+              <textarea
+                v-model="editedQuiz.description"
+                type="text"
+                class="input-field description"
+              ></textarea>
+            </div>
           </div>
+
           <h3>Category:</h3>
           <select v-model="editedQuiz.categoryName" required>
             <option disabled value="">Select a category</option>
@@ -73,10 +65,39 @@
               {{ category }}
             </option>
           </select>
-          <h3>
-            Randomize Questions: <input type="checkbox" v-model="editedQuiz.randomizedOrder" />
-          </h3>
-          <h3>Make Public: <input type="checkbox" v-model="editedQuiz.public" /></h3>
+
+          <div class="tag-div">
+            <h3>Add tags</h3>
+            <div class="tags-input">
+              <ul id="tags">
+                <li v-for="(tag, index) in tagArray" :key="index">
+                  {{ tag }}
+                  <button class="delete-button" @click="removeTag(index)">X</button>
+                </li>
+              </ul>
+              <input
+                type="text"
+                v-model="tagInput"
+                @keydown.enter="addTag"
+                placeholder="Enter tag (e.g. difficult)"
+              />
+              <button type="button" @click="addTag" :disabled="tagArray.length > 2" id="addTagButton">
+                Create tag
+              </button>
+            </div>
+          </div>
+
+          
+          <h3>Randomize Questions:</h3>
+          <label class="switch">
+            <input type="checkbox" v-model="editedQuiz.randomizedOrder" />
+            <span class="slider round"></span>
+          </label>
+          <h3>Make Public: </h3>
+            <label class="switch">
+          <input type="checkbox" v-model="editedQuiz.public" />
+          <span class="slider round"></span>
+        </label>
           <Popup
             id="popup"
             v-if="isVisible"
@@ -442,6 +463,9 @@ h3 {
 
 .sidebar {
   border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .edit-quiz-form {
@@ -473,6 +497,10 @@ h3 {
   padding: 10px;
   margin-bottom: 10px;
   box-sizing: border-box;
+  border: 0;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.5em;
+
 }
 
 .button-container {
@@ -513,7 +541,7 @@ h3 {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 form {
-  width: 470px;
+  width: 100%;
   padding-bottom: 20px;
 }
 
@@ -554,10 +582,26 @@ form {
 }
 
 .question {
-  padding-right: 20px;
   max-width: 150px;
   max-height: 200px;
   margin-bottom: 10px;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 5px;
+}
+
+.question:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+
+.add-questio {
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .question-info {
@@ -579,6 +623,7 @@ form {
   border-radius: 8px;
   border: 1px solid #ccc;
   max-height: 78px;
+  cursor: pointer;
 }
 
 .remove-icon {
@@ -611,7 +656,6 @@ form {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 20px;
 }
 
 .question-image {
@@ -634,6 +678,7 @@ form {
   -webkit-line-clamp: 2; /* Limit to two lines */
   -webkit-box-orient: vertical;
   white-space: normal; /* Ensures text wraps within the limited lines */
+  padding: 5px;
 }
 
 /* Hide the title attribute and style the tooltip */
@@ -653,4 +698,212 @@ form {
   top: 0;
   white-space: normal;
 }
+.top-row-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+.title-desc-container {
+  margin-left: 10px;
+  width:50%;
+}
+.image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-is-present-container {
+  width: 100%;
+}
+
+.tag-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40%;
+}
+select {
+  appearance: none;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  width: 15rem;
+  padding: 1rem 4rem 1rem 1rem;
+  color: black;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+
+  &::-ms-expand {
+    display: none;
+  }
+  option {
+    color: inherit;
+    background-color: var(--option-bg);
+  }
+}
+select:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+.inputfile + label {
+    font-size: 1em;
+    font-weight: 700;
+    display: inline-block;
+    color: white;
+    background-color: #000000;
+    border: none; 
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+    background-color: #333;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.inputfile + label {
+	cursor: pointer; /* "hand" cursor */
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+@media (max-width: 1100px) {
+  .container {
+    display: flex;
+    flex-direction:column;
+    overflow-x: scroll;
+    justify-content: center;
+  }
+
+  .top-row-container {
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+
+  .title-desc-container {
+    margin: 0;
+    margin-top: 10px;
+  }
+
+  .tag-div {
+    width: 80%;
+  }
+
+  .sidebar {
+    flex-direction: row;
+    width: 100vw;
+    overflow-x: scroll;
+  }
+
+  .question-title {
+    display: none;
+  }
+
+  .question {
+    width: 500px;
+    margin-right: 20px;
+  }
+
+  .layout-container {
+    width:100%;
+  }
+
+  .additional-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .additional-button {
+    display:flex;
+    margin: 0;
+    margin-right: 10px;
+    margin-bottom:0;
+  }
+
+  #addTagButton {
+    width: 100px;
+  }
+}
+
 </style>
