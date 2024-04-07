@@ -1,7 +1,7 @@
 <template>
   <QuizFrontPage v-if="frontPage" :quizId="quizId" @start-quiz="startQuiz" />
   <div v-else>
-    <div class="container">
+    <div v-if="finished==false" class="container">
       <div id="header">{{ currentQuestion.questionText }}</div>
       <img id="image" :src="currentQuestion.mediaUrl || '/default.jpg'" />
       <div class="button-container">
@@ -32,10 +32,18 @@
       <button class="submit" @click="toggleButtonState">
         {{ buttonText }}
       </button>
+      <div class="score-display">
+        {{ scoreDisplay.scoreText }}
+      </div>
     </div>
-
-    <div class="score-display">
+  </div>
+  <div v-if="finished" class="center-container">
+    <h1 id="finishedHeader">You finished the quiz 🎉</h1>
+    <div id="finalScore">
       {{ scoreDisplay.scoreText }}
+    </div>
+    <div class="feedback">
+      {{ feedback }}
     </div>
     <button class="exploreButton" @click="router.push('/explore')">Back to explore page</button>
   </div>
@@ -66,6 +74,7 @@ const scoreDisplay = ref({
 })
 const quiz = ref<any | null>(null)
 const isRandomized = ref<boolean | null>(null)
+const feedback = ref('')
 
 const buttonText = computed(() => {
   return buttonState.value === 'submit' ? 'Submit Answer' : 'Next Question ->'
@@ -87,6 +96,8 @@ let pointsPerQuestion = 0
 let currentScore = 0
 let maxScore = 0
 let tofClicked = true
+let scorePercentage = 0
+let finished = false
 
 const quizAttemptRequest = {
   title: '',
@@ -247,21 +258,19 @@ const nextQuestion = async () => {
       }
     })
   } else {
+    finished=true
+    scorePercentage = currentScore/maxScore*100
+    if(scorePercentage>75){
+      feedback.value = "Amazingly done!"
+    } else if(scorePercentage>50){
+      feedback.value = "Good job!"
+    } else if(scorePercentage>25){
+      feedback.value = "Could have been worse."
+    } else {
+      feedback.value = "Better luck next time..."
+    }
     scoreDisplay.value.scoreText =
       'Score: ' + Math.floor(currentScore * 100) / 100 + ' / ' + Math.floor(maxScore * 100) / 100
-    const container = document.querySelector('.container')
-    const scoreDisplayElement = document.querySelector('.score-display')
-    const exploreButton = document.querySelector('.exploreButton')
-
-    if (
-      container instanceof HTMLElement &&
-      scoreDisplayElement instanceof HTMLElement &&
-      exploreButton instanceof HTMLElement
-    ) {
-      container.style.display = 'none'
-      scoreDisplayElement.style.left = '44%'
-      exploreButton.style.display = 'inline'
-    }
   }
 }
 
@@ -444,21 +453,51 @@ const showQuestion = (index: number) => {
   max-width: 20ch;
   z-index: 2;
 }
-.exploreButton {
-  display: none;
-  position: absolute;
-  top: 500px;
-  left: 30%;
-  border: none;
-  background-color: #000000;
-  color: white;
-  border-radius: 20px;
-  font-size: 1.5vw;
-  cursor: pointer;
-  width: 40%;
-  margin-left: 10px;
-  margin-right: 10px;
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh; /* Adjust based on your requirement */
+    background-color: #f4f4f4; /* Optional: Adding a background color for visibility */
+    padding: 20px; /* Optional: Adding some padding around the child elements */
 }
+
+#finishedHeader{
+  margin-top: 30px;
+}
+
+.feedback {
+  margin-top: 10px;
+    font-size: 22px;
+    margin-bottom: 20px; /* Optional: Adding some space between elements */
+}
+
+#finalScore {
+  margin-top: 150px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #333; /* Optional: Changing text color */
+    margin-bottom: 20px; /* Optional: Adding some space between elements */
+}
+
+.exploreButton {
+  margin-top: 100px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #000000; /* Optional: Setting a button color */
+    color: #fff; /* Optional: Setting button text color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 250px;
+    transition: background-color 0.3s ease; /* Optional: Adding a transition effect */
+}
+
+.exploreButton:hover {
+    background-color: rgb(35, 36, 36); /* Optional: Changing button color on hover */
+}
+
 .upright {
   position: absolute;
   top: 1px;
