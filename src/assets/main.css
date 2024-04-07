@@ -4,6 +4,26 @@
   display: grid;
   height: 100%;
 }
+.primary-padding {
+  padding: 40px;
+}
+
+.grid-layout {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+  justify-content: center;
+  align-items: start;
+}
+
+.input-shared {
+  margin-bottom: 20px;
+  width: 100%;
+  padding: var(--input-padding);
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+}
 
 .link {
   margin: 10px;
@@ -45,6 +65,7 @@
   display: flex;
   white-space: nowrap;
 }
+
 .tags-input .delete-button {
   background-color: none;
   border: none;

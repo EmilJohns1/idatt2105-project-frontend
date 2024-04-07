@@ -20,10 +20,10 @@
             <span class="tags-icon">🏷️</span>
           </template>
           <template #content>
-            <div class="tags-list">
+            <div class="hover-tags-list">
               <ul>
                 <p>Tags:</p>
-                <li v-for="tag in tags" :key="tag.id">{{ tag.tagName }}</li>
+                <li v-for="tag in tags" :key="tag.id" class="tag-item">{{ tag.tagName }}</li>
               </ul>
               <p>{{ latestDate }}</p>
             </div>
@@ -35,10 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref, computed } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 import HoverCard from './HoverCard.vue'
 import type { Tag } from '@/types/Tag'
 
+// Define the props with the appropriate types
 type Props = {
   id: string | number
   title: string
@@ -55,16 +56,35 @@ type Props = {
 
 const props = defineProps<Props>()
 const emits = defineEmits(['clicked'])
+
+const formatDate = (dateString: string | undefined) => {
+  if (!dateString) return ''
+
+  const date = new Date(dateString)
+
+  if (isNaN(date.getTime())) {
+    return 'Invalid date'
+  }
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' }
+
+  return date.toLocaleDateString(undefined, options)
+}
+
 const latestDate = computed(() => {
-  return props.creationDate &&
-    (!props.lastModifiedDate || new Date(props.creationDate) > new Date(props.lastModifiedDate))
-    ? props.creationDate
-    : props.lastModifiedDate
+  const creationDateObj = props.creationDate ? new Date(props.creationDate) : null
+  const lastModifiedDateObj = props.lastModifiedDate ? new Date(props.lastModifiedDate) : null
+
+  if (!creationDateObj && !lastModifiedDateObj) return 'No valid date'
+  if (!creationDateObj) return formatDate(props.lastModifiedDate)
+  if (!lastModifiedDateObj) return formatDate(props.creationDate)
+
+  const latest = creationDateObj > lastModifiedDateObj ? creationDateObj : lastModifiedDateObj
+  return formatDate(latest.toISOString())
 })
 
 const handleClick = () => {
   if (props.clickable) {
-    emits('clicked', props.title)
+    emits('clicked', props.id)
   }
 }
 </script>
@@ -80,7 +100,6 @@ const handleClick = () => {
   display: flex;
   flex-direction: column;
   text-align: left;
-  background: white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -136,16 +155,23 @@ const handleClick = () => {
   margin-left: auto;
 }
 
-.tags-list {
-  display: block;
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: white;
-  z-index: 10;
-  width: max-content;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+.hover-tags-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.hover-tags-list li {
+  align-items: center;
+  background-color: #f2f2f2;
+  color: #333;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin: 2px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
 </style>

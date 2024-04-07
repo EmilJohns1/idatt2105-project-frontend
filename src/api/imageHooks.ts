@@ -1,5 +1,11 @@
 import { api } from '@/api/axiosConfig'
 
+/**
+ * Uploads a file to the server.
+ *
+ * @param {File} file - The file to upload.
+ * @returns {Promise<string | null>} The response data from the server, otherwise null.
+ */
 export const uploadFile = async (file: File): Promise<string | null> => {
   try {
     const formData = new FormData()
@@ -17,6 +23,12 @@ export const uploadFile = async (file: File): Promise<string | null> => {
   }
 }
 
+/**
+ * Deletes a file from the server based on its URL.
+ *
+ * @param {string} url - The URL of the file to delete.
+ * @returns {Promise<boolean>} True if succesful, or false and throws.
+ */
 export const deletePicture = async (url: string): Promise<boolean> => {
   try {
     const response = await api.delete('/storage/deleteFile', {

@@ -2,6 +2,11 @@ import { api, oauth2 } from '@/api/axiosConfig'
 import { ref } from 'vue'
 import type { LoginRequest } from '@/types/LoginRequest.ts'
 
+/**
+ * Provides composition functions for registration, including state management for registration errors.
+ *
+ * @returns An object containing the `registrationError` reactive state, `registerUser` function to register a user, and `clearError` function to clear any registration errors.
+ */
 export const useRegistration = () => {
   const registrationError = ref('')
 
@@ -30,6 +35,12 @@ export const useRegistration = () => {
   return { registrationError, registerUser, clearError }
 }
 
+/**
+ * Checks if a username is available.
+ *
+ * @param {string} username - The username to check for availability.
+ * @returns {Promise<boolean>} True if the username is available, false otherwise.
+ */
 export const checkUsername = async (username: string): Promise<boolean> => {
   try {
     const response = await api.get('/user/username', {
@@ -42,6 +53,11 @@ export const checkUsername = async (username: string): Promise<boolean> => {
   }
 }
 
+/**
+ * Provides composition functions for user login, including state management for login errors.
+ *
+ * @returns An object containing the `loginError` reactive state, `loginUser` function to log in a user, and `clearError` function to clear any login errors.
+ */
 export const useLogin = () => {
   const loginError = ref('')
 
@@ -70,6 +86,12 @@ export const useLogin = () => {
   return { loginError, loginUser, clearError }
 }
 
+/**
+ * Retrieves user details by username.
+ *
+ * @param {string} username - The username to retrieve details for.
+ * @returns {Promise<any | null>} The user details if found, null otherwise.
+ */
 export const getUserByUsername = async (username: string): Promise<any | null> => {
   try {
     const response = await api.get('/user/username', {
@@ -82,6 +104,12 @@ export const getUserByUsername = async (username: string): Promise<any | null> =
   }
 }
 
+/**
+ * Fetches quizzes associated with a given user ID.
+ *
+ * @param {number} userId - The ID of the user whose quizzes are to be fetched.
+ * @returns {Promise<any[] | null>} An array of quizzes if found, null otherwise.
+ */
 export const getQuizzesByUserId = async (userId: number): Promise<any[] | null> => {
   try {
     const response = await api.get(`/user/${userId}/quizzes`)
@@ -92,6 +120,13 @@ export const getQuizzesByUserId = async (userId: number): Promise<any[] | null> 
   }
 }
 
+/**
+ * Updates the profile picture of a user.
+ *
+ * @param {string} username - The username of the user.
+ * @param {string} profilePictureUrl - The new URL for the user's profile picture.
+ * @returns {Promise<boolean>} True if the update was successful, throws an error otherwise.
+ */
 export const updateProfilePicture = async (
   username: string,
   profilePictureUrl: string
@@ -111,6 +146,12 @@ export const updateProfilePicture = async (
   }
 }
 
+/**
+ * Retrieves quizzes by username.
+ *
+ * @param {string} username - The username to retrieve quizzes for.
+ * @returns {Promise<any[] | null>} An array of quizzes associated with the username, null if the user is not found or on error.
+ */
 export const getQuizzesByUsername = async (username: string): Promise<any[] | null> => {
   try {
     const user = await getUserByUsername(username)
@@ -126,6 +167,12 @@ export const getQuizzesByUsername = async (username: string): Promise<any[] | nu
   }
 }
 
+/**
+ * Retrieves user details by user ID.
+ *
+ * @param {number} userId - The ID of the user to retrieve details for.
+ * @returns {Promise<any | null>} The user details if found, null otherwise.
+ */
 export const getUserByUserId = async (userId: number): Promise<any | null> => {
   try {
     const response = await api.get(`/user/${userId}`)

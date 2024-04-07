@@ -15,8 +15,8 @@
             <div class="separator"></div>
             <div class="details">
               <div class="quizText">
-              <h2>{{ quiz.title }}</h2>
-              <p class="description">{{ quiz.description }}</p>
+                <h2>{{ quiz.title }}</h2>
+                <p class="description">{{ quiz.description }}</p>
               </div>
               <div class="author">
                 <img
@@ -305,7 +305,7 @@ h2 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
 }
-.quizText{
+.quizText {
   max-height: 200px;
   overflow-y: scroll;
 }
@@ -492,25 +492,24 @@ h2 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
   }
-  .content-area{
+  .content-area {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  .separator{
+  .separator {
     display: none;
   }
-  .quizText{
+  .quizText {
     width: 100%;
   }
-  .frontpage-container{
+  .frontpage-container {
     width: 100%;
     padding: 5px;
   }
   .quiz-image img {
     max-height: 150px;
-
   }
 }
 </style>

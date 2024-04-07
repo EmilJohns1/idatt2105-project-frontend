@@ -1,27 +1,25 @@
 <template>
-  <div class="category-quizzes-container">
+  <div class="category-quizzes-container primary-padding">
     <div class="header">
       <h1>{{ categoryName }}</h1>
       <p>Try out all the quizzes made by our bustling community</p>
-      <div class="sort-select-container">
-        <select v-model="selectedSort" @change="changeSort">
-          <option v-for="option in sortOptions" :key="option.value" :value="option.value">
-            {{ option.text }}
-          </option>
-        </select>
+    </div>
+    <div class="control-container">
+      <div class="tags-input-container">
+        <div class="search-tags-input">
+          <input type="text" v-model="currentTag" @keyup.enter="addTag" placeholder="Add Tags..." />
+          <button @click="addTag" :disabled="!currentTag" class="add-tag-button">Add Tag</button>
+        </div>
+        <div class="sort-select-container">
+          <select v-model="selectedSort" @change="changeSort">
+            <option v-for="option in sortOptions" :key="option.value" :value="option.value">
+              {{ option.text }} ▼
+            </option>
+          </select>
+        </div>
       </div>
     </div>
-    <div class="tags-input-container">
-      <div class="tags-input">
-        <input
-          type="text"
-          v-model="currentTag"
-          @keyup.enter="addTag"
-          placeholder="Search Tags..."
-          class="input-tag"
-        />
-        <button @click="addTag" class="add-tag-btn">Add tag</button>
-      </div>
+    <div>
       <ul class="tags-list">
         <li v-for="(tag, index) in searchTags" :key="index" class="tag">
           {{ tag }}
@@ -30,13 +28,12 @@
       </ul>
     </div>
   </div>
-  <div class="quizzes-grid">
+  <div class="grid-layout">
     <CardItem
       v-for="quiz in filteredQuizzes"
-      class="quizCard"
       :key="quiz.id"
       :id="quiz.id"
-      :image="quiz.quizPictureUrl || '/default.jpg'"
+      :image="quiz.quizPictureUrl || '/defualt-quiz-image.jpg'"
       :title="quiz.title"
       :description="quiz.description"
       :authorName="authorName(quiz)"
@@ -49,35 +46,11 @@
     />
   </div>
   <div class="pagination-controls">
-    <button @click="changePage(currentPage - 1)" :disabled="currentPage <= 1">&lt; Previous</button>
-    <button @click="changePage(1)" :disabled="currentPage === 1">1</button>
-
-    <span v-if="currentPage > 3" class="pagination-ellipsis">...</span>
-    <button v-if="currentPage > 2" @click="changePage(currentPage - 1)">
-      {{ currentPage - 1 }}
-    </button>
-    <button
-      v-if="currentPage > 1 && currentPage < totalPages"
-      class="current-page"
-      :disabled="true"
-    >
-      {{ currentPage }}
-    </button>
-    <button v-if="currentPage < totalPages - 1" @click="changePage(currentPage + 1)">
-      {{ currentPage + 1 }}
-    </button>
-    <span v-if="currentPage < totalPages - 2" class="pagination-ellipsis">...</span>
-
-    <button
-      v-if="totalPages > 1"
-      @click="changePage(totalPages)"
-      :disabled="currentPage === totalPages"
-    >
-      {{ totalPages }}
-    </button>
-    <button @click="changePage(Number(currentPage) + 1)" :disabled="currentPage >= totalPages">
-      Next &gt;
-    </button>
+    <PaginationComponent
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @changePage="changePage"
+    />
   </div>
 </template>
 
@@ -85,9 +58,11 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CardItem from './CardItem.vue'
+import PaginationComponent from './PaginationComponent.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
+import { fetchAllTags } from '@/api/quizHooks'
 
 /**
  * Retrieves the author's name for a given quiz.
@@ -118,7 +93,9 @@ const sortOptions = [
   //{ value: 'lastModifiedDate,desc', text: 'Newest Modified Date' },
   //{ value: 'lastModifiedDate,asc', text: 'Oldest Modified Date' },
   { value: 'title,asc', text: 'Title (A-Z)' },
-  { value: 'title,desc', text: 'Title (Z-A)' }
+  { value: 'title,desc', text: 'Title (Z-A)' },
+  { value: 'isPublic,desc', text: 'Public Quizzes' },
+  { value: 'isPublic,asc', text: 'Private Quizzes' }
   // Add more options here
 ]
 
@@ -259,98 +236,101 @@ function goToQuiz(quizId: number, quizTitle: string) {
 }
 
 const filteredQuizzes = computed(() => quizzes.value)
+
+const searchQuizzes = async () => {
+  // Future me, implement functionality to search quizzes by title?
+  quizzes.value = [] // Clear current quizzes to ensure a fresh search
+  currentPage.value = 1 // Start from the first page
+  await fetchQuizzes()
+}
 </script>
 
 <style scoped>
 .category-quizzes-container {
-  padding: 40px;
-}
-.quizzes-grid {
-  margin-top: 50px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 40px;
-  justify-content: center;
-  align-items: start;
-}
-
-.tags-input-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 20px;
 }
-
-.tags-input {
+.control-container {
   display: flex;
-  border: 2px solid black;
-  padding: 5px;
+  margin-bottom: 20px;
+  align-items: flex-end;
+  width: 100%;
+}
+.tags-input-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: space-between;
 }
 
-.input-tag {
+.search-tags-input {
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 4px;
+  box-shadow: 2px 2px 5px #00000033;
+}
+
+.search-tags-input input[type='text'] {
+  flex-grow: 1;
   border: none;
   outline: none;
-  flex-grow: 1;
+  padding: 8px;
 }
 
-.add-tag-btn {
-  background-color: black;
+.add-tag-button {
+  padding: 8px;
+  background-color: green;
   color: white;
   border: none;
-  padding: 5px 10px;
+  border-radius: 4px;
   cursor: pointer;
+  outline: none;
+  box-shadow: 2px 2px 5px #00000033;
 }
 
+.add-tag-button:hover {
+  background-color: darkgreen;
+}
 .tags-list {
-  display: flex;
-  gap: 10px;
-  list-style: none;
+  list-style-type: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .tag {
-  background-color: #eeeeee;
-  border: 1px solid #cccccc;
-  border-radius: 10px;
-  padding: 5px 10px;
   display: flex;
-  gap: 5px;
   align-items: center;
-  font-size: 0.8rem;
+  background-color: #f2f2f2;
+  color: #333;
+  border-radius: 20px;
+  padding: 2px 10px;
+  border: solid 1px black;
+  margin-right: 10px;
 }
 
 .remove-tag {
+  margin-left: 5px;
   border: none;
   background-color: transparent;
+  color: #999;
   cursor: pointer;
 }
 
-.input-tag,
-.add-tag-btn,
-.search-btn {
-  height: 40px;
+.sort-select-container {
+  position: relative;
 }
 
-.add-tag-btn:hover {
-  background-color: black;
-  color: white;
-}
-
-.pagination-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-}
-
-.pagination-controls button {
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  background-color: white;
-  padding: 8px 16px;
-  margin: 0 5px;
+.sort-select-container select {
+  padding: 12px;
+  border-radius: 4px;
+  appearance: none;
+  position: relative;
+  font-size: 16px;
   cursor: pointer;
   user-select: none;
 }
@@ -381,7 +361,7 @@ const filteredQuizzes = computed(() => quizzes.value)
 .pagination-controls .pagination-ellipsis {
   cursor: default;
 }
-.quizCard{
+.quizCard {
   cursor: pointer;
 }
 </style>

@@ -1,5 +1,11 @@
 import { api } from '@/api/axiosConfig'
 
+/**
+ * Sends an email to the specified recipient.
+ *
+ * @param {string} to - The email address of the recipient.
+ * @throws {Error} Throws an error if the email sending fails.
+ */
 export const sendEmail = async (to: string) => {
   try {
     const response = await api.post('/sendEmail?to=' + to)

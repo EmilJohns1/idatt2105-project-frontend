@@ -1,9 +1,9 @@
 <template>
-  <div class="explore-container">
+  <div class="explore-container primary-padding">
     <h1>Explore</h1>
     <p>Choose your desired subject to start.</p>
     <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input" />
-    <div class="category-grid">
+    <div class="grid-layout">
       <CardItem
         v-for="category in filteredCategories"
         class="categoryCard"
@@ -33,16 +33,19 @@ interface Category {
   id: string | number
   name: string
 }
+
 onMounted(async () => {
   const fetchedCategories = await getCategories()
   if (fetchedCategories) {
-    // Transform the string array to the expected object array format
     categories.value = fetchedCategories.map((name) => ({ id: name, name }))
   } else {
     console.error('Could not fetch categories')
   }
 })
 
+/**
+ * Filter categories in the search term.
+ */
 const filteredCategories = computed(() => {
   const results = []
   if (!searchTerm.value || searchTerm.value.toLowerCase().startsWith('a')) {
@@ -57,6 +60,9 @@ const filteredCategories = computed(() => {
   return results
 })
 
+/**
+ * Routes to the category.
+ */
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
     router.push({ name: 'Category', params: { category: 'all' } })
@@ -70,11 +76,7 @@ function goToCategory(categoryName: string) {
 }
 </script>
 
-<style>
-.explore-container {
-  padding: 40px;
-}
-
+<style scoped>
 .search-input {
   margin-bottom: 20px;
   width: 100%;
@@ -91,14 +93,5 @@ function goToCategory(categoryName: string) {
   gap: 40px;
   justify-content: center;
   align-items: start;
-}
-
-.categoryCard{
-  cursor: pointer;
-}
-@media (max-width: 750px) {
-  .explore-container {
-  padding: 0px;
-}
 }
 </style>

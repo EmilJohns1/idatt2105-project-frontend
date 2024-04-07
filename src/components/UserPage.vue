@@ -601,38 +601,38 @@ h3 {
 }
 @media (max-width: 750px) {
   .quizzes-section {
-  display: grid;
-  align-items: baseline;
-  overflow-x: scroll;
-  width: 100%;
-  padding: 10px;
+    display: grid;
+    align-items: baseline;
+    overflow-x: scroll;
+    width: 100%;
+    padding: 10px;
   }
   .quizzes-recent-activity {
-  grid-template-columns: 1fr;
-  gap: 20px;
-  max-height: 100%;
-  margin-bottom: 60px;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-height: 100%;
+    margin-bottom: 60px;
   }
-  .recent-activity-section{
-    height:300px;
+  .recent-activity-section {
+    height: 300px;
     overflow-y: scroll;
     padding: 10px;
   }
-  .quiz-list{
+  .quiz-list {
     grid-auto-flow: column;
     padding-left: 0px;
     overflow-x: scroll;
   }
-  .quiz-card{
+  .quiz-card {
     max-width: 100%;
     width: 200px;
     height: 200px;
   }
   .comment-grid {
-  display: grid;
-  place-items: center;
-  grid-template-columns: 1fr;
-  gap: 20px;
+    display: grid;
+    place-items: center;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
   .comments-card {
     width: 80%;
@@ -644,22 +644,21 @@ h3 {
   .comment-and-button-container {
     display: flex;
     align-items: center;
-    width:100%;
+    width: 100%;
     flex-direction: column;
   }
-  .profile-section{
+  .profile-section {
     padding: 3px;
-    
   }
-  .profile-picture{
+  .profile-picture {
     width: 75px;
     height: 75px;
     margin-right: 5px;
   }
-  .email{
+  .email {
     font-size: 17px;
     white-space: nowrap;
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
   }
   .comment-card {
@@ -668,8 +667,8 @@ h3 {
   .calendar-card {
     padding: 10px;
   }
-  .user-page{
-    padding:0px
+  .user-page {
+    padding: 0px;
   }
 }
 </style>
