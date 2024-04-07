@@ -581,6 +581,7 @@ h3 {
 #comment-content {
   font-size: 16px;
   font-family: 'Luckiest Guy', cursive;
+  overflow-wrap: anywhere;
 }
 
 .comment-card {
