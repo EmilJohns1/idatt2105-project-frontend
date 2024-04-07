@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import CardItem from '@/components/CardItem.vue' // Adjust the import path as needed
+import ComponentCardItem from '@/components/ComponentCardItem.vue' // Adjust the import path as needed
 
 describe('CardItem.vue', () => {
   it('renders title and description', () => {
-    const wrapper = mount(CardItem, {
+    const wrapper = mount(ComponentCardItem, {
       props: {
         id: 1,
         title: 'Test Title',
@@ -21,7 +21,7 @@ describe('CardItem.vue', () => {
   })
 
   it('conditionally renders description and footer based on props', () => {
-    const wrapper = mount(CardItem, {
+    const wrapper = mount(ComponentCardItem, {
       props: {
         id: 1,
         title: 'Test Title',
@@ -42,7 +42,7 @@ describe('CardItem.vue', () => {
   })
 
   it('emits clicked event when the card is clicked and is clickable', async () => {
-    const wrapper = mount(CardItem, {
+    const wrapper = mount(ComponentCardItem, {
       props: {
         id: 1,
         title: 'Test Title',
@@ -57,7 +57,7 @@ describe('CardItem.vue', () => {
   })
 
   it('does not emit clicked event when the card is not clickable', async () => {
-    const wrapper = mount(CardItem, {
+    const wrapper = mount(ComponentCardItem, {
       props: {
         id: 1,
         title: 'Test Title',
