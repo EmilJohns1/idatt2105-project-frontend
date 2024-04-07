@@ -71,11 +71,16 @@ const formatDate = (dateString: string | undefined) => {
 };
 
 const latestDate = computed(() => {
-  return props.creationDate && (!props.lastModifiedDate || new Date(props.creationDate) > new Date(props.lastModifiedDate))
-    ? props.creationDate
-    : props.lastModifiedDate;
-});
+  const creationDateObj = props.creationDate ? new Date(props.creationDate) : null;
+  const lastModifiedDateObj = props.lastModifiedDate ? new Date(props.lastModifiedDate) : null;
 
+  if (!creationDateObj && !lastModifiedDateObj) return 'No valid date';
+  if (!creationDateObj) return formatDate(props.lastModifiedDate);
+  if (!lastModifiedDateObj) return formatDate(props.creationDate);
+
+  const latest = (creationDateObj > lastModifiedDateObj) ? creationDateObj : lastModifiedDateObj;
+  return formatDate(latest.toISOString());
+});
 
 const handleClick = () => {
   if (props.clickable) {
@@ -156,8 +161,8 @@ const handleClick = () => {
   padding: 0;
   margin: 0;
   display: flex;
-  flex-wrap: wrap; /* This will allow your tags to wrap if there's not enough space */
-  gap: 5px; /* This adds a space between your tags */
+  flex-wrap: wrap;
+  gap: 5px;
 }
 
 .hover-tags-list li {
@@ -169,6 +174,7 @@ const handleClick = () => {
   margin: 2px; 
   border: 1px solid #ccc; 
   font-size: 14px; 
+  
 }
 
 
