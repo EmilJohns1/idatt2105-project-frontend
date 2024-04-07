@@ -60,6 +60,7 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CardItem from './CardItem.vue'
+import PaginationComponent from './PaginationComponent.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
