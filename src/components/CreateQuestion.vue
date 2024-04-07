@@ -4,11 +4,11 @@
     <h2 class="header1">{{ editMode ? 'Edit Question' : 'Add Question' }}</h2>
     <h2 class="mainHeader">Question Text</h2>
     <label class="overlay" for="toggle-menu"></label>
-    <input type="text" class="choiceInput" v-model="question" /><br />
+    <input type="text" class="choiceInput inputField" v-model="question" /><br />
 
     <h2 class="header">Image or Video</h2>
     <img :src="imageUrl || placeholderImage" id="image" /><br />
-    <input accept="image/*" type="file" @change="onFileChange" /><br />
+    <input accept="image/*" type="file" id="file" name="file" @change="onFileChange" class="inputfile" /><label for="file">Choose a file</label><br />
 
     <div class="max-points-slider">
       <label for="maxPoints">Max Points</label>
@@ -31,8 +31,7 @@
 
     <div class="choice" v-if="selectedQuestionType === 'mc'">
       <div v-for="(alternativeObj, index) in alternatives" :key="index">
-        Alt {{ index + 1 }}:
-        <input type="text" class="choiceInput" v-model="alternativeObj.text" />
+        <input type="text" class="choiceInput inputField alt" :placeholder="generatePlaceholder(index)" v-model="alternativeObj.text" />
         <label class="container">
           <input type="checkbox" v-model="alternativeObj.checked" />
           <span class="checkmark"></span> </label
@@ -48,17 +47,20 @@
 
     <div class="choice" id="tof" v-if="selectedQuestionType === 'tof'">
       Answer:<br />
-      True&nbsp;<label class="container"
-        ><input type="radio" name="tof" value="true" v-model="selectedTofOption" /><span
-          class="checkmark"
-        ></span></label
-      ><br />
-      False
+      <div id="tofAnswers">
+      <label class="tofLabel" for="true">True</label>
       <label class="container"
-        ><input type="radio" name="tof" value="false" v-model="selectedTofOption" /><span
+        ><input type="radio" name="tof" id="true" value="true" v-model="selectedTofOption" /><span
+          class="checkmark"
+        ></span></label><br />
+
+      <label class="tofLabel" for="false">False</label>
+      <label class="container"
+        ><input type="radio" name="tof" id="false" value="false" v-model="selectedTofOption" /><span
           class="checkmark"
         ></span></label
-      ><br />
+      >
+      </div>
     </div>
 
     <button class="submitButton" @click="editMode ? saveChanges() : addToQuiz()">
@@ -130,6 +132,10 @@ const validateImageFile = (file: File): boolean => {
   const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
+
+const  generatePlaceholder = (index:number): string => {
+        return `Alternative ${index + 1}`;
+    }
 
 const validateImageSize = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -364,11 +370,11 @@ const saveChanges = async () => {
 
     const updatedQuestion = await updateQuestionById(questionData)
 
-    const formattedAlternatives = alternatives.value.map((alternative, index) => {
+    const formattedAlternatives = alternatives.value.map((alternative) => {
       return {
         alternativeText: alternative.text,
         correct: alternative.checked,
-        id: alternative.id // Use the ID of the alternative
+        id: alternative.id 
       }
     })
 
@@ -425,7 +431,51 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* content */
+.inputField{
+  width: 50%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  border: 0;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.5em;
+}
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  font-size: 1em;
+  font-weight: 700;
+  display: inline-block;
+  color: white;
+  background-color: #000000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.inputfile + label {
+  cursor: pointer; /* "hand" cursor */
+}
+
+.alt {
+  margin-right: 10px;
+}
+
 .choiceInput {
   width: 50%;
 }
@@ -445,6 +495,7 @@ onMounted(async () => {
   height: 300px;
   border-radius: 8px;
   border: 1px solid #333;
+  max-width: 90%;
 }
 
 .content {
@@ -462,11 +513,18 @@ onMounted(async () => {
   margin-top: 40px;
 }
 
-/* options */
+#QuestionType{
+  background-color: white;
+  padding:10px;
+  border: #000 solid 1px;
+  border-radius: 10px;
+}
+
 #maxPoints {
   font-size: 20px;
   display: inline-block;
   width: fit-content;
+  accent-color: #756dd3;
 }
 #maxPointsInput {
   width: 60px;
@@ -563,10 +621,35 @@ onMounted(async () => {
 
 .addRemoveButton {
   margin-left: 5px;
+  background-color: #000000;
+  border-radius: 10px;
+  border: solid black 1px;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
 }
-
+.tofLabel{
+  width:70px;
+  display: inline-block;
+}
+#tofAnswers{
+  margin-top: 10px;
+  margin-left: 27px;
+}
 .header1 {
   font-size: 2.5rem;
   margin-bottom: 20px;
+}
+@media (max-width: 750px) {
+  .returnButton {
+    top: 60px;
+    left: 5px;
+  }
+  .inputField{
+    width: 80%;
+  }
+  .choice, .qType{
+    margin-left: 10px;
+  }
 }
 </style>
