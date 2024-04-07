@@ -115,6 +115,11 @@ const file = ref<File | null>(null)
 const questionData = ref<any>(null)
 const originalPictureUrl = ref('')
 
+/**
+ * Preview uploaded image.
+ * 
+ * @param {Event} event - The input change event.
+ */
 const previewImage = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
@@ -123,20 +128,42 @@ const previewImage = (event: Event) => {
   }
 }
 
+/**
+ * Handle file input change.
+ * 
+ * @param {Event} event - The input change event.
+ */
 const onFileChange = (event: Event) => {
   validateImageSize(event)
   previewImage(event)
 }
 
+/**
+ * Validate if the uploaded file is an image.
+ * 
+ * @param {File} file - The uploaded file.
+ * @returns {boolean} - True if the file is a valid image; otherwise, false.
+ */
 const validateImageFile = (file: File): boolean => {
   const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 
-const  generatePlaceholder = (index:number): string => {
-        return `Alternative ${index + 1}`;
-    }
+/**
+ * Generate a placeholder for the alternative input based on its index.
+ * 
+ * @param {number} index - The index of the alternative.
+ * @returns {string} - The generated placeholder text.
+ */
+const generatePlaceholder = (index: number): string => {
+  return `Alternative ${index + 1}`;
+}
 
+/**
+ * Validate the size of the uploaded image.
+ * 
+ * @param {Event} event - The input change event.
+ */
 const validateImageSize = (event: Event) => {
   const target = event.target as HTMLInputElement
   const selectedFile = target.files?.[0]
@@ -146,26 +173,23 @@ const validateImageSize = (event: Event) => {
     const maxSizeKB = 1024 * 3 // Max size in KB (3 MB)
 
     if (!validateImageFile(selectedFile)) {
-      // Show an alert if file type is not valid
       window.alert('Invalid file type. Please select a PNG, JPG, or JPEG file.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else if (fileSize > maxSizeKB) {
-      // Show an alert if file size exceeds the maximum limit
       window.alert('File size exceeds the maximum limit. Maximum 3 MB allowed.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else {
-      // Update the file variable with the selected file
       file.value = selectedFile
     }
   }
 }
 
+/**
+ * Upload the selected picture.
+ */
 const uploadPicture = async (): Promise<void> => {
   if (file.value) {
     try {
-      //Delete the current profile picture from the storage
       if (originalPictureUrl.value) {
         const deleteSuccess = await deletePicture(originalPictureUrl.value)
 
@@ -175,7 +199,6 @@ const uploadPicture = async (): Promise<void> => {
         }
       }
 
-      // Upload the new profile picture
       imageUrl.value = await uploadFile(file.value)
 
       if (imageUrl.value) {
@@ -195,11 +218,19 @@ const uploadPicture = async (): Promise<void> => {
   }
 }
 
+/**
+ * Handle change in question type.
+ * 
+ * @param {Event} event - The select change event.
+ */
 const handleQuestionTypeChange = (event: Event) => {
   const target = event.target as HTMLSelectElement
   selectedQuestionType.value = target.value
 }
 
+/**
+ * Return to the quiz edit page.
+ */
 const returnToQuiz = () => {
   const params = router.currentRoute.value.params
   const quiz_id = params.quiz_id
@@ -211,6 +242,11 @@ const returnToQuiz = () => {
   }, 0)
 }
 
+/**
+ * Get the question type based on the selected question type.
+ * 
+ * @returns {string} - The question type.
+ */
 const getQuestionType = () => {
   if (selectedQuestionType.value === 'mc') {
     return 'multiple_choice'
@@ -219,6 +255,11 @@ const getQuestionType = () => {
   }
 }
 
+/**
+ * Validate user inputs.
+ * 
+ * @returns {boolean} - True if all inputs are valid; otherwise, false.
+ */
 const checkIfValidInputs = () => {
   if (question.value === '') {
     popup('Please enter a question', 'red')
@@ -259,6 +300,9 @@ const checkIfValidInputs = () => {
   return true
 }
 
+/**
+ * Add the question to the quiz.
+ */
 const addToQuiz = async () => {
   if (!checkIfValidInputs()) {
     return
@@ -308,18 +352,30 @@ const addToQuiz = async () => {
   }
 }
 
+/**
+ * Add an alternative to the question.
+ */
 const addAlternative = () => {
   if (alternatives.value.length < 4) {
     alternatives.value.push({ text: '', checked: false })
   }
 }
 
+/**
+ * Remove an alternative from the question.
+ */
 const removeAlternative = () => {
   if (alternatives.value.length > 2) {
     alternatives.value.pop()
   }
 }
 
+/**
+ * Display a popup message.
+ * 
+ * @param {string} message - The message to display.
+ * @param {string} fontColor - The color of the message font.
+ */
 const popup = (message: string, fontColor: string) => {
   popupVisible.value = true
   popupMessage.value = message
@@ -330,6 +386,9 @@ const popupVisible = ref(false)
 const popupMessage = ref('')
 const popupFontColor = ref('')
 
+/**
+ * Save the changes made to the question.
+ */
 const saveChanges = async () => {
   if (!checkIfValidInputs()) {
     return
@@ -395,6 +454,9 @@ const saveChanges = async () => {
   }
 }
 
+/**
+ * Fetch and populate the question data for editing.
+ */
 onMounted(async () => {
   const params = router.currentRoute.value.params
   if (params.question_id) {
@@ -429,6 +491,7 @@ onMounted(async () => {
   }
 })
 </script>
+
 
 <style scoped>
 .inputField{
