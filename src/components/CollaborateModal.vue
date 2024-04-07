@@ -5,9 +5,9 @@
       <h2 id="header">Edit collaborators</h2>
       <div class="collaborate-section">
         <div class="add-user-section">
-          <h3>Add User to Quiz</h3>
+          <h3 id="header2">Add User to Quiz</h3>
           <input type="text" v-model="username" placeholder="Enter username" />
-          <button @click="addToQuiz">Add User</button>
+          <button class="button-class" @click="addToQuiz">Add User</button>
         </div>
         <div class="collaborators-section">
           <h3>Collaborators</h3>
@@ -19,7 +19,7 @@
           </ul>
         </div>
       </div>
-      <button @click="shareQuiz">Collaborate on Quiz!</button>
+      <button class="collaborate-button" @click="shareQuiz">Collaborate on Quiz!</button>
     </div>
     <Popup
       v-if="showErrorPopup"
@@ -168,8 +168,14 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+#header2 {
+  margin-bottom: 10px;
+}
+
 .modal {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   z-index: 99999;
   left: 0;
@@ -177,18 +183,16 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.8);
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
   border: 1px solid #888;
-  width: 50%;
   border-radius: 8px;
-  padding-bottom: 5%;
+  padding: 20px;
+  max-width: 80%;
+  width: 500px; /* Change the width as needed */
 }
 
 .close {
@@ -207,19 +211,121 @@ onMounted(() => {
 
 .collaborate-section {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.add-user-section {
-  width: 45%;
-}
-
+.add-user-section,
 .collaborators-section {
-  width: 45%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
 }
 
-ul {
-  list-style-type: none;
+.add-user-section h3,
+.collaborators-section h3 {
+  margin-top: 0;
+}
+
+.add-user-section input[type="text"] {
+  width: calc(100% - 80px);
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.add-user-section button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.add-user-section button:hover {
+  background-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.collaborators-section ul {
   padding: 0;
+  margin: 0;
+}
+
+.collaborators-section li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.collaborators-section li:last-child {
+  border-bottom: none;
+}
+
+.collaborators-section button {
+  padding: 5px 10px;
+  border-radius: 50%;
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.collaborators-section button:hover {
+  background-color: #cc0000;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button-wrapper button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.button-wrapper button:hover {
+  background-color: #0056b3;
+}
+
+.button-class {
+  margin-top: 10px;
+}
+
+.collaborate-button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.collaborate-button:hover {
+  background-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+@media screen and (max-width: 600px) {
+  .modal-content {
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .modal-content {
+    width: 95%;
+  }
 }
 </style>
