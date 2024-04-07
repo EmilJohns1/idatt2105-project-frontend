@@ -4,6 +4,7 @@ Frontend repository for voluntary project in IDATT2105 full-stack application de
 # idatt2105-project-frontend
 
 For information about how to run the project as a whole, see the full project documentation [here](https://github.com/1Cezzo/idatt2105-project-backend)
+To be able to communicate with the backend of this project using https, you need to create a folder named "certs" in the root directory and store your certificates here.
 
 ## Frontend setup
 
