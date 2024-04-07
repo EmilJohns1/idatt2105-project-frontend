@@ -475,7 +475,7 @@ h3 {
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-gap: 20px;
-  padding: 20px;
+  padding: 20px 20px 20px 0;
 }
 
 .sidebar {
@@ -600,11 +600,11 @@ form {
 .question {
   max-width: 150px;
   max-height: 200px;
-  margin-bottom: 10px;
+  margin:0 10px 10px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 5px;
+  padding: 5px;
 }
 
 .question:hover {
@@ -613,10 +613,16 @@ form {
   cursor: pointer;
 }
 
-.add-questio {
+.add-question {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin:0 10px 10px 10px;
+}
+
+.add-question:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .question-info {
@@ -644,7 +650,7 @@ form {
 .remove-icon {
   position: absolute;
   top: 5px;
-  right: 40px;
+  right: 5px;
   width: 20px;
   height: 20px;
   cursor: pointer;
