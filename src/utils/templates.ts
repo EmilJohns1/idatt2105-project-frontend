@@ -10,14 +10,14 @@ export const templates = [
     isRandomized: false
   },
   {
-    name: 'Template 1',
-    title: 'Template 1 Title',
-    description: 'Template 1 Description',
-    imageUrl: 'template1.jpg',
-    tags: ['tag1', 'tag2', 'tag3'],
-    category: 'string',
+    name: 'Sport Quiz',
+    title: 'Sport Quiz',
+    description: 'This is a sport quiz that tests your basic knowledge of sports.',
+    imageUrl: 'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/d5e385e0-05f9-4c5a-93ca-19c755496c6d_sport-quiz.jpg',
+    tags: ['sport', 'world cup', 'olympics'],
+    category: 'Sports',
     isPublic: false,
-    isRandomized: true
+    isRandomized: false
   },
   {
     name: 'Template 2',
