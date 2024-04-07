@@ -20,11 +20,11 @@ const showContent = ref(false)
   background-color: white;
   border-radius: 4px;
   padding: 10px;
-  width: 200px;
+  width: auto;
 }
 
 .hover-card:hover .hover-card-content {
   opacity: 1;
-  transform: translateY(-130%) translateX(-50%);
+  transform: translateY(-140%) translateX(-45%);
 }
 </style>

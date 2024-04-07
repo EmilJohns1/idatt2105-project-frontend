@@ -6,13 +6,14 @@
       { clickable: clickable, 'quiz-type': type === 'quiz', 'category-type': type === 'category' }
     ]"
     @click="handleClick"
-  >
+    :title="title"
+    >
     <div class="card-item-image">
       <img :src="image" :alt="title" />
     </div>
     <div class="card-item-content">
       <h3 class="card-item-title">{{ title }}</h3>
-      <p v-if="description">{{ description }}</p>
+      <p v-if="description" class="card-item-description">{{ description }}</p>
       <div v-if="type === 'quiz'" class="card-item-footer">
         <span class="author-name">{{ authorName }}</span>
         <HoverCard>
@@ -129,6 +130,21 @@ const handleClick = () => {
 
 .card-item-title {
   font-size: 1.5em;
+}
+
+.card-item-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90%;
+}
+
+.card-item-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-item-footer {
