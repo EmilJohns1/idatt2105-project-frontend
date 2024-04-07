@@ -679,6 +679,7 @@ form {
   min-height: 78;
   max-height: 78px;
   background-color: #ccc;
+  margin: 0px 12px 0px 12px;
 }
 
 .icon {
@@ -863,6 +864,8 @@ input:checked + .slider:before {
     flex-direction: column;
     overflow-x: scroll;
     justify-content: center;
+    width: 100%;
+    padding: 0px;
   }
 
   .top-row-container {
@@ -884,6 +887,7 @@ input:checked + .slider:before {
     flex-direction: row;
     width: 100vw;
     overflow-x: scroll;
+    margin-left: 0px;
   }
 
   .question-title {
@@ -892,7 +896,7 @@ input:checked + .slider:before {
 
   .question {
     width: 500px;
-    margin-right: 20px;
+    margin-right: 0px;
   }
 
   .layout-container {
@@ -904,17 +908,21 @@ input:checked + .slider:before {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
   }
 
   .additional-button {
     display: flex;
-    margin: 0;
     margin-right: 10px;
-    margin-bottom: 0;
   }
 
   #addTagButton {
     width: 100px;
+  }
+
+  .remove-icon {
+    right: 10px;
+    opacity: 1;
   }
 }
 </style>

@@ -115,4 +115,10 @@ function clearPopup() {
   align-self: flex-end;
   max-width: fit-content;
 }
+@media (max-width: 1100px) {
+  .additional-button{
+    margin-bottom: 10px;
+    margin-left: 10px;
+  }
+}
 </style>
