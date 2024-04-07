@@ -616,12 +616,15 @@ h3 {
   margin-bottom: 10px;
   box-sizing: border-box;
   border: 0;
-  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
   border-radius: 0.5em;
 }
 
+.input-field:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+}
+
 .button-container {
-  margin-top: 10px;
+  margin-top: 20px;
   display: grid;
   grid-template-rows: 1fr;
   grid-gap: 5px;
