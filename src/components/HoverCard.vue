@@ -25,6 +25,6 @@ const showContent = ref(false)
 
 .hover-card:hover .hover-card-content {
   opacity: 1;
-  transform: translateY(-130%) translateX(-50%);
+  transform: translateY(-140%) translateX(-45%);
 }
 </style>
