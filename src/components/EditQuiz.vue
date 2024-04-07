@@ -134,6 +134,9 @@
       </button>
       <ImportButton :quizId="quizId" />
       <ExportButton :quizId="quizId" />
+      <button @click="redirectToHelp" class="additional-button collaborate-button">
+        Help
+      </button>
     </div>
     <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
   </div>
@@ -421,6 +424,10 @@ const showPopup = (message: string, color: string) => {
   popupMessage.value = { message, color }
   isVisible.value = true
 }
+
+const redirectToHelp = () => {
+  router.push('')
+}
 </script>
 
 <style scoped>
@@ -503,6 +510,7 @@ h3 {
 }
 
 .input-field {
+  font-family: inherit;
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
