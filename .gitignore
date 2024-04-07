@@ -7,6 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+certs/cert.pem
+certs/key.pem
+
 node_modules
 .DS_Store
 dist
@@ -28,3 +31,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+.env
+/certs/*.pem

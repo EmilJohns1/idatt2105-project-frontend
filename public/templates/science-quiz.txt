@@ -1,0 +1,41 @@
+Question title: What is the most abundant gas in the Earth's atmosphere?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/2a2a0f3e-d10f-4b78-98cc-3a46ec14c87f_earth-atmosphere.webp
+Question type: multiple choice
+Alternatives:
+-Oxygen
+-Carbon Dioxide
+-Nitrogen (correct)
+-Hydrogen
+
+Question title: Which planet is closest to Earth?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/b4895b89-0e09-4dbd-8609-d4952bdf379d_sun.webp
+Question type: multiple choice
+Alternatives:
+-Mars
+-Venus
+-Jupiter
+-Mercury (correct)
+
+Question title: Can time theoretically flow backwards
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/2dd60bfd-81b0-4a2a-9adc-f3b3aae90349_black-hole.jpg
+Question type: true or false
+Answer: true
+
+Question title: Is it possible to teleport information using quantum entanglement?
+Max points: 2
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/2a6a54a1-7bbd-43b4-b138-23d48f6731d2_quantum-entanglement1.jpg
+Question type: true or false
+Answer: true
+
+Question title: What is the answer to the Ultimate Question of Life, the Universe, and Everything?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/cdfa9021-d4ec-426e-9be0-22577c340185_hitchhiker's-guide.jpg
+Question type: multiple choice
+Alternatives:
+-To seek knowledge
+-To achieve enlightenment
+-42 (correct)
+-To live in harmony 
