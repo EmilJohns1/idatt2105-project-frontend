@@ -9,7 +9,6 @@ import { api } from '@/api/axiosConfig'
 export const getCommentsByUserId = async (userId: number): Promise<any[] | null> => {
   try {
     const response = await api.get(`/comments/user/${userId}`)
-    console.log('response.data:', response.data)
     return response.data || []
   } catch (error) {
     console.error('Error getting comments by user ID:', error)
@@ -43,7 +42,6 @@ export const getCommentsByQuizId = async (
   const queryParams = `?page=${page}&size=${size}` + (sort ? `&sort=${sort.join(',')}` : '')
   try {
     const response = await api.get(`/comments/quiz/page/${quizId}${queryParams}`)
-    console.log('response.data:', response.data)
     return response.data || []
   } catch (error) {
     console.error('Error getting comments by quiz ID:', error)

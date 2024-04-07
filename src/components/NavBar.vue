@@ -115,7 +115,7 @@ ul {
   margin-right: 5%;
   margin-left: 2%;
   cursor: default;
-  font-family: 'Amita'
+  font-family: 'Amita';
 }
 
 #logo:hover {
@@ -140,7 +140,6 @@ li a:hover {
 }
 .navbar {
   display: block;
-  min-width: 400px;
   border-bottom: solid 1px black;
 }
 .link {

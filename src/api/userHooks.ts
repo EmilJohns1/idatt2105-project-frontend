@@ -10,22 +10,21 @@ import type { LoginRequest } from '@/types/LoginRequest.ts'
 export const useRegistration = () => {
   const registrationError = ref('')
 
-  const registerUser = async (userData: LoginRequest): Promise<boolean> => {
+  const registerUser = async (userData: LoginRequest): Promise<any | null> => {
     try {
       const response = await oauth2.post('/api/user/register', userData)
 
       if (response.status === 200) {
-        console.log('User registered successfully')
-        return true
+        return response
       } else {
         console.error('Registration failed:', response.data)
         registrationError.value = 'Registration failed'
-        return false
+        return response
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error registering user:', error)
       registrationError.value = 'Registration failed'
-      return false
+      return error.response ? error.response : null
     }
   }
 
@@ -67,7 +66,6 @@ export const useLogin = () => {
       const response = await api.post('/user/login', userData)
 
       if (response.status === 200) {
-        console.log('User logged in successfully')
         return true
       } else {
         console.error('Login failed:', response.data)

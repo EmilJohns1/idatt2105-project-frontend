@@ -45,7 +45,6 @@ const checkAuthentication = async (
 
   try {
     const quizDetails = await getQuizByQuizId(quizIdNumber)
-    console.log('quizDetails:', quizDetails)
     if (!quizDetails) {
       console.error('Quiz not found:', quizIdNumber)
       next('/404')
@@ -107,53 +106,40 @@ const router = createRouter({
     {
       path: '/quiz/create',
       name: 'createQuiz',
-      component: CreateQuizView
-    }
-    ,
+      component: CreateQuizView,
+      beforeEnter: (to, from, next) => {
+        const userStore = useUserStore()
+        const currentUser = userStore.getUserName
+        if (!currentUser) {
+          console.error('User not logged in')
+          next('/login')
+          return
+        }
+        next()
+      }
+    },
     {
       path: '/quiz/:quiz_id-:quiz_title/attempt/:quizattempt_id',
       name: 'QuizAttempt',
       component: QuizAttemptView,
       props: (route) => ({
         quiz_id: route.params.quiz_id,
-        quiz_title: route.params.quiz_title as string, 
+        quiz_title: route.params.quiz_title as string,
         quizattempt_id: route.params.quizattempt_id
       }),
       beforeEnter: async (to, from, next) => {
-        const quizIdParam = to.params.quiz_id
-        const quizTitleParam = to.params.quiz_title.toString() 
         const quizAttemptIdParam = to.params.quizattempt_id
-        const quizAttemptId = Array.isArray(quizAttemptIdParam) ? quizAttemptIdParam[0] : quizAttemptIdParam
+        const quizAttemptId = Array.isArray(quizAttemptIdParam)
+          ? quizAttemptIdParam[0]
+          : quizAttemptIdParam
         const quizAttemptIdNumber = parseInt(quizAttemptId)
-        const quizId = Array.isArray(quizIdParam) ? quizIdParam[0] : quizIdParam
-        const quizIdNumber = parseInt(quizId)
         try {
-          const quizDetails = await getQuizByQuizId(quizIdNumber)
-          console.log('quizDetails:', quizDetails)
-          if (!quizDetails) {
-            console.error('Quiz not found:', quizIdNumber)
-            next('/404')
-            return
-          }
-
           const quizAttemptDetails = await getQuizAttemptById(quizAttemptIdNumber)
-          console.log('quizDetails:', quizAttemptDetails)
           if (!quizAttemptDetails) {
             console.error('Quiz not found:', quizAttemptIdNumber)
             next('/404')
             return
           }
-
-
-          const formattedQuizTitle = quizDetails.title.toLowerCase().replace(/ /g, '-')
-          const formattedQuizTitleParam = quizTitleParam.toLowerCase().replace(/ /g, '-')
-          const quizTitleMatches = formattedQuizTitle === formattedQuizTitleParam
-
-          if (!quizTitleMatches) {
-            console.error('Quiz title does not match:', quizDetails.title, to.params.quiz_title)
-            next('/404')
-            return
-          } 
 
           next()
         } catch (error) {
@@ -177,7 +163,6 @@ const router = createRouter({
         const quizIdNumber = parseInt(quizId)
         try {
           const quizDetails = await getQuizByQuizId(quizIdNumber)
-          console.log('quizDetails:', quizDetails)
           if (!quizDetails) {
             console.error('Quiz not found:', quizIdNumber)
             next('/404')
@@ -231,7 +216,6 @@ const router = createRouter({
         quiz_title: route.params.quiz_title as string
       }),
       beforeEnter: (to, from, next) => {
-        console.log('to:', to)
         const { quiz_id, quiz_title } = to.params
         if (quiz_id && quiz_title) {
           checkAuthentication(

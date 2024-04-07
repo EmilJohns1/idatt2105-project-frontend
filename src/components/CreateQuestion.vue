@@ -159,10 +159,8 @@ const validateImageSize = (event: Event) => {
 const uploadPicture = async (): Promise<void> => {
   if (file.value) {
     try {
-      console.log(originalPictureUrl.value)
       //Delete the current profile picture from the storage
       if (originalPictureUrl.value) {
-        console.log('Deleting current picture:', originalPictureUrl.value)
         const deleteSuccess = await deletePicture(originalPictureUrl.value)
 
         if (!deleteSuccess) {
@@ -173,7 +171,6 @@ const uploadPicture = async (): Promise<void> => {
 
       // Upload the new profile picture
       imageUrl.value = await uploadFile(file.value)
-      console.log('Uploaded picture:', imageUrl)
 
       if (imageUrl.value) {
         const modifiedImageUrl = imageUrl.value.replace(
@@ -181,7 +178,6 @@ const uploadPicture = async (): Promise<void> => {
           'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/'
         )
         imageUrl.value = modifiedImageUrl
-        console.log('Picture updated successfully.')
       } else {
         console.error('Failed to update profile picture.')
       }
@@ -276,7 +272,6 @@ const addToQuiz = async () => {
       quizId: quizId
     }
 
-    console.log(questionData)
     const addedQuestion = await addQuestionToQuiz(questionData)
 
     if (selectedQuestionType.value === 'mc') {
@@ -287,16 +282,11 @@ const addToQuiz = async () => {
           correct: alternative.checked
         })
       }
-      console.log('Alternatives added successfully!')
-      console.log(addedQuestion)
     } else if (selectedQuestionType.value === 'tof') {
       const tofInput = document.querySelector('input[name="tof"]:checked')
       const isCorrect = (tofInput as HTMLInputElement)?.value === 'true'
-      console.log(isCorrect)
       await updateTrueOrFalseQuestion(addedQuestion.id, isCorrect)
     }
-
-    console.log('Question added successfully!')
 
     if (editMode.value) {
       popup('Question updated!', 'green')
@@ -384,13 +374,10 @@ const saveChanges = async () => {
 
     if (selectedQuestionType.value === 'mc') {
       await updateQuestionAlternatives(updatedQuestion.id, formattedAlternatives)
-      console.log('Alternatives updated successfully!')
     } else if (selectedQuestionType.value === 'tof') {
       const isCorrect = selectedTofOption.value === 'true'
       await updateTrueOrFalseQuestion(updatedQuestion.id, isCorrect)
     }
-
-    console.log('Question updated successfully!')
 
     popup('Question updated!', 'green')
 
@@ -408,14 +395,10 @@ onMounted(async () => {
     editMode.value = true
     try {
       questionData.value = await getQuestionByQuestionId(Number(params.question_id))
-      console.log(questionData)
       question.value = questionData.value.questionText
       imageUrl.value = questionData.value.mediaUrl
       originalPictureUrl.value = questionData.value.mediaUrl
-      console.log('Original picture URL:', originalPictureUrl.value)
       maxPoints.value = String(questionData.value.points)
-
-      console.log('Original question type:', originalQuestionType)
 
       if (questionData.value.alternatives) {
         selectedQuestionType.value = 'mc'
@@ -434,7 +417,6 @@ onMounted(async () => {
           { text: 'False', checked: !isTrue }
         ]
       }
-      console.log(originalQuestionType.value)
     } catch (error) {
       console.error('Error fetching question data:', error)
     }

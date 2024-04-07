@@ -6,6 +6,7 @@
     <div class="grid-layout">
       <CardItem
         v-for="category in filteredCategories"
+        class="categoryCard"
         :key="category.id"
         :id="category.id"
         :image="`/categoryimage/${category.name.toLowerCase()}.png`"
@@ -34,14 +35,14 @@ interface Category {
 }
 
 onMounted(async () => {
-  const fetchedCategories = await getCategories();
+  const fetchedCategories = await getCategories()
   if (fetchedCategories) {
     categories.value = fetchedCategories.map((name) => ({ id: name, name }));
     console.log('Categories fetched:', categories.value);
   } else {
-    console.error('Could not fetch categories');
+    console.error('Could not fetch categories')
   }
-});
+})
 
 /**
  * Filter categories in the search term.
@@ -65,11 +66,9 @@ const filteredCategories = computed(() => {
  */
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
-    console.log('Navigating to All quizzes')
     router.push({ name: 'Category', params: { category: 'all' } })
   } else {
     const lowerCaseCategoryName = categoryName.toLowerCase()
-    console.log('Navigating to ', categoryName)
     router.push({
       name: 'Category',
       params: { category: lowerCaseCategoryName }
@@ -89,4 +88,12 @@ function goToCategory(categoryName: string) {
   border-radius: 4px;
 }
 
+.category-grid {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+  justify-content: center;
+  align-items: start;
+}
 </style>

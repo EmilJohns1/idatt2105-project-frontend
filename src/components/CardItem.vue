@@ -52,7 +52,7 @@ type Props = {
   tags?: Tag[]
   lastModifiedDate?: string
   type?: 'quiz' | 'category'
-};
+}
 
 const props = defineProps<Props>();
 const emits = defineEmits(['clicked']);
@@ -71,13 +71,11 @@ const formatDate = (dateString: string | undefined) => {
 };
 
 const latestDate = computed(() => {
-  const creationDate = props.creationDate ? new Date(props.creationDate) : new Date();
-  const lastModifiedDate = props.lastModifiedDate ? new Date(props.lastModifiedDate) : new Date();
-  
-  const latest = lastModifiedDate > creationDate ? lastModifiedDate : creationDate;
-
-  return formatDate(latest.toISOString());
+  return props.creationDate && (!props.lastModifiedDate || new Date(props.creationDate) > new Date(props.lastModifiedDate))
+    ? props.creationDate
+    : props.lastModifiedDate;
 });
+
 
 const handleClick = () => {
   if (props.clickable) {
@@ -134,7 +132,7 @@ const handleClick = () => {
 
 .tags-icon {
   cursor: cursor;
-  font-size: 1.75em; 
+  font-size: 1.75em;
 }
 .footer-content {
   display: flex;

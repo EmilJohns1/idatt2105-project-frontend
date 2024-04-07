@@ -77,6 +77,13 @@
             Randomize Questions: <input type="checkbox" v-model="editedQuiz.randomizedOrder" />
           </h3>
           <h3>Make Public: <input type="checkbox" v-model="editedQuiz.public" /></h3>
+          <Popup
+            id="popup"
+            v-if="isVisible"
+            :error-message="popupMessage.message"
+            :font-color="popupMessage.color"
+            @popup-closed="isVisible = false"
+          />
           <div class="button-container">
             <button type="submit" class="submit-button">Update Quiz</button>
           </div>
@@ -102,6 +109,7 @@
 </template>
 
 <script setup lang="ts">
+import Popup from '@/components/Popup.vue'
 import CollaborateModal from '@/components/CollaborateModal.vue'
 import ImportButton from '@/components/ImportButton.vue'
 import ExportButton from '@/components/ExportButton.vue'
@@ -119,6 +127,7 @@ import { uploadFile, deletePicture } from '@/api/imageHooks'
 import { getAllQuestionsByQuizId, deleteQuestionByQuestionId } from '@/api/questionHooks'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
+import { type PopupMessage } from '@/types/PopupMessage'
 
 const router = useRouter()
 const quizId = parseInt(router.currentRoute.value.params.quiz_id as string)
@@ -144,11 +153,12 @@ const userStore = useUserStore()
 const questions = ref<any[]>([])
 const hoveredIndex = ref<number | null>(null)
 const originalPictureUrl = ref('')
+const popupMessage = ref<PopupMessage>({ message: '', color: '' })
+const isVisible = ref(false)
 
 // Fetch quiz details by ID
 const fetchQuizDetails = async () => {
   quiz.value = await getQuizByQuizId(quizId)
-  console.log('Quiz:', quiz.value)
   if (quiz.value) {
     editedQuiz.value.title = quiz.value.title
     editedQuiz.value.description = quiz.value.description
@@ -186,6 +196,14 @@ const tagArray = computed(() =>
 
 // Update quiz details
 const updateQuiz = async () => {
+  if (!checkQuestionCount() && editedQuiz.value.public === true) {
+    showPopup('You need at least 5 questions to make your quiz public!', 'red')
+    setTimeout(() => {
+      window.location.reload()
+    }, 2000)
+    return
+  }
+
   await updateTags(editedQuiz.value.tags, quizId)
   await uploadPicture()
 
@@ -197,16 +215,22 @@ const updateQuiz = async () => {
     randomizedOrder: editedQuiz.value.randomizedOrder,
     public: editedQuiz.value.public
   }
-
-  console.log('Updating quiz:', quizData)
-
-  await updateQuizById(quizId, quizData)
-
-  console.log('Edited quiz title:', editedQuiz.value.title)
-
-  setTimeout(async () => {
-    await redirectToPage(quizId, editedQuiz.value.title)
-  }, 1000)
+  try {
+    showPopup('Updating...', '')
+    await updateQuizById(quizId, quizData)
+    setTimeout(async () => {
+      await redirectToPage(quizId, editedQuiz.value.title)
+      showPopup('Updated', 'green')
+      setTimeout(async () => {
+        window.location.reload()
+      }, 500)
+    }, 1000)
+  } catch {
+    showPopup('Failed to update', 'red')
+    setTimeout(async () => {
+      window.location.reload()
+    }, 1000)
+  }
 }
 
 const redirectToPage = async (quiz_id: number, quiz_title: string) => {
@@ -272,17 +296,12 @@ const validateImageSize = (event: Event) => {
     const maxSizeKB = 1024 * 3 // Max size in KB (3 MB)
 
     if (!validateImageFile(selectedFile)) {
-      // Show an alert if file type is not valid
       window.alert('Invalid file type. Please select a PNG, JPG, or JPEG file.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else if (fileSize > maxSizeKB) {
-      // Show an alert if file size exceeds the maximum limit
       window.alert('File size exceeds the maximum limit. Maximum 3 MB allowed.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else {
-      // Update the file variable with the selected file
       file.value = selectedFile
     }
   }
@@ -297,7 +316,6 @@ const uploadPicture = async (): Promise<void> => {
           'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/'
         )
 
-        console.log('Deleting current profile picture:', modifiedPictureUrl)
         const deleteSuccess = await deletePicture(modifiedPictureUrl)
 
         if (!deleteSuccess) {
@@ -308,12 +326,10 @@ const uploadPicture = async (): Promise<void> => {
 
       // Upload the new profile picture
       const imageUrl: string | null = await uploadFile(file.value)
-      console.log('Uploaded profile picture:', imageUrl)
 
       if (imageUrl) {
         const modifiedImageUrl = imageUrl.replace('https://quiz-project-fullstack.', 'https://')
         editedQuiz.value.quizPictureUrl = modifiedImageUrl
-        console.log('Profile picture updated successfully.')
       } else {
         console.error('Failed to update profile picture.')
       }
@@ -365,9 +381,22 @@ const removeQuestion = async (index: number) => {
 const addQuestion = async () => {
   await redirectToQuestionPage(quizId, editedQuiz.value.title)
 }
+
+const checkQuestionCount = () => {
+  return questions.value.length >= 5
+}
+
+const showPopup = (message: string, color: string) => {
+  popupMessage.value = { message, color }
+  isVisible.value = true
+}
 </script>
 
 <style scoped>
+#popup {
+  z-index: 2;
+}
+
 .tags-input {
   height: 100px;
 }

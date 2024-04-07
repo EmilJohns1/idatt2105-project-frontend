@@ -30,7 +30,6 @@ export const uploadFile = async (file: File): Promise<string | null> => {
  * @returns {Promise<boolean>} True if succesful, or false and throws.
  */
 export const deletePicture = async (url: string): Promise<boolean> => {
-  console.log('url:', url)
   try {
     const response = await api.delete('/storage/deleteFile', {
       headers: {

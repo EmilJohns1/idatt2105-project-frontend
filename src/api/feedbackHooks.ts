@@ -18,7 +18,6 @@ interface FeedbackData {
 export const createFeedback = async (feedbackData: FeedbackData): Promise<boolean> => {
   try {
     const response = await api.post('/feedback/create', feedbackData)
-    console.log('Feedback created:', response.data)
     return true
   } catch (error) {
     console.error('Error creating feedback:', error)

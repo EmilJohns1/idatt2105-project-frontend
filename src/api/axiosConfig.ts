@@ -6,7 +6,7 @@ const baseURL = 'https://localhost:8443' // Adjust this to our backend API URL
 
 const api = axios.create({
   baseURL: baseURL + '/api',
-  timeout: 5000 // Adjust timeout as needed
+  timeout: 10000 // Adjust timeout as needed
 })
 
 const oauth2 = axios.create({
