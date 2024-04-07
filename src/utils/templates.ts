@@ -13,7 +13,8 @@ export const templates = [
     name: 'Sport Quiz',
     title: 'Sport Quiz',
     description: 'This is a sport quiz that tests your basic knowledge of sports.',
-    imageUrl: 'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/d5e385e0-05f9-4c5a-93ca-19c755496c6d_sport-quiz.jpg',
+    imageUrl:
+      'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/d5e385e0-05f9-4c5a-93ca-19c755496c6d_sport-quiz.jpg',
     tags: ['sport', 'world cup', 'olympics'],
     category: 'Sports',
     isPublic: false,

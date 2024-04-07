@@ -37,12 +37,18 @@
       <h1 id="header1">Edit Quiz</h1>
       <div v-if="quiz" class="quiz-is-present-container">
         <form @submit.prevent="updateQuiz" class="edit-quiz-form">
-
           <div class="top-row-container">
             <div class="image-container">
               <h2>Display image</h2>
               <img :src="editedQuiz.quizPictureUrl || placeholderImage" class="quiz-image" /><br />
-              <input accept="image/*" name="file" type="file" id="file" class="inputfile" @change="onFileChange" />
+              <input
+                accept="image/*"
+                name="file"
+                type="file"
+                id="file"
+                class="inputfile"
+                @change="onFileChange"
+              />
               <label for="file">Choose a file</label>
             </div>
 
@@ -81,23 +87,27 @@
                 @keydown.enter="addTag"
                 placeholder="Enter tag (e.g. difficult)"
               />
-              <button type="button" @click="addTag" :disabled="tagArray.length > 2" id="addTagButton">
+              <button
+                type="button"
+                @click="addTag"
+                :disabled="tagArray.length > 2"
+                id="addTagButton"
+              >
                 Create tag
               </button>
             </div>
           </div>
 
-          
           <h3>Randomize Questions:</h3>
           <label class="switch">
             <input type="checkbox" v-model="editedQuiz.randomizedOrder" />
             <span class="slider round"></span>
           </label>
-          <h3>Make Public: </h3>
-            <label class="switch">
-          <input type="checkbox" v-model="editedQuiz.public" />
-          <span class="slider round"></span>
-        </label>
+          <h3>Make Public:</h3>
+          <label class="switch">
+            <input type="checkbox" v-model="editedQuiz.public" />
+            <span class="slider round"></span>
+          </label>
           <Popup
             id="popup"
             v-if="isVisible"
@@ -500,7 +510,6 @@ h3 {
   border: 0;
   box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
   border-radius: 0.5em;
-
 }
 
 .button-container {
@@ -585,7 +594,7 @@ form {
   max-width: 150px;
   max-height: 200px;
   margin-bottom: 10px;
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   padding-top: 5px;
@@ -597,9 +606,8 @@ form {
   cursor: pointer;
 }
 
-
 .add-questio {
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
 }
@@ -706,7 +714,7 @@ form {
 }
 .title-desc-container {
   margin-left: 10px;
-  width:50%;
+  width: 50%;
 }
 .image-container {
   display: flex;
@@ -748,39 +756,38 @@ select {
 }
 select:hover {
   box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
-
 }
 
 .inputfile {
-	width: 0.1px;
-	height: 0.1px;
-	opacity: 0;
-	overflow: hidden;
-	position: absolute;
-	z-index: -1;
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
 }
 .inputfile + label {
-    font-size: 1em;
-    font-weight: 700;
-    display: inline-block;
-    color: white;
-    background-color: #000000;
-    border: none; 
-    border-radius: 10px;
-    cursor: pointer;
-    padding: 5px 10px;
-    transition:
+  font-size: 1em;
+  font-weight: 700;
+  display: inline-block;
+  color: white;
+  background-color: #000000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition:
     background-color 0.3s,
     box-shadow 0.3s;
 }
 
 .inputfile:focus + label,
 .inputfile + label:hover {
-    background-color: #333;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 .inputfile + label {
-	cursor: pointer; /* "hand" cursor */
+  cursor: pointer; /* "hand" cursor */
 }
 
 .switch {
@@ -790,7 +797,7 @@ select:hover {
   height: 34px;
 }
 
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -804,28 +811,28 @@ select:hover {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 26px;
   width: 26px;
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #2196f3;
 }
 
 input:checked + .slider:before {
@@ -833,8 +840,6 @@ input:checked + .slider:before {
   -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
-
-
 
 /* Rounded sliders */
 .slider.round {
@@ -848,7 +853,7 @@ input:checked + .slider:before {
 @media (max-width: 1100px) {
   .container {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     overflow-x: scroll;
     justify-content: center;
   }
@@ -884,7 +889,7 @@ input:checked + .slider:before {
   }
 
   .layout-container {
-    width:100%;
+    width: 100%;
   }
 
   .additional-buttons {
@@ -895,15 +900,14 @@ input:checked + .slider:before {
   }
 
   .additional-button {
-    display:flex;
+    display: flex;
     margin: 0;
     margin-right: 10px;
-    margin-bottom:0;
+    margin-bottom: 0;
   }
 
   #addTagButton {
     width: 100px;
   }
 }
-
 </style>
