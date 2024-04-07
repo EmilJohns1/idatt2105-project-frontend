@@ -20,14 +20,14 @@
         <div class="top-row-container">
           <div class="image-container">
             <h2>Display image</h2>
-            <img :src="imageUrl || placeholderImage" id="image" class="quiz-image" /><br />
+            <img :src="newImage || placeholderImage" class="quiz-image" /><br />
             <input
               accept="image/*"
               name="file"
               type="file"
               id="file"
               class="inputfile"
-              @change="previewImage"
+              @change="onFileChange"
             />
             <label for="file">Choose a file</label>
           </div>
@@ -41,6 +41,7 @@
               class="input-field"
               spellcheck="false"
               maxLength="100"
+              placeholder="Enter title"
             />
             <h2>Description</h2>
             <textarea
@@ -49,6 +50,7 @@
               class="input-field description"
               spellcheck="false"
               maxLength="255"
+              placeholder="Enter description"
             ></textarea>
           </div>
         </div>
@@ -86,6 +88,7 @@
 import { ref, type Ref, onMounted } from 'vue'
 import router from '@/router'
 import { useRegistration, getCategories, addUserToQuiz, addTagsToQuiz } from '@/api/quizHooks'
+import { uploadFile } from '@/api/imageHooks'
 import type { QuizRequest } from '@/types/QuizRequest'
 import type { Tag } from '@/types/Tag'
 import { getUserByUsername } from '@/api/userHooks'
@@ -112,6 +115,9 @@ const categories = ref<string[] | null>(null)
 const loading = ref(false)
 const selectedTemplate: Ref<any> = ref(null)
 
+const file = ref<File | null>(null)
+const newImage = ref('')
+
 const fetchCategories = async () => {
   categories.value = await getCategories()
 }
@@ -122,6 +128,8 @@ const submitForm = async () => {
   clearError()
 
   loading.value = true
+
+  await uploadPicture()
 
   const quizData: QuizRequest = {
     title: title.value,
@@ -182,23 +190,78 @@ const addTagElement = () => {
   const tagContent = input.value!.value.trim()
 
   if (tagContent !== '') {
-    tagArray.value.push(tagContent)
+    if (tagContent.length > 15) {
+      alert('Tag length exceeds maximum limit (15 characters).');
+      input.value!.value = '';
+      return;
+    }
 
-    const tag = document.createElement('li')
-    tag.innerText = tagContent
-    tag.innerHTML += '<button class="delete-button">X</button>'
-    tags.value?.appendChild(tag)
+    tagArray.value.push(tagContent);
 
-    input.value!.value = ''
+    const tag = document.createElement('li');
+    tag.innerText = tagContent;
+    tag.innerHTML += '<button class="delete-button">X</button>';
+    tags.value?.appendChild(tag);
+
+    input.value!.value = '';
   }
 }
 
 const previewImage = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
-    imageUrl.value = URL.createObjectURL(file)
+    newImage.value = URL.createObjectURL(file)
   } else {
-    imageUrl.value = ''
+    newImage.value = ''
+  }
+}
+
+const validateImageFile = (file: File): boolean => {
+  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
+  return validTypes.includes(file.type)
+}
+
+const validateImageSize = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const selectedFile = target.files?.[0]
+
+  if (selectedFile) {
+    const fileSize = selectedFile.size / 1024 // Convert to KB
+    const maxSizeKB = 1024 * 3 // Max size in KB (3 MB)
+
+    if (!validateImageFile(selectedFile)) {
+      window.alert('Invalid file type. Please select a PNG, JPG, or JPEG file.')
+      target.value = ''
+    } else if (fileSize > maxSizeKB) {
+      window.alert('File size exceeds the maximum limit. Maximum 3 MB allowed.')
+      target.value = ''
+    } else {
+      file.value = selectedFile
+    }
+  }
+}
+
+const onFileChange = (event: Event) => {
+  validateImageSize(event)
+  previewImage(event)
+}
+
+const uploadPicture = async (): Promise<void> => {
+  if (file.value) {
+    try {
+      const URL: string | null = await uploadFile(file.value)
+
+      if (URL) {
+        const modifiedImageUrl = URL.replace('https://quiz-project-fullstack.', 'https://')
+        imageUrl.value = modifiedImageUrl
+      } else {
+        console.error('Failed to update profile picture.')
+      }
+    } catch (error) {
+      console.error('Error uploading profile picture:', error)
+    }
+  } else {
+    console.warn('No file selected.')
   }
 }
 
@@ -238,6 +301,7 @@ const applyTemplate = async () => {
     title.value = template.title
     description.value = template.description
     imageUrl.value = template.imageUrl
+    newImage.value = template.imageUrl
     category.value = template.category
     isPublic.value = template.isPublic
     isRandomized.value = template.isRandomized
@@ -264,13 +328,20 @@ const applyTemplate = async () => {
 
 <style scoped>
 .tags-input {
-  height: 100px;
+  min-height: 100px;
+  height: auto;
+  padding: 10px;
+  width: 70%;
+  display: flex;
+  flex-wrap: wrap; 
+  align-items: flex-start; 
+  max-height: -webkit-fill-available;
 }
+
 #input-tag {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  align-self: self-end;
 }
+
 #addTagButton {
   position: absolute;
   bottom: 0;
@@ -278,15 +349,58 @@ const applyTemplate = async () => {
   width: 20%;
   font-size: 15px;
   color: white;
-  border-radius: 10%;
+  border-radius: 2px;
   background-color: black;
   border: 0px;
   cursor: pointer;
+  margin: 5px;
+  padding: 5px;
 }
+
+@media screen and (max-width: 1440px){
+  .tags-input {
+    width: fit-content;
+    min-width: 300px;
+  }
+
+  #addTagButton {
+    width: 30%;
+  }
+}
+
+@media screen and (max-width: 680px){
+  #addTagButton {
+    width: 40%;
+  }
+}
+
+@media screen and (max-width: 500px){
+  #addTagButton {
+    width: 45%;
+  }
+}
+
+#tags {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
 #addTagButton:disabled {
   background-color: rgb(143, 143, 143);
   cursor: default;
 }
+
+#tags {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
 #category {
   min-width: 150px;
 }
@@ -320,8 +434,16 @@ h3 {
   margin-bottom: 10px;
   box-sizing: border-box;
   border: 0;
-  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
   border-radius: 0.5em;
+  margin-right: 50px;
+}
+
+.input-field:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+}
+
+.description {
+  height: 120px;
 }
 
 .button-container {
@@ -386,7 +508,7 @@ form {
 }
 .title-desc-container {
   margin-left: 10px;
-  width: 50%;
+  width: fit-content;
 }
 .image-container {
   display: flex;
