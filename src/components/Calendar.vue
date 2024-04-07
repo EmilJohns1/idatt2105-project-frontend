@@ -93,23 +93,16 @@ const fetchActivityData = async () => {
       events.map((event) => {
         return format(new Date(event.date), 'yyyy-MM-dd') // Format the date using date-fns
       })
-    )
-
+    ) 
     const todaysDate = format(new Date(), 'yyyy-MM-dd')
     let prevDay = todaysDate
-
-    for (const day of Array.from(uniqueDays).reverse()) {
+    for (const day of Array.from(uniqueDays)) {
       if (day === prevDay) {
         streak.value += 1
         if (day === todaysDate) {
           isQuizCompletedToday.value = true
         }
         prevDay = format(addDays(new Date(day), -1), 'yyyy-MM-dd') // Move to the previous day
-      }
-      if (day === todaysDate) {
-        continue
-      } else {
-        break
       }
     }
 
