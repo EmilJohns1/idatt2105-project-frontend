@@ -15,7 +15,7 @@
             <div class="separator"></div>
             <div class="details">
               <div class="quizText">
-                <h2>{{ quiz.title }}</h2>
+                <h2 id="header2">{{ quiz.title }}</h2>
                 <p class="description">{{ quiz.description }}</p>
               </div>
               <div class="author">
@@ -323,7 +323,6 @@ h2 {
 }
 
 .quiz-header {
-  max-height: 280px;
   display: flex;
   justify-content: start;
   gap: 20px;
@@ -334,13 +333,17 @@ h2 {
 }
 .quizText {
   max-height: 200px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .header-section {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+#header2{
+  overflow-wrap: anywhere;
 }
 
 .content-area {
@@ -406,6 +409,10 @@ h2 {
 
 .card-container p {
   font-size: 1.2rem;
+  overflow-wrap: anywhere;
+}
+
+.description {
   overflow-wrap: anywhere;
 }
 

@@ -512,6 +512,7 @@ h3 {
   border-radius: 5px;
   margin-bottom: 10px;
   cursor: pointer;
+  overflow-wrap: anywhere;
 }
 
 .activity-router {
@@ -521,6 +522,7 @@ h3 {
 .quiz-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  padding: 0px;
 }
 
 .quiz-item,
@@ -629,6 +631,7 @@ h3 {
   display: block;
   text-decoration: none;
   color: inherit;
+  text-align: -webkit-center;
 }
 @media (max-width: 750px) {
   .quizzes-section {
