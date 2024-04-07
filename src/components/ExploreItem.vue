@@ -38,7 +38,6 @@ onMounted(async () => {
   const fetchedCategories = await getCategories()
   if (fetchedCategories) {
     categories.value = fetchedCategories.map((name) => ({ id: name, name }));
-    console.log('Categories fetched:', categories.value);
   } else {
     console.error('Could not fetch categories')
   }

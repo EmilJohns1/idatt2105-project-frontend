@@ -2,7 +2,6 @@
 
 describe('CreateQuiz Component', () => {
     beforeEach(() => {
-      // Assuming your app runs on localhost:3000
       cy.visit('https://localhost:4173/quiz/create')
     })
   
