@@ -7,7 +7,7 @@
     ]"
     @click="handleClick"
     :title="title"
-    >
+  >
     <div class="card-item-image">
       <img :src="image" :alt="title" />
     </div>
@@ -16,7 +16,7 @@
       <p v-if="description" class="card-item-description">{{ description }}</p>
       <div v-if="type === 'quiz'" class="card-item-footer">
         <span class="author-name">{{ authorName }}</span>
-        <HoverCard>
+        <ComponentHoverCard>
           <template #trigger>
             <span class="tags-icon">🏷️</span>
           </template>
@@ -29,7 +29,7 @@
               <p>{{ latestDate }}</p>
             </div>
           </template>
-        </HoverCard>
+        </ComponentHoverCard>
       </div>
     </div>
   </div>
@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { defineProps, defineEmits, computed } from 'vue'
-import HoverCard from './HoverCard.vue'
+import ComponentHoverCard from './ComponentHoverCard.vue'
 import type { Tag } from '@/types/Tag'
 
 // Define the props with the appropriate types
@@ -142,7 +142,7 @@ const handleClick = () => {
 .card-item-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; 
+  -webkit-line-clamp: 3;
   overflow: hidden;
   text-overflow: ellipsis;
 }

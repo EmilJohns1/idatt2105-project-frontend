@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <Card class="login-card">
+    <ComponentCard class="login-card">
       <h1 id="header">Log in</h1>
       <form @submit.prevent="submitLogin">
         <input type="email" v-model="email" placeholder="Email" required class="input-field" />
@@ -23,16 +23,16 @@
           </div>
         </div>
       </form>
-    </Card>
-    <forgot-password-modal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
+    </ComponentCard>
+    <UserForgotPasswordModal v-if="showForgotPasswordModal" @close="closeForgotPasswordModal" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import router from '@/router/index'
-import ForgotPasswordModal from '@/components/ForgotPasswordModal.vue'
-import Card from '@/components/Card.vue'
+import UserForgotPasswordModal from '@/components/UserForgotPasswordModal.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
 import { useLogin } from '@/api/userHooks'
 import type { LoginRequest } from '@/types/LoginRequest' // Import LoginRequest type
 

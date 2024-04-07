@@ -115,7 +115,7 @@
             <input type="checkbox" v-model="editedQuiz.public" />
             <span class="slider round"></span>
           </label>
-          <Popup
+          <ComponentPopup
             id="popup"
             v-if="isVisible"
             :error-message="popupMessage.message"
@@ -139,21 +139,19 @@
       >
         Collaborate
       </button>
-      <ImportButton :quizId="quizId" />
-      <ExportButton :quizId="quizId" />
-      <button @click="redirectToHelp" class="additional-button collaborate-button">
-        Help
-      </button>
+      <ComponentImportButton :quizId="quizId" />
+      <ComponentExportButton :quizId="quizId" />
+      <button @click="redirectToHelp" class="additional-button collaborate-button">Help</button>
     </div>
-    <CollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
+    <QuizCollaborateModal v-if="showModal" @close="hideCollaborateModal" :quizId="quizId" />
   </div>
 </template>
 
 <script setup lang="ts">
-import Popup from '@/components/Popup.vue'
-import CollaborateModal from '@/components/CollaborateModal.vue'
-import ImportButton from '@/components/ImportButton.vue'
-import ExportButton from '@/components/ExportButton.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
+import QuizCollaborateModal from '@/components/QuizCollaborateModal.vue'
+import ComponentImportButton from '@/components/ComponentImportButton.vue'
+import ComponentExportButton from '@/components/ComponentExportButton.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
@@ -235,7 +233,6 @@ onMounted(() => {
   fetchQuizDetails()
   fetchData()
 })
-
 
 const tagArray = computed(() =>
   editedQuiz.value.tags.map((tag: { tagName: string }) => tag.tagName)
@@ -339,15 +336,16 @@ const addTag = () => {
 
   if (tag !== '') {
     if (tag.length > 15) {
-      alert('Tag length exceeds maximum limit (15 characters).');
-      tagInput.value = '';
-      return;
+      alert('Tag length exceeds maximum limit (15 characters).')
+      tagInput.value = ''
+      return
     }
 
-  if (tag && !editedQuiz.value.tags.includes(tag)) {
-    editedQuiz.value.tags.push({ tagName: tag }) 
-    tagInput.value = ''
-  }}
+    if (tag && !editedQuiz.value.tags.includes(tag)) {
+      editedQuiz.value.tags.push({ tagName: tag })
+      tagInput.value = ''
+    }
+  }
 }
 
 /**
@@ -405,7 +403,6 @@ const validateImageSize = (event: Event) => {
   }
 }
 
-
 /**
  * Upload the selected picture.
  */
@@ -442,7 +439,6 @@ const uploadPicture = async (): Promise<void> => {
     console.warn('No file selected.')
   }
 }
-
 
 /**
  * Display the collaborate modal.
@@ -530,7 +526,7 @@ const showPopup = (message: string, color: string) => {
 }
 
 const redirectToHelp = () => {
-  window.open('https://github.com/1Cezzo/idatt2105-project-backend/wiki/Import-format');
+  window.open('https://github.com/1Cezzo/idatt2105-project-backend/wiki/Import-format')
 }
 </script>
 
@@ -709,7 +705,7 @@ form {
 .question {
   max-width: 150px;
   max-height: 200px;
-  margin:0 10px 10px 10px;
+  margin: 0 10px 10px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -726,7 +722,7 @@ form {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin:0 10px 10px 10px;
+  margin: 0 10px 10px 10px;
 }
 
 .add-question:hover {
@@ -806,9 +802,9 @@ form {
 .question-title {
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2; 
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  white-space: normal; 
+  white-space: normal;
   padding: 5px;
 }
 

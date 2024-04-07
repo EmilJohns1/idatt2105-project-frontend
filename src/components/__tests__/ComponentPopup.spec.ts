@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
-import Popup from '@/components/Popup.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 
-describe('Popup.vue', () => {
+describe('ComponentPopup.vue', () => {
   it('is visible when isVisible is true', () => {
-    const wrapper = mount(Popup, {
+    const wrapper = mount(ComponentPopup, {
       props: {
         errorMessage: 'Test Error Message',
         fontColor: 'red'
@@ -15,7 +15,7 @@ describe('Popup.vue', () => {
   })
 
   it('displays the error message and applies font color', () => {
-    const wrapper = mount(Popup, {
+    const wrapper = mount(ComponentPopup, {
       props: {
         errorMessage: 'Test Error Message',
         fontColor: 'red'
@@ -27,7 +27,7 @@ describe('Popup.vue', () => {
   })
 
   it('hides the popup and emits an event when clicked', async () => {
-    const wrapper = mount(Popup, {
+    const wrapper = mount(ComponentPopup, {
       props: {
         errorMessage: 'Test Error Message',
         fontColor: 'red'

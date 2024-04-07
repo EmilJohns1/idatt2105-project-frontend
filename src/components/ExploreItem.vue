@@ -4,7 +4,7 @@
     <p>Choose your desired subject to start.</p>
     <input type="text" v-model="searchTerm" placeholder="Search subjects..." class="search-input" />
     <div class="grid-layout">
-      <CardItem
+      <ComponentCardItem
         v-for="category in filteredCategories"
         class="categoryCard"
         :key="category.id"
@@ -23,7 +23,7 @@
 import { getCategories } from '@/api/quizHooks'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import CardItem from '../components/CardItem.vue'
+import ComponentCardItem from '../components/ComponentCardItem.vue'
 
 const categories = ref<Category[]>([])
 const router = useRouter()
@@ -77,7 +77,7 @@ function goToCategory(categoryName: string) {
 </script>
 
 <style scoped>
-.categoryCard{
+.categoryCard {
   cursor: pointer;
 }
 .search-input {

@@ -61,8 +61,14 @@
             id="trueButton"
           >
             True
-            <div v-if="currentQuestionAttempt.userAnswer === true && currentQuestionAttempt.correctAnswer===true" class="upright">
-              + 
+            <div
+              v-if="
+                currentQuestionAttempt.userAnswer === true &&
+                currentQuestionAttempt.correctAnswer === true
+              "
+              class="upright"
+            >
+              +
               {{ currentQuestionAttempt.points }} score
             </div>
           </button>
@@ -86,8 +92,14 @@
             id="falseButton"
           >
             False
-            <div v-if="currentQuestionAttempt.userAnswer === false && currentQuestionAttempt.correctAnswer===false" class="upright">
-              + 
+            <div
+              v-if="
+                currentQuestionAttempt.userAnswer === false &&
+                currentQuestionAttempt.correctAnswer === false
+              "
+              class="upright"
+            >
+              +
               {{ currentQuestionAttempt.points }} score
             </div>
           </button>

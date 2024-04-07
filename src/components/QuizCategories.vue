@@ -11,7 +11,8 @@
           <button @click="addTag" :disabled="!currentTag" class="add-tag-button">Add Tag</button>
         </div>
         <div class="sort-select-container">
-          <p>Sort by:
+          <p>
+            Sort by:
             <select v-model="selectedSort" @change="changeSort">
               <option v-for="option in sortOptions" :key="option.value" :value="option.value">
                 {{ option.text }}
@@ -31,7 +32,7 @@
     </div>
   </div>
   <div class="grid-layout">
-    <CardItem
+    <ComponentCardItem
       v-for="quiz in filteredQuizzes"
       class="quizCard"
       :key="quiz.id"
@@ -49,7 +50,7 @@
     />
   </div>
   <div class="pagination-controls">
-    <PaginationComponent
+    <ComponentPagination
       :currentPage="currentPage"
       :totalPages="totalPages"
       @changePage="changePage"
@@ -60,8 +61,8 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import CardItem from './CardItem.vue'
-import PaginationComponent from './PaginationComponent.vue'
+import ComponentCardItem from './ComponentCardItem.vue'
+import ComponentPagination from './ComponentPagination.vue'
 import type { QuizDto } from '@/types/QuizDto'
 import { fetchQuizzesByCategory, fetchAllQuizzes } from '@/api/quizHooks'
 import { fetchQuizzesByTags } from '@/api/quizHooks'
@@ -92,7 +93,7 @@ const sortOptions = [
   { value: 'creationDate,desc', text: 'Newest Creation Date' },
   { value: 'creationDate,asc', text: 'Oldest Creation Date' },
   { value: 'title,asc', text: 'Title (A-Z)' },
-  { value: 'title,desc', text: 'Title (Z-A)' },
+  { value: 'title,desc', text: 'Title (Z-A)' }
   // Add more options here
 ]
 

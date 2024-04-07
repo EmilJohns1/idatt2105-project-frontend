@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SignUpView from '../views/SignUpView.vue'
+import UserSignUpView from '../views/UserSignUpView.vue'
 import ExploreView from '../views/ExploreView.vue'
 import UserPageView from '@/views/UserPageView.vue'
 import ContactView from '@/views/ContactView.vue'
-import ResetPasswordView from '@/views/ResetPasswordView.vue'
-import CreateQuizView from '../views/CreateQuizView.vue'
-import CreateQuestionView from '../views/CreateQuestionView.vue'
-import EditQuizView from '../views/EditQuizView.vue'
+import UserResetPasswordView from '@/views/UserResetPasswordView.vue'
+import QuizCreationView from '../views/QuizCreationView.vue'
+import QuestionCreationView from '../views/QuestionCreationView.vue'
+import QuizEditView from '../views/QuizEditView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import NoAccessView from '../views/NoAccessView.vue'
-import LoginRedirect from '@/components/LoginRedirect.vue'
+import UserLoginRedirect from '@/components/UserLoginRedirect.vue'
 import TokenHandlerView from '@/views/TokenHandlerView.vue'
 import { getQuizByQuizId, getUsersByQuizId, getQuizAttemptById } from '@/api/quizHooks'
 import { getQuizzesByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
-import ForgotPasswordView from '@/views/ForgotPasswordView.vue'
+import UserForgotPasswordView from '@/views/UserForgotPasswordView.vue'
 import HomeView from '@/views/HomeView.vue'
 import QuizView from '@/views/QuizView.vue'
 import QuizAttemptView from '@/views/QuizAttemptView.vue'
@@ -100,13 +100,13 @@ const router = createRouter({
     {
       path: '/explore/:category',
       name: 'Category',
-      component: () => import('../views/CategoryView.vue'),
+      component: () => import('../views/QuizCategoryView.vue'),
       props: true
     },
     {
       path: '/quiz/create',
       name: 'createQuiz',
-      component: CreateQuizView,
+      component: QuizCreationView,
       beforeEnter: (to, from, next) => {
         const userStore = useUserStore()
         const currentUser = userStore.getUserName
@@ -189,7 +189,7 @@ const router = createRouter({
     {
       path: '/quiz/:quiz_id-:quiz_title/edit',
       name: 'EditQuiz',
-      component: EditQuizView,
+      component: QuizEditView,
       props: (route) => ({
         quiz_id: route.params.quiz_id,
         quiz_title: route.params.quiz_title as string
@@ -210,7 +210,7 @@ const router = createRouter({
     {
       path: '/quiz/:quiz_id-:quiz_title/questions/add',
       name: 'CreateQuestionAdd',
-      component: CreateQuestionView,
+      component: QuestionCreationView,
       props: (route) => ({
         quiz_id: route.params.quiz_id,
         quiz_title: route.params.quiz_title as string
@@ -231,7 +231,7 @@ const router = createRouter({
     {
       path: '/quiz/:quiz_id-:quiz_title/questions/:question_id/edit',
       name: 'CreateQuestionEdit',
-      component: CreateQuestionView,
+      component: QuestionCreationView,
       props: (route) => ({
         quiz_id: route.params.quiz_id,
         quiz_title: route.params.quiz_title as string,
@@ -256,19 +256,14 @@ const router = createRouter({
       component: NotFoundView
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue')
-    },
-    {
       path: '/signup',
       name: 'signup',
-      component: SignUpView
+      component: UserSignUpView
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginRedirect
+      component: UserLoginRedirect
     },
     {
       path: '/user',
@@ -283,12 +278,12 @@ const router = createRouter({
     {
       path: '/forgot-password',
       name: 'forgot-password',
-      component: ForgotPasswordView
+      component: UserForgotPasswordView
     },
     {
       path: '/reset-password',
       name: 'reset-password',
-      component: ResetPasswordView
+      component: UserResetPasswordView
     },
     {
       path: '/no-access',

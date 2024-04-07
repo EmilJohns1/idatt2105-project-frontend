@@ -21,7 +21,7 @@
       </div>
       <button class="collaborate-button" @click="shareQuiz">Collaborate on Quiz!</button>
     </div>
-    <Popup
+    <ComponentPopup
       v-if="showErrorPopup"
       :error-message="popupMessage"
       :font-color="fontColor"
@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import Popup from '@/components/Popup.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 import { defineProps, ref, onMounted } from 'vue'
 import { getUserByUsername } from '@/api/userHooks'
 import { addUserToQuiz, getUsersByQuizId, deleteUserFromQuiz } from '@/api/quizHooks'
@@ -227,7 +227,7 @@ onMounted(() => {
   margin-top: 0;
 }
 
-.add-user-section input[type="text"] {
+.add-user-section input[type='text'] {
   width: calc(100% - 80px);
   padding: 10px;
   border-radius: 5px;

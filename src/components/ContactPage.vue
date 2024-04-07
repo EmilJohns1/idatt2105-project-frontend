@@ -1,6 +1,6 @@
 <template>
   <div class="contact-page">
-    <Card class="contact-card">
+    <ComponentCard class="contact-card">
       <h2 id="header">Contact Us</h2>
       <form @submit.prevent="submitForm">
         <div class="form-group">
@@ -29,19 +29,19 @@
         </div>
         <button type="submit">Submit</button>
       </form>
-      <Popup
+      <ComponentPopup
         v-if="feedbackError"
         :errorMessage="feedbackError"
         :fontColor="popupFontColor"
         @popup-closed="resetError"
       />
-    </Card>
+    </ComponentCard>
   </div>
 </template>
 
 <script>
-import Card from '@/components/Card.vue'
-import Popup from '@/components/Popup.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 import { createFeedback } from '@/api/feedbackHooks'
 import { getUserByUsername } from '@/api/userHooks'
 import { useUserStore } from '@/stores/userStore'
@@ -49,8 +49,8 @@ import { useUserStore } from '@/stores/userStore'
 export default {
   name: 'ContactPage',
   components: {
-    Card,
-    Popup
+    ComponentCard,
+    ComponentPopup
   },
   data() {
     return {

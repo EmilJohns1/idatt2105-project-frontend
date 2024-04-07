@@ -1,6 +1,6 @@
 <template>
   <div class="sign-container">
-    <Card class="sign-card">
+    <ComponentCard class="sign-card">
       <h1 id="header-1">Create an account</h1>
       <h2 id="header-2">Sign up with an email and password for this app</h2>
       <form @submit.prevent="submitForm">
@@ -23,7 +23,7 @@
         <button type="submit" class="submit-button">Sign up with email</button>
       </form>
       <p id="registration-error" v-if="registrationError">{{ registrationError }}</p>
-    </Card>
+    </ComponentCard>
   </div>
 </template>
 
@@ -32,7 +32,7 @@ import { ref } from 'vue'
 import { useRegistration } from '@/api/userHooks'
 import type { LoginRequest } from '@/types/LoginRequest'
 import router from '@/router/index'
-import Card from '@/components/Card.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
 
 const email = ref('')
 const password = ref('')

@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <Card class="calendar-card">
+  <ComponentCard class="calendar-card">
     <div class="calendar-container">
       <div class="calendar-item">
         <h2 id="header">Activity Calendar</h2>
@@ -17,11 +17,11 @@
         </span>
       </div>
     </div>
-  </Card>
+  </ComponentCard>
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/Card.vue'
+import ComponentCard from '@/components/ComponentCard.vue'
 import { ref, onMounted, defineProps } from 'vue'
 import { getAttemptsByUserId } from '@/api/attemptHooks'
 import { format, addDays } from 'date-fns'
@@ -52,7 +52,6 @@ const attributes = ref<
 const streak = ref(0)
 const countdown = ref('')
 const isQuizCompletedToday = ref(false)
-
 
 /**
  * Calculates the time until midnight in UTC.
@@ -104,7 +103,7 @@ const fetchActivityData = async () => {
       events.map((event) => {
         return format(new Date(event.date), 'yyyy-MM-dd') // Format the date using date-fns
       })
-    ) 
+    )
     const todaysDate = format(new Date(), 'yyyy-MM-dd')
     let prevDay = todaysDate
     for (const day of Array.from(uniqueDays)) {

@@ -4,7 +4,7 @@
       Import questions
       <input type="file" @change="handleFileChange" class="file-input" />
     </button>
-    <Popup
+    <ComponentPopup
       v-if="popupMessage.message"
       :errorMessage="popupMessage.message"
       :fontColor="popupMessage.color"
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import Popup from '@/components/Popup.vue'
+import ComponentPopup from '@/components/ComponentPopup.vue'
 import { defineProps, ref } from 'vue'
 import { handleImport } from '@/utils/functions'
 import type { PopupMessage } from '@/types/PopupMessage'
