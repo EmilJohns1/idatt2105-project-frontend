@@ -11,6 +11,8 @@
           <button @click="addTag" :disabled="!currentTag" class="add-tag-button">Add Tag</button>
         </div>
         <div class="sort-select-container">
+          <p>Sort by:</p>
+
           <select v-model="selectedSort" @change="changeSort">
             <option v-for="option in sortOptions" :key="option.value" :value="option.value">
               {{ option.text }}

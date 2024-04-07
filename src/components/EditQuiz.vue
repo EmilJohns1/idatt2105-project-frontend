@@ -528,14 +528,18 @@ h3 {
 }
 
 .additional-buttons {
-  grid-column: 3;
+  flex-direction: row;
+  grid-column: 4;
   display: flex;
   flex-direction: column;
   justify-content: start;
+  margin-right: 10px;
 }
 
 .additional-buttons button {
   margin-bottom: 10px;
+  padding: 10px;
+  margin-left: 10px;
 }
 
 .submit-button,
@@ -691,9 +695,9 @@ form {
 .question-title {
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to two lines */
+  -webkit-line-clamp: 2; 
   -webkit-box-orient: vertical;
-  white-space: normal; /* Ensures text wraps within the limited lines */
+  white-space: normal; 
   padding: 5px;
 }
 

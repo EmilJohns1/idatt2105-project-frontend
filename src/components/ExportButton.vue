@@ -99,7 +99,7 @@ function clearPopup() {
   background-color: black;
   color: white;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 10px 0;
   transition:
     background-color 0.3s,
     box-shadow 0.3s;
