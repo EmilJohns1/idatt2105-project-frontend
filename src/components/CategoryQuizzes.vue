@@ -92,8 +92,6 @@ const selectedSort = ref('creationDate,desc') // Default sort option
 const sortOptions = [
   { value: 'creationDate,desc', text: 'Newest Creation Date' },
   { value: 'creationDate,asc', text: 'Oldest Creation Date' },
-  //{ value: 'lastModifiedDate,desc', text: 'Newest Modified Date' },
-  //{ value: 'lastModifiedDate,asc', text: 'Oldest Modified Date' },
   { value: 'title,asc', text: 'Title (A-Z)' },
   { value: 'title,desc', text: 'Title (Z-A)' },
   { value: 'isPublic,desc', text: 'Public Quizzes' },

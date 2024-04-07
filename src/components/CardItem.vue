@@ -174,7 +174,6 @@ const handleClick = () => {
   margin: 2px; 
   border: 1px solid #ccc; 
   font-size: 14px; 
-  
 }
 
 
