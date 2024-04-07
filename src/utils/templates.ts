@@ -21,12 +21,13 @@ export const templates = [
     isRandomized: false
   },
   {
-    name: 'Template 2',
-    title: 'Template 2 Title',
-    description: 'Template 2 Description',
-    imageUrl: 'template2.jpg',
-    tags: ['tag4', 'tag5', 'tag6'],
-    category: 'string',
+    name: 'Geography Quiz',
+    title: 'Geography Quiz',
+    description: 'This is a geography quiz that tests your knowledge of countries and flags.',
+    imageUrl:
+      'https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/fae2f987-8c34-41f5-9a82-f108553a8130_worldmap.jpg',
+    tags: ['flags', 'countries', 'europe'],
+    category: 'Geography',
     isPublic: false,
     isRandomized: false
   }

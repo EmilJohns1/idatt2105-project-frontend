@@ -1,0 +1,41 @@
+Question title: Which country has the highest gdp per capita?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/31c45a69-18cb-47ff-bfe5-f41b5be15c27_gdp.jpg 
+Question type: multiple choice
+Alternatives:
+-Luxembourg (correct)
+-USA
+-Russia
+-Germany
+
+Question title: Does china have the highest population in the world?
+Max points: 4
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/40670479-76e6-4db5-a53e-c788741f27e2_population.jpeg 
+Question type: true or false
+Answer: false
+
+Question title: Which country has this flag?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/452ee4d0-83a6-484d-ba96-c6b423affcec_ghana.png 
+Question type: multiple choice
+Alternatives:
+-Ghana (correct)
+-Zimbabwe
+-Chad
+-Hungary
+
+Question title: Which of these countries are both in Europe and Asia?
+Max points: 3
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/d330b1a3-7328-4875-8120-5bf9610b33d2_europeasia.jpg 
+Question type: multiple choice
+Alternatives:
+-Russia (correct)
+-Turkey (correct)
+-Belarus
+-North macedonia
+
+Question title: Is Russia the largest country in the world (by mass)?
+Max points: 2
+Image url: https://quiz-project-fullstack.s3.eu-north-1.amazonaws.com/d96014ba-9375-409f-a998-6c003993fc5e_russia.png
+Question type: true or false
+Answer: true
