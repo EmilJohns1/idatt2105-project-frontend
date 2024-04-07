@@ -426,7 +426,7 @@ const showPopup = (message: string, color: string) => {
 }
 
 const redirectToHelp = () => {
-  router.push('')
+  window.open('https://github.com/1Cezzo/idatt2105-project-backend/wiki/Import-format');
 }
 </script>
 
