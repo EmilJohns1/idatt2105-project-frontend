@@ -52,10 +52,16 @@ const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
+/**
+ * Emit the 'close' event.
+ */
 const close = () => {
   emit('close')
 }
 
+/**
+ * Add a user to the quiz as a collaborator.
+ */
 const addToQuiz = async () => {
   if (
     username.value === '' ||
@@ -91,6 +97,9 @@ const addToQuiz = async () => {
   username.value = ''
 }
 
+/**
+ * Fetch the list of collaborators for the quiz.
+ */
 const fetchCollaborators = async () => {
   const username = userStore.getUserName || ''
   const fetchedCollaborators = await getUsersByQuizId(props.quizId ?? 0)
@@ -101,6 +110,9 @@ const fetchCollaborators = async () => {
   }
 }
 
+/**
+ * Share the quiz link by copying it to the clipboard.
+ */
 const shareQuiz = () => {
   const url = window.location.href
   navigator.clipboard
@@ -118,6 +130,10 @@ const shareQuiz = () => {
     })
 }
 
+/**
+ * Delete a collaborator from the quiz.
+ * @param userId - The ID of the user to be deleted.
+ */
 const deleteCollaborator = async (userId: number) => {
   const confirmed = confirm('Are you sure you want to delete this collaborator?')
   if (confirmed) {
@@ -133,6 +149,9 @@ const deleteCollaborator = async (userId: number) => {
   }
 }
 
+/**
+ * Hide the error popup.
+ */
 const hideErrorPopup = () => {
   showErrorPopup.value = false
 }

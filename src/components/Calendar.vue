@@ -53,6 +53,11 @@ const streak = ref(0)
 const countdown = ref('')
 const isQuizCompletedToday = ref(false)
 
+
+/**
+ * Calculates the time until midnight in UTC.
+ * @returns The time in milliseconds until midnight UTC.
+ */
 const calculateTimeUntilMidnightUTC = () => {
   const now = new Date()
   const midnightUTC = new Date(now)
@@ -63,6 +68,9 @@ const calculateTimeUntilMidnightUTC = () => {
   return timeUntilMidnight
 }
 
+/**
+ * Updates the countdown timer until midnight UTC.
+ */
 const updateTimer = () => {
   const timeUntilMidnight = calculateTimeUntilMidnightUTC()
 
@@ -76,6 +84,9 @@ const updateTimer = () => {
   countdown.value = `${hours}:${formattedMinutes}:${formattedSeconds}`
 }
 
+/**
+ * Fetches activity data for the user based on the provided props.
+ */
 const fetchActivityData = async () => {
   try {
     const userId = props.id
@@ -128,6 +139,9 @@ const fetchActivityData = async () => {
 updateTimer()
 setInterval(updateTimer, 1000)
 
+/**
+ * Resets the timer daily to update the countdown and quiz completion status.
+ */
 const resetTimerDaily = () => {
   const timeUntilMidnight = calculateTimeUntilMidnightUTC()
   setTimeout(() => {

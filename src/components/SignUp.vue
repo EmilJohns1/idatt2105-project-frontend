@@ -39,6 +39,9 @@ const password = ref('')
 const { registerUser, clearError } = useRegistration()
 const registrationError = ref('')
 
+/**
+ * Submit Form and gives appropriate feedback.
+ */
 const submitForm = async () => {
   clearError()
   const userData: LoginRequest = {
@@ -62,6 +65,10 @@ const submitForm = async () => {
     password.value = ''
   }
 }
+
+/**
+ * Redirect to login page.
+ */
 const redirect = () => {
   router.push('/login')
   setTimeout(() => {
