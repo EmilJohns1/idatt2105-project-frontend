@@ -197,7 +197,9 @@ const originalPictureUrl = ref('')
 const popupMessage = ref<PopupMessage>({ message: '', color: '' })
 const isVisible = ref(false)
 
-// Fetch quiz details by ID
+/**
+ * Fetch quiz details by ID.
+ */
 const fetchQuizDetails = async () => {
   quiz.value = await getQuizByQuizId(quizId)
   if (quiz.value) {
@@ -215,6 +217,9 @@ const fetchQuizDetails = async () => {
   authorId.value = quiz.value.authorId
 }
 
+/**
+ * Fetch necessary data for the component.
+ */
 const fetchData = async () => {
   if (quizId) {
     questions.value = (await getAllQuestionsByQuizId(quizId)) as any[]
@@ -231,11 +236,14 @@ onMounted(() => {
   fetchData()
 })
 
+
 const tagArray = computed(() =>
   editedQuiz.value.tags.map((tag: { tagName: string }) => tag.tagName)
 )
 
-// Update quiz details
+/**
+ * Update quiz details.
+ */
 const updateQuiz = async () => {
   if (!checkQuestionCount() && editedQuiz.value.public === true) {
     showPopup('You need at least 5 questions to make your quiz public!', 'red')
@@ -274,6 +282,12 @@ const updateQuiz = async () => {
   }
 }
 
+/**
+ * Redirect to quiz edit page.
+ *
+ * @param {number} quiz_id - The ID of the quiz.
+ * @param {string} quiz_title - The title of the quiz.
+ */
 const redirectToPage = async (quiz_id: number, quiz_title: string) => {
   router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/edit`)
   setTimeout(() => {
@@ -283,6 +297,12 @@ const redirectToPage = async (quiz_id: number, quiz_title: string) => {
   }, 250)
 }
 
+/**
+ * Redirect to add question page.
+ *
+ * @param {number} quiz_id - The ID of the quiz.
+ * @param {string} quiz_title - The title of the quiz.
+ */
 const redirectToQuestionPage = async (quiz_id: number, quiz_title: string) => {
   router.push(`/quiz/${quiz_id}-${quiz_title.toLowerCase().replace(/ /g, '-')}/questions/add`)
 
@@ -293,6 +313,11 @@ const redirectToQuestionPage = async (quiz_id: number, quiz_title: string) => {
   }, 250)
 }
 
+/**
+ * Preview uploaded image.
+ *
+ * @param {Event} event - The input change event.
+ */
 const previewImage = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
@@ -306,28 +331,60 @@ const previewImage = (event: Event) => {
   }
 }
 
+/**
+ * Add a tag to the quiz.
+ */
 const addTag = () => {
   const tag = tagInput.value.trim()
+
+  if (tag !== '') {
+    if (tag.length > 15) {
+      alert('Tag length exceeds maximum limit (15 characters).');
+      tagInput.value = '';
+      return;
+    }
+
   if (tag && !editedQuiz.value.tags.includes(tag)) {
-    editedQuiz.value.tags.push({ tagName: tag }) // Pushing an object with tagName property
+    editedQuiz.value.tags.push({ tagName: tag }) 
     tagInput.value = ''
-  }
+  }}
 }
 
+/**
+ * Remove a tag from the quiz.
+ *
+ * @param {number} index - The index of the tag to remove.
+ */
 const removeTag = (index: number) => {
   editedQuiz.value.tags.splice(index, 1)
 }
 
+/**
+ * Handle file input change.
+ *
+ * @param {Event} event - The input change event.
+ */
 const onFileChange = (event: Event) => {
   validateImageSize(event)
   previewImage(event)
 }
 
+/**
+ * Validate if the uploaded file is an image.
+ *
+ * @param {File} file - The uploaded file.
+ * @returns {boolean} - True if the file is a valid image; otherwise, false.
+ */
 const validateImageFile = (file: File): boolean => {
   const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 
+/**
+ * Validate the size of the uploaded image.
+ *
+ * @param {Event} event - The input change event.
+ */
 const validateImageSize = (event: Event) => {
   const target = event.target as HTMLInputElement
   const selectedFile = target.files?.[0]
@@ -348,6 +405,10 @@ const validateImageSize = (event: Event) => {
   }
 }
 
+
+/**
+ * Upload the selected picture.
+ */
 const uploadPicture = async (): Promise<void> => {
   if (file.value) {
     try {
@@ -382,20 +443,37 @@ const uploadPicture = async (): Promise<void> => {
   }
 }
 
+
+/**
+ * Display the collaborate modal.
+ */
 const showCollaborateModal = () => {
   showModal.value = true
 }
 
+/**
+ * Hide the collaborate modal.
+ */
 const hideCollaborateModal = () => {
   showModal.value = false
 }
 
+/**
+ * Check if the current user is the author of the quiz.
+ *
+ * @returns {boolean} - True if the user is the author; otherwise, false.
+ */
 const isAuthor = computed(() => {
   if (!userData.value) return false
   const userDataWithId = userData.value as { id: number }
   return userDataWithId && authorId.value === userDataWithId.id
 })
 
+/**
+ * Edit a question.
+ *
+ * @param {number} index - The index of the question to edit.
+ */
 const editQuestion = (index: number) => {
   const question = questions.value[index]
   const { quiz_id, quiz_title } = router.currentRoute.value.params
@@ -406,6 +484,11 @@ const editQuestion = (index: number) => {
   }
 }
 
+/**
+ * Remove a question.
+ *
+ * @param {number} index - The index of the question to remove.
+ */
 const removeQuestion = async (index: number) => {
   const question = questions.value[index]
   const confirmDelete = confirm('Are you sure you want to delete this question?')
@@ -419,14 +502,28 @@ const removeQuestion = async (index: number) => {
   }
 }
 
+/**
+ * Navigate to add question page.
+ */
 const addQuestion = async () => {
   await redirectToQuestionPage(quizId, editedQuiz.value.title)
 }
 
+/**
+ * Check if there are enough questions to make the quiz public.
+ *
+ * @returns {boolean} - True if there are at least 5 questions; otherwise, false.
+ */
 const checkQuestionCount = () => {
   return questions.value.length >= 5
 }
 
+/**
+ * Display a popup message.
+ *
+ * @param {string} message - The message to display.
+ * @param {string} color - The color of the popup.
+ */
 const showPopup = (message: string, color: string) => {
   popupMessage.value = { message, color }
   isVisible.value = true
@@ -740,7 +837,6 @@ form {
 }
 .title-desc-container {
   margin-left: 10px;
-  width: 50%;
 }
 .image-container {
   display: flex;
