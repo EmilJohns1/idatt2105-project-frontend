@@ -617,6 +617,12 @@ form {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin:0 10px 10px 10px;
+}
+
+.add-question:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .question-info {
