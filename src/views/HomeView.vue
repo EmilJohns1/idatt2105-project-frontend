@@ -23,10 +23,11 @@
     </div>
     <div class="login">
       <h1>Or Create?</h1>
-      <div class="buttons">
+      <div class="buttons" v-if="!loggedIn">
         <RouterLink to="/signup" class="signup-button purpleButton button">Sign up</RouterLink>
         <RouterLink to="/login" class="blackButton button">Log in</RouterLink>
       </div>
+      <RouterLink to="/quiz/create" class="blackButton button create" v-else>Create a quiz</RouterLink>
     </div>
     <div class="aligner"></div>
   </div>
@@ -38,11 +39,15 @@ import { useRouter } from 'vue-router'
 import CardItem from '@/components/CardItem.vue'
 import { api } from '@/api/axiosConfig'
 import type { Category } from '@/types/Category'
+import { useUserStore } from '@/stores/userStore'
 
 const router = useRouter()
-
 const categories = ref<Category[]>([])
 const cardsContainer = ref()
+const userStore = useUserStore()
+const loggedIn = computed(() => {
+  return userStore.getIsLoggedIn
+})
 
 function goToCategory(categoryName: string) {
   if (categoryName === 'all') {
@@ -213,6 +218,19 @@ function scrollRight() {
   width: 90%;
   font-size: 2.5em;
   height: 65px;
+}
+
+.create {
+  font-size: 2em;
+  width: 20%;
+  height: 50%;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+.create:hover {
+  background-color: #333;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 750px) {
