@@ -4,11 +4,11 @@
     <h2 class="header1">{{ editMode ? 'Edit Question' : 'Add Question' }}</h2>
     <h2 class="mainHeader">Question Text</h2>
     <label class="overlay" for="toggle-menu"></label>
-    <input type="text" class="choiceInput" v-model="question" /><br />
+    <input type="text" class="choiceInput inputField" v-model="question" /><br />
 
     <h2 class="header">Image or Video</h2>
     <img :src="imageUrl || placeholderImage" id="image" /><br />
-    <input accept="image/*" type="file" @change="onFileChange" /><br />
+    <input accept="image/*" type="file" id="file" name="file" @change="onFileChange" class="inputfile" /><label for="file">Choose a file</label><br />
 
     <div class="max-points-slider">
       <label for="maxPoints">Max Points</label>
@@ -31,8 +31,7 @@
 
     <div class="choice" v-if="selectedQuestionType === 'mc'">
       <div v-for="(alternativeObj, index) in alternatives" :key="index">
-        Alt {{ index + 1 }}:
-        <input type="text" class="choiceInput" v-model="alternativeObj.text" />
+        <input type="text" class="choiceInput inputField alt" :placeholder="generatePlaceholder(index)" v-model="alternativeObj.text" />
         <label class="container">
           <input type="checkbox" v-model="alternativeObj.checked" />
           <span class="checkmark"></span> </label
@@ -48,17 +47,20 @@
 
     <div class="choice" id="tof" v-if="selectedQuestionType === 'tof'">
       Answer:<br />
-      True&nbsp;<label class="container"
-        ><input type="radio" name="tof" value="true" v-model="selectedTofOption" /><span
-          class="checkmark"
-        ></span></label
-      ><br />
-      False
+      <div id="tofAnswers">
+      <label class="tofLabel" for="true">True</label>
       <label class="container"
-        ><input type="radio" name="tof" value="false" v-model="selectedTofOption" /><span
+        ><input type="radio" name="tof" id="true" value="true" v-model="selectedTofOption" /><span
+          class="checkmark"
+        ></span></label><br />
+
+      <label class="tofLabel" for="false">False</label>
+      <label class="container"
+        ><input type="radio" name="tof" id="false" value="false" v-model="selectedTofOption" /><span
           class="checkmark"
         ></span></label
-      ><br />
+      >
+      </div>
     </div>
 
     <button class="submitButton" @click="editMode ? saveChanges() : addToQuiz()">
@@ -113,6 +115,11 @@ const file = ref<File | null>(null)
 const questionData = ref<any>(null)
 const originalPictureUrl = ref('')
 
+/**
+ * Preview uploaded image.
+ * 
+ * @param {Event} event - The input change event.
+ */
 const previewImage = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
@@ -121,16 +128,42 @@ const previewImage = (event: Event) => {
   }
 }
 
+/**
+ * Handle file input change.
+ * 
+ * @param {Event} event - The input change event.
+ */
 const onFileChange = (event: Event) => {
   validateImageSize(event)
   previewImage(event)
 }
 
+/**
+ * Validate if the uploaded file is an image.
+ * 
+ * @param {File} file - The uploaded file.
+ * @returns {boolean} - True if the file is a valid image; otherwise, false.
+ */
 const validateImageFile = (file: File): boolean => {
   const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 
+/**
+ * Generate a placeholder for the alternative input based on its index.
+ * 
+ * @param {number} index - The index of the alternative.
+ * @returns {string} - The generated placeholder text.
+ */
+const generatePlaceholder = (index: number): string => {
+  return `Alternative ${index + 1}`;
+}
+
+/**
+ * Validate the size of the uploaded image.
+ * 
+ * @param {Event} event - The input change event.
+ */
 const validateImageSize = (event: Event) => {
   const target = event.target as HTMLInputElement
   const selectedFile = target.files?.[0]
@@ -140,26 +173,23 @@ const validateImageSize = (event: Event) => {
     const maxSizeKB = 1024 * 3 // Max size in KB (3 MB)
 
     if (!validateImageFile(selectedFile)) {
-      // Show an alert if file type is not valid
       window.alert('Invalid file type. Please select a PNG, JPG, or JPEG file.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else if (fileSize > maxSizeKB) {
-      // Show an alert if file size exceeds the maximum limit
       window.alert('File size exceeds the maximum limit. Maximum 3 MB allowed.')
-      // Reset the file input to clear the selected file
       target.value = ''
     } else {
-      // Update the file variable with the selected file
       file.value = selectedFile
     }
   }
 }
 
+/**
+ * Upload the selected picture.
+ */
 const uploadPicture = async (): Promise<void> => {
   if (file.value) {
     try {
-      //Delete the current profile picture from the storage
       if (originalPictureUrl.value) {
         const deleteSuccess = await deletePicture(originalPictureUrl.value)
 
@@ -169,7 +199,6 @@ const uploadPicture = async (): Promise<void> => {
         }
       }
 
-      // Upload the new profile picture
       imageUrl.value = await uploadFile(file.value)
 
       if (imageUrl.value) {
@@ -189,11 +218,19 @@ const uploadPicture = async (): Promise<void> => {
   }
 }
 
+/**
+ * Handle change in question type.
+ * 
+ * @param {Event} event - The select change event.
+ */
 const handleQuestionTypeChange = (event: Event) => {
   const target = event.target as HTMLSelectElement
   selectedQuestionType.value = target.value
 }
 
+/**
+ * Return to the quiz edit page.
+ */
 const returnToQuiz = () => {
   const params = router.currentRoute.value.params
   const quiz_id = params.quiz_id
@@ -205,6 +242,11 @@ const returnToQuiz = () => {
   }, 0)
 }
 
+/**
+ * Get the question type based on the selected question type.
+ * 
+ * @returns {string} - The question type.
+ */
 const getQuestionType = () => {
   if (selectedQuestionType.value === 'mc') {
     return 'multiple_choice'
@@ -213,6 +255,11 @@ const getQuestionType = () => {
   }
 }
 
+/**
+ * Validate user inputs.
+ * 
+ * @returns {boolean} - True if all inputs are valid; otherwise, false.
+ */
 const checkIfValidInputs = () => {
   if (question.value === '') {
     popup('Please enter a question', 'red')
@@ -253,6 +300,9 @@ const checkIfValidInputs = () => {
   return true
 }
 
+/**
+ * Add the question to the quiz.
+ */
 const addToQuiz = async () => {
   if (!checkIfValidInputs()) {
     return
@@ -302,18 +352,30 @@ const addToQuiz = async () => {
   }
 }
 
+/**
+ * Add an alternative to the question.
+ */
 const addAlternative = () => {
   if (alternatives.value.length < 4) {
     alternatives.value.push({ text: '', checked: false })
   }
 }
 
+/**
+ * Remove an alternative from the question.
+ */
 const removeAlternative = () => {
   if (alternatives.value.length > 2) {
     alternatives.value.pop()
   }
 }
 
+/**
+ * Display a popup message.
+ * 
+ * @param {string} message - The message to display.
+ * @param {string} fontColor - The color of the message font.
+ */
 const popup = (message: string, fontColor: string) => {
   popupVisible.value = true
   popupMessage.value = message
@@ -324,6 +386,9 @@ const popupVisible = ref(false)
 const popupMessage = ref('')
 const popupFontColor = ref('')
 
+/**
+ * Save the changes made to the question.
+ */
 const saveChanges = async () => {
   if (!checkIfValidInputs()) {
     return
@@ -364,11 +429,11 @@ const saveChanges = async () => {
 
     const updatedQuestion = await updateQuestionById(questionData)
 
-    const formattedAlternatives = alternatives.value.map((alternative, index) => {
+    const formattedAlternatives = alternatives.value.map((alternative) => {
       return {
         alternativeText: alternative.text,
         correct: alternative.checked,
-        id: alternative.id // Use the ID of the alternative
+        id: alternative.id 
       }
     })
 
@@ -389,6 +454,9 @@ const saveChanges = async () => {
   }
 }
 
+/**
+ * Fetch and populate the question data for editing.
+ */
 onMounted(async () => {
   const params = router.currentRoute.value.params
   if (params.question_id) {
@@ -424,8 +492,53 @@ onMounted(async () => {
 })
 </script>
 
+
 <style scoped>
-/* content */
+.inputField{
+  width: 50%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  border: 0;
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  border-radius: 0.5em;
+}
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  font-size: 1em;
+  font-weight: 700;
+  display: inline-block;
+  color: white;
+  background-color: #000000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.inputfile + label {
+  cursor: pointer; /* "hand" cursor */
+}
+
+.alt {
+  margin-right: 10px;
+}
+
 .choiceInput {
   width: 50%;
 }
@@ -445,6 +558,7 @@ onMounted(async () => {
   height: 300px;
   border-radius: 8px;
   border: 1px solid #333;
+  max-width: 90%;
 }
 
 .content {
@@ -462,11 +576,18 @@ onMounted(async () => {
   margin-top: 40px;
 }
 
-/* options */
+#QuestionType{
+  background-color: white;
+  padding:10px;
+  border: #000 solid 1px;
+  border-radius: 10px;
+}
+
 #maxPoints {
   font-size: 20px;
   display: inline-block;
   width: fit-content;
+  accent-color: #756dd3;
 }
 #maxPointsInput {
   width: 60px;
@@ -563,10 +684,35 @@ onMounted(async () => {
 
 .addRemoveButton {
   margin-left: 5px;
+  background-color: #000000;
+  border-radius: 10px;
+  border: solid black 1px;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
 }
-
+.tofLabel{
+  width:70px;
+  display: inline-block;
+}
+#tofAnswers{
+  margin-top: 10px;
+  margin-left: 27px;
+}
 .header1 {
   font-size: 2.5rem;
   margin-bottom: 20px;
+}
+@media (max-width: 750px) {
+  .returnButton {
+    top: 60px;
+    left: 5px;
+  }
+  .inputField{
+    width: 80%;
+  }
+  .choice, .qType{
+    margin-left: 10px;
+  }
 }
 </style>

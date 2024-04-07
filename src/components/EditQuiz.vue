@@ -54,12 +54,19 @@
 
             <div class="title-desc-container">
               <h2>Title</h2>
-              <input v-model="editedQuiz.title" type="text" required class="input-field" />
+              <input
+                v-model="editedQuiz.title"
+                type="text"
+                required
+                class="input-field"
+                maxLength="100"
+              />
               <h2>Description</h2>
               <textarea
                 v-model="editedQuiz.description"
                 type="text"
                 class="input-field description"
+                maxLength="255"
               ></textarea>
             </div>
           </div>
@@ -317,7 +324,7 @@ const onFileChange = (event: Event) => {
 }
 
 const validateImageFile = (file: File): boolean => {
-  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
+  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp']
   return validTypes.includes(file.type)
 }
 
@@ -475,7 +482,7 @@ h3 {
   display: grid;
   grid-template-columns: auto 1fr auto;
   grid-gap: 20px;
-  padding: 20px;
+  padding: 20px 20px 20px 0;
 }
 
 .sidebar {
@@ -605,11 +612,11 @@ form {
 .question {
   max-width: 150px;
   max-height: 200px;
-  margin-bottom: 10px;
+  margin:0 10px 10px 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 5px;
+  padding: 5px;
 }
 
 .question:hover {
@@ -618,10 +625,16 @@ form {
   cursor: pointer;
 }
 
-.add-questio {
+.add-question {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin:0 10px 10px 10px;
+}
+
+.add-question:hover {
+  box-shadow: 0 0 1em 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }
 
 .question-info {
@@ -649,7 +662,7 @@ form {
 .remove-icon {
   position: absolute;
   top: 5px;
-  right: 32px;
+  right: 5px;
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -684,6 +697,7 @@ form {
   min-height: 78;
   max-height: 78px;
   background-color: #ccc;
+  margin: 0px 12px 0px 12px;
 }
 
 .icon {
@@ -865,6 +879,8 @@ input:checked + .slider:before {
     flex-direction: column;
     overflow-x: scroll;
     justify-content: center;
+    width: 100%;
+    padding: 0px;
   }
 
   .top-row-container {
@@ -886,6 +902,7 @@ input:checked + .slider:before {
     flex-direction: row;
     width: 100vw;
     overflow-x: scroll;
+    margin-left: 0px;
   }
 
   .question-title {
@@ -894,7 +911,7 @@ input:checked + .slider:before {
 
   .question {
     width: 500px;
-    margin-right: 20px;
+    margin-right: 0px;
   }
 
   .layout-container {
@@ -906,17 +923,21 @@ input:checked + .slider:before {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    margin-bottom: 10px;
   }
 
   .additional-button {
     display: flex;
-    margin: 0;
     margin-right: 10px;
-    margin-bottom: 0;
   }
 
   #addTagButton {
     width: 100px;
+  }
+
+  .remove-icon {
+    right: 10px;
+    opacity: 1;
   }
 }
 </style>
