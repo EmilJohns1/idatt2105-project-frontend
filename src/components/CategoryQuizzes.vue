@@ -7,12 +7,7 @@
     <div class="control-container">
       <div class="tags-input-container">
         <div class="search-tags-input">
-          <input
-            type="text"
-            v-model="currentTag"
-            @keyup.enter="addTag"
-            placeholder="Add Tags..."
-          />
+          <input type="text" v-model="currentTag" @keyup.enter="addTag" placeholder="Add Tags..." />
           <button @click="addTag" :disabled="!currentTag" class="add-tag-button">Add Tag</button>
         </div>
         <div class="sort-select-container">
@@ -51,9 +46,12 @@
     />
   </div>
   <div class="pagination-controls">
-    <PaginationComponent :currentPage="currentPage" :totalPages="totalPages" @changePage="changePage" />
+    <PaginationComponent
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @changePage="changePage"
+    />
   </div>
-  
 </template>
 
 <script setup lang="ts">
@@ -237,16 +235,14 @@ function goToQuiz(quizId: number, quizTitle: string) {
   router.push(`/quiz/${quizId}-${formattedTitle}`)
 }
 
-const filteredQuizzes = computed(() => quizzes.value);
-
+const filteredQuizzes = computed(() => quizzes.value)
 
 const searchQuizzes = async () => {
   // Future me, implement functionality to search quizzes by title?
-  quizzes.value = []; // Clear current quizzes to ensure a fresh search
-  currentPage.value = 1; // Start from the first page
-  await fetchQuizzes(); 
-};
-
+  quizzes.value = [] // Clear current quizzes to ensure a fresh search
+  currentPage.value = 1 // Start from the first page
+  await fetchQuizzes()
+}
 </script>
 
 <style scoped>
@@ -259,7 +255,7 @@ const searchQuizzes = async () => {
   display: flex;
   margin-bottom: 20px;
   align-items: flex-end;
-  width:100%;
+  width: 100%;
 }
 .tags-input-container {
   display: flex;
@@ -285,14 +281,14 @@ const searchQuizzes = async () => {
 }
 
 .add-tag-button {
-  padding: 8px; 
-  background-color: green; 
-  color: white; 
-  border: none; 
+  padding: 8px;
+  background-color: green;
+  color: white;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
-  outline: none; 
-  box-shadow: 2px 2px 5px #00000033; 
+  outline: none;
+  box-shadow: 2px 2px 5px #00000033;
 }
 
 .add-tag-button:hover {
@@ -334,7 +330,7 @@ const searchQuizzes = async () => {
   border-radius: 4px;
   appearance: none;
   position: relative;
-  font-size: 16px; 
+  font-size: 16px;
   cursor: pointer;
   user-select: none;
 }
@@ -343,29 +339,29 @@ const searchQuizzes = async () => {
   background-color: #f0f0f0;
 }
 
-.pagination-controls button.current-page, 
+.pagination-controls button.current-page,
 .pagination-controls button:disabled {
   background-color: black;
   color: white;
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .pagination-controls span {
-  user-select: none; 
+  user-select: none;
 }
 
 .pagination-controls .pagination-ellipsis {
   text-align: center;
-  padding: 8px 16px; 
+  padding: 8px 16px;
   margin: 0 5px;
   display: inline-block;
-  min-width: 36px; 
+  min-width: 36px;
 }
 
 .pagination-controls .pagination-ellipsis {
   cursor: default;
 }
-.quizCard{
+.quizCard {
   cursor: pointer;
 }
 </style>

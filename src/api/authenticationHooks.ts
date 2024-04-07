@@ -23,7 +23,7 @@ export const useLogin = async () => {
 
 /**
  * Exchanges an authorization code for tokens and sets them in the user store.
- * 
+ *
  * @param {string} code - Authorization code.
  */
 export const getTokens = async (code: string) => {
@@ -82,7 +82,7 @@ export const getTokens = async (code: string) => {
 
 /**
  * Base64url encodes an ArrayBuffer.
- * 
+ *
  * @param {ArrayBuffer} arrayBuffer - Data to encode.
  * @returns {string} Encoded string.
  */
@@ -95,7 +95,7 @@ function base64URLEncode(arrayBuffer: ArrayBuffer) {
 
 /**
  * Hashes a string with SHA-256.
- * 
+ *
  * @param {string} plain - String to hash.
  * @returns {Promise<ArrayBuffer>} Hash as ArrayBuffer.
  */
@@ -108,7 +108,7 @@ async function sha256(plain: string) {
 
 /**
  * Generates a code verifier for OAuth2 PKCE.
- * 
+ *
  * @returns {string} Code verifier.
  */
 export const generateCodeVerifier = () => {
@@ -117,7 +117,7 @@ export const generateCodeVerifier = () => {
 
 /**
  * Generates a code challenge from a verifier.
- * 
+ *
  * @param {string} codeVerifier - Code verifier.
  * @returns {Promise<string>} Code challenge.
  */

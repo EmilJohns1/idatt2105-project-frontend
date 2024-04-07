@@ -15,16 +15,16 @@ const showContent = ref(false)
 
 <style scoped>
 .hover-card-content {
-    position: absolute;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    background-color: white;
-    border-radius: 4px;
-    padding: 10px;
-    width: 200px;
+  position: absolute;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  border-radius: 4px;
+  padding: 10px;
+  width: 200px;
 }
 
 .hover-card:hover .hover-card-content {
-    opacity: 1;
-    transform: translateY(-130%) translateX(-50%);
+  opacity: 1;
+  transform: translateY(-130%) translateX(-50%);
 }
 </style>

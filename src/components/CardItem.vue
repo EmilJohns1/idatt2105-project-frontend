@@ -54,41 +54,40 @@ type Props = {
   type?: 'quiz' | 'category'
 }
 
-const props = defineProps<Props>();
-const emits = defineEmits(['clicked']);
+const props = defineProps<Props>()
+const emits = defineEmits(['clicked'])
 
 const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return '';
+  if (!dateString) return ''
 
-  const date = new Date(dateString);
-  
+  const date = new Date(dateString)
+
   if (isNaN(date.getTime())) {
-    return 'Invalid date';
+    return 'Invalid date'
   }
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-  
-  return date.toLocaleDateString(undefined, options);
-};
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' }
+
+  return date.toLocaleDateString(undefined, options)
+}
 
 const latestDate = computed(() => {
-  const creationDateObj = props.creationDate ? new Date(props.creationDate) : null;
-  const lastModifiedDateObj = props.lastModifiedDate ? new Date(props.lastModifiedDate) : null;
+  const creationDateObj = props.creationDate ? new Date(props.creationDate) : null
+  const lastModifiedDateObj = props.lastModifiedDate ? new Date(props.lastModifiedDate) : null
 
-  if (!creationDateObj && !lastModifiedDateObj) return 'No valid date';
-  if (!creationDateObj) return formatDate(props.lastModifiedDate);
-  if (!lastModifiedDateObj) return formatDate(props.creationDate);
+  if (!creationDateObj && !lastModifiedDateObj) return 'No valid date'
+  if (!creationDateObj) return formatDate(props.lastModifiedDate)
+  if (!lastModifiedDateObj) return formatDate(props.creationDate)
 
-  const latest = (creationDateObj > lastModifiedDateObj) ? creationDateObj : lastModifiedDateObj;
-  return formatDate(latest.toISOString());
-});
+  const latest = creationDateObj > lastModifiedDateObj ? creationDateObj : lastModifiedDateObj
+  return formatDate(latest.toISOString())
+})
 
 const handleClick = () => {
   if (props.clickable) {
-    emits('clicked', props.id);
+    emits('clicked', props.id)
   }
 }
 </script>
-
 
 <style>
 .card-item {
@@ -166,16 +165,13 @@ const handleClick = () => {
 }
 
 .hover-tags-list li {
-  align-items: center; 
+  align-items: center;
   background-color: #f2f2f2;
   color: #333;
   border-radius: 20px;
   padding: 5px 10px;
-  margin: 2px; 
-  border: 1px solid #ccc; 
-  font-size: 14px; 
-  
+  margin: 2px;
+  border: 1px solid #ccc;
+  font-size: 14px;
 }
-
-
 </style>

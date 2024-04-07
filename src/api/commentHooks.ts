@@ -2,7 +2,7 @@ import { api } from '@/api/axiosConfig'
 
 /**
  * Fetches comments made by a specific user.
- * 
+ *
  * @param {number} userId - The ID of the user whose comments are to be fetched.
  * @returns {Promise<any[] | null>} A promise that resolves to an array of comments, or null in case of an error.
  */
@@ -24,11 +24,11 @@ interface Pagination {
 
 /**
  * Fetches comments associated with a quiz, with support for pagination and sorting.
- * 
+ *
  * @param {number} quizId - The ID of the quiz for which comments are to be fetched.
  * @param {Pagination} pagination - Pagination and sorting options.
  * @returns {Promise<any[] | null>} A promise that resolves to an array of comments, or null in case of an error.
- * 
+ *
  * @typedef {Object} Pagination - Defines pagination and sorting parameters.
  * @property {number} page - Page number.
  * @property {number} size - Number of items per page.
@@ -51,7 +51,7 @@ export const getCommentsByQuizId = async (
 
 /**
  * Adds a new comment to a quiz.
- * 
+ *
  * @param {any} commentData - The comment data to be added.
  * @returns {Promise<any>} A promise that resolves to the added comment data.
  * @throws Will throw an error if adding the comment fails.

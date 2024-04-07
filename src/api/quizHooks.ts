@@ -9,7 +9,7 @@ import type { Question } from '@/types/Question'
 
 /**
  * Fetches quiz details by its ID.
- * 
+ *
  * @param {number} quizId - ID of the quiz to fetch.
  * @returns {Promise<QuizDto | null>} Quiz details or null/error if not found.
  */
@@ -25,7 +25,7 @@ export const getQuizByQuizId = async (quizId: number): Promise<any | null> => {
 
 /**
  * Updates the details of a specific quiz.
- * 
+ *
  * @param {number} quizId - The quiz's unique identifier.
  * @param {QuizRequest} quizData - The new details for the quiz.
  * @returns {Promise<void>} Resolves if the update is successful.
@@ -46,7 +46,7 @@ export const updateQuizById = async (quizId: number, quizData: QuizRequest): Pro
 
 /**
  * Provides registration functionality for a quiz.
- * 
+ *
  * @returns {Object} - Includes registration functions and error handling.
  */
 export const useRegistration = () => {
@@ -79,7 +79,7 @@ export const useRegistration = () => {
 
 /**
  * Registers an attempt for a quiz.
- * 
+ *
  * @param {QuizAttemptRequest} quizData - The attempt data.
  * @returns {Promise<number | null>} The attempt's ID or null if registration fails.
  */
@@ -101,7 +101,7 @@ export const registerQuizAttempt = async (quizData: QuizAttemptRequest): Promise
 
 /**
  * Adds a user to a quiz.
- * 
+ *
  * @param {number} quizId - The quiz's ID.
  * @param {number} userId - The user's ID.
  * @returns {Promise<void>} Indicates successful addition.
@@ -121,7 +121,7 @@ export const addUserToQuiz = async (quizId: number, userId: number): Promise<voi
 
 /**
  * Removes a user from a quiz.
- * 
+ *
  * @param {number} quizId - The quiz's ID.
  * @param {number} userId - The user's ID to remove.
  * @returns {Promise<void>} Indicates successful removal.
@@ -132,7 +132,7 @@ export const deleteUserFromQuiz = async (quizId: number, userId: number): Promis
 
     if (response.status !== 200) {
       console.error('Failed to delete user from quiz')
-    } 
+    }
   } catch (error) {
     console.error('Error deleting user from quiz:', error)
     throw new Error('Failed to delete user from quiz')
@@ -141,7 +141,7 @@ export const deleteUserFromQuiz = async (quizId: number, userId: number): Promis
 
 /**
  * Adds tags to a quiz.
- * 
+ *
  * @param {Tag[]} tags - Tags to add.
  * @param {number} quizId - The quiz's ID.
  * @returns {Promise<void>} Indicates successful add.
@@ -160,7 +160,7 @@ export const addTagsToQuiz = async (tags: Tag[], quizId: number): Promise<void> 
 
 /**
  * Updates a quiz's tags.
- * 
+ *
  * @param {Tag[]} tags - New tags.
  * @param {number} quizId - The quiz's ID.
  * @returns {Promise<void>} Mean successful update.
@@ -180,7 +180,7 @@ export const updateTags = async (tags: Tag[], quizId: number): Promise<void> => 
 
 /**
  * Retrieves all quiz categories.
- * 
+ *
  * @returns {Promise<string[] | null>} List of category names or null.
  */
 export const getCategories = async (): Promise<string[] | null> => {
@@ -202,7 +202,7 @@ export const getCategories = async (): Promise<string[] | null> => {
 
 /**
  * Fetches all users associated with a quiz.
- * 
+ *
  * @param {number} quizId - The quiz's ID.
  * @returns {Promise<any[] | null>} User data or null.
  */
@@ -224,7 +224,7 @@ export const getUsersByQuizId = async (quizId: number): Promise<any[] | null> =>
 
 /**
  * Fetches quizzes by category with pagination and optional sorting.
- * 
+ *
  * @param {string} category - Category name.
  * @param {number} page - Page index.
  * @param {number} size - Page size.
@@ -237,7 +237,7 @@ export const fetchQuizzesByCategory = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`;
+  const fetchUrl = `/quizzes/category?category=${encodeURIComponent(category)}&page=${page}&size=${size}&sort=${sort}`
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
@@ -254,7 +254,7 @@ export const fetchQuizzesByCategory = async (
 
 /**
  * Retrieves all quizzes with optional pagination and sorting.
- * 
+ *
  * @param {number} page - Page index.
  * @param {number} size - Page size.
  * @param {string} sort - Sorting criteria.
@@ -265,7 +265,7 @@ export const fetchAllQuizzes = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`;
+  const fetchUrl = `/quizzes?page=${page}&size=${size}&sort=${sort}`
   try {
     const response = await api.get(fetchUrl)
     if (response.status === 200) {
@@ -282,7 +282,7 @@ export const fetchAllQuizzes = async (
 
 /**
  * Fetches quizzes filtered by tags with pagination and sorting.
- * 
+ *
  * @param {string[]} tags - Tags to filter by.
  * @param {number} page - Page index.
  * @param {number} size - Page size.
@@ -295,53 +295,57 @@ export const fetchQuizzesByTags = async (
   size: number,
   sort: string
 ): Promise<Page<QuizDto> | null> => {
-  const fetchUrl = `/quizzes/filter-by-tags`;
-  const requestBody = JSON.stringify(tags); 
-  const queryParams = new URLSearchParams({ page: String(page), size: String(size), sort }).toString();
-  const fullUrl = `${fetchUrl}?${queryParams}`;
+  const fetchUrl = `/quizzes/filter-by-tags`
+  const requestBody = JSON.stringify(tags)
+  const queryParams = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+    sort
+  }).toString()
+  const fullUrl = `${fetchUrl}?${queryParams}`
 
   try {
     const response = await api.post(fullUrl, requestBody, {
       headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+        'Content-Type': 'application/json'
+      }
+    })
 
     if (response.status === 200 && response.data) {
-      return response.data;
+      return response.data
     } else {
-      console.error(`Failed to fetch quizzes by tags. Status: ${response.status}`);
-      return null;
+      console.error(`Failed to fetch quizzes by tags. Status: ${response.status}`)
+      return null
     }
   } catch (error) {
-    console.error(`Failed to fetch quizzes by tags: ${error}`);
-    return null;
+    console.error(`Failed to fetch quizzes by tags: ${error}`)
+    return null
   }
-};
+}
 
 /**
  * Retrieves all tags used in quizzes.
- * 
+ *
  * @returns {Promise<Tag[] | null>} List of tags or null.
  */
 export const fetchAllTags = async (): Promise<Tag[] | null> => {
   try {
-    const response = await api.get('/api/quizzes/all/tags');
+    const response = await api.get('/api/quizzes/all/tags')
     if (response.status === 200) {
-      return response.data;
+      return response.data
     } else {
-      console.error('Failed to fetch all tags. Status:', response.status);
-      return null;
+      console.error('Failed to fetch all tags. Status:', response.status)
+      return null
     }
   } catch (error) {
-    console.error('Failed to fetch all tags:', error);
-    return null;
+    console.error('Failed to fetch all tags:', error)
+    return null
   }
-};
+}
 
 /**
  * Fetches all questions for a given quiz ID.
- * 
+ *
  * @param {number} quizId - The quiz's ID.
  * @returns {Promise<Question[] | null>} List of questions or null.
  */
@@ -362,16 +366,16 @@ export const getQuestionsFromQuizId = async (quizId: number): Promise<Question[]
 
 /**
  * Retrieves a specific quiz attempt by its ID.
- * 
+ *
  * @param {number} id - The attempt's ID.
  * @returns {Promise<QuizAttemptRequest | null>} Attempt details or null.
  */
 export const getQuizAttemptById = async (id: number): Promise<QuizAttemptRequest | null> => {
   try {
     const response = await api.get(`/attempts/${id}`, {})
-    if (response.status === 200 ){
-    return response.data
-    } else{
+    if (response.status === 200) {
+      return response.data
+    } else {
       console.error('Error fetching attempt')
       return null
     }

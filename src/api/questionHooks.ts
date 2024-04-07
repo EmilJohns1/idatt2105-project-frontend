@@ -2,7 +2,7 @@ import { api } from '@/api/axiosConfig'
 
 /**
  * Fetches all questions for a given quiz by its ID.
- * 
+ *
  * @param {number} quizId - The ID of the quiz.
  * @returns {Promise<any>} A list of questions associated with the quiz.
  */
@@ -17,7 +17,7 @@ export const getAllQuestionsByQuizId = async (quizId: number) => {
 
 /**
  * Adds a new question to a quiz.
- * 
+ *
  * @param {any} questionData - The data for the new question.
  * @returns {Promise<any>} The created question's data.
  */
@@ -33,7 +33,7 @@ export const addQuestionToQuiz = async (questionData: any) => {
 
 /**
  * Adds an alternative to a question.
- * 
+ *
  * @param {any} alternativeData - The data for the new alternative.
  * @returns {Promise<any>} The created alternative's data.
  */
@@ -49,7 +49,7 @@ export const addAlternativeToQuestion = async (alternativeData: any) => {
 
 /**
  * Updates a true or false question by its ID.
- * 
+ *
  * @param {number} questionId - The ID of the question.
  * @param {boolean} isCorrect - The correctness of the question.
  * @returns {Promise<any>} The updated question's data.
@@ -66,7 +66,7 @@ export const updateTrueOrFalseQuestion = async (questionId: number, isCorrect: b
 
 /**
  * Deletes a question by its ID.
- * 
+ *
  * @param {number} questionId - The ID of the question to delete.
  * @returns {Promise<any>} Confirmation of deletion.
  */
@@ -82,7 +82,7 @@ export const deleteQuestionByQuestionId = async (questionId: number) => {
 
 /**
  * Fetches a single question by its ID.
- * 
+ *
  * @param {number} questionId - The ID of the question.
  * @returns {Promise<any>} The fetched question's data.
  */
@@ -97,7 +97,7 @@ export const getQuestionByQuestionId = async (questionId: number) => {
 
 /**
  * Updates a question by its ID.
- * 
+ *
  * @param {any} questionData - The updated data for the question.
  * @returns {Promise<any>} The updated question's data.
  */
@@ -113,7 +113,7 @@ export const updateQuestionById = async (questionData: any) => {
 
 /**
  * Updates the alternatives for a question.
- * 
+ *
  * @param {number} questionId - The ID of the question.
  * @param {any} alternatives - The updated alternatives.
  * @returns {Promise<any>} The updated alternatives' data.
@@ -130,7 +130,7 @@ export const updateQuestionAlternatives = async (questionId: number, alternative
 
 /**
  * Deletes an alternative by its ID.
- * 
+ *
  * @param {number} alternativeId - The ID of the alternative to delete.
  * @returns {Promise<any>} Confirmation of deletion.
  */

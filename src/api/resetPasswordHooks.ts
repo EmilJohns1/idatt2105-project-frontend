@@ -3,7 +3,7 @@ import type { ResetPasswordRequest } from '@/types/ResetPasswordRequest'
 
 /**
  * Function to start the process of resetting password.
- * 
+ *
  * @param {ResetPasswordRequest} resetRequest - The details required to reset the password, including token and new password.
  * @returns {Promise<string>} The response message from the server being either success or fail.
  */
