@@ -15,9 +15,11 @@
               type="file"
               id="fileInput"
               accept="image/*"
+              class="inputfile"
               @change="validateImageSize($event)"
             />
-            <button @click="uploadProfilePicture">Edit Profile Picture</button>
+            <label for="fileInput">Choose a file</label>
+            <button @click="uploadProfilePicture" class="blackButton edit-profile-pic">Edit Profile Picture</button>
           </div>
         </div>
       </div>
@@ -630,6 +632,54 @@ h3 {
   text-decoration: none;
   color: inherit;
 }
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.inputfile + label {
+  font-size: 1em;
+  font-weight: 700;
+  display: inline-block;
+  color: white;
+  background-color: #000000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 2px 5px;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+.inputfile + label {
+  cursor: pointer; /* "hand" cursor */
+}
+
+.edit-profile-pic {
+  font-size: 1em;
+  font-weight: 700;
+  margin-top: 5px;
+  padding: 5px 5px;
+  border-radius: 10px;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+.edit-profile-pic:hover {
+  background-color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
 @media (max-width: 750px) {
   .quizzes-section {
     display: grid;
