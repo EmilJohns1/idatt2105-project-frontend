@@ -86,6 +86,7 @@ function scrollRight() {
   flex-direction: column;
   align-items: center;
   height: 100%;
+  padding-top: 40px;
 }
 
 .discover {
@@ -93,6 +94,7 @@ function scrollRight() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  
 }
 
 .category-card {
@@ -124,6 +126,7 @@ function scrollRight() {
 .arrows {
   display: flex;
   flex-direction: row;
+  padding-top: 40px;
 }
 
 .arrow {
@@ -159,6 +162,7 @@ function scrollRight() {
   width: 100vw;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 40px;
   -webkit-mask-image: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0) 0%,

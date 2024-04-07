@@ -7,9 +7,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 vi.mock('@/api/quizHooks', () => ({
     getCategories: vi.fn().mockResolvedValue([
-        { id: 1, name: 'Science' },
-        { id: 2, name: 'Math' },
-        { id: 3, name: 'History' }
+        { id: 'Science', name: 'Science' },
+        { id: 'Math', name: 'Math' },
+        { id: 'History', name: 'History' }
     ])
 }));
 

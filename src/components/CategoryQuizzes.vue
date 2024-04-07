@@ -3,55 +3,57 @@
     <div class="header">
       <h1>{{ categoryName }}</h1>
       <p>Try out all the quizzes made by our bustling community</p>
-        <div class="sort-select-container">
-          <select v-model="selectedSort" @change="changeSort">
-            <option v-for="option in sortOptions" :key="option.value" :value="option.value">
-              {{ option.text }}
-            </option>
-          </select>
-        </div>
-      </div>
+    </div>
+    <div class="control-container">
       <div class="tags-input-container">
-        <div class="tags-input">
+        <div class="search-tags-input">
           <input
             type="text"
             v-model="currentTag"
             @keyup.enter="addTag"
-            placeholder="Search Tags..."
-            class="input-tag"
+            placeholder="Add Tags..."
           />
+          <button @click="addTag" :disabled="!currentTag" class="add-tag-button">Add Tag</button>
         </div>
-        <div>
-          <button @click="addTag" class="add-tag-btn">Add tag</button>
+        <div class="sort-select-container">
+          <select v-model="selectedSort" @change="changeSort">
+            <option v-for="option in sortOptions" :key="option.value" :value="option.value">
+              {{ option.text }} ▼
+            </option>
+          </select>
         </div>
-        <ul class="tags-list">
-          <li v-for="(tag, index) in searchTags" :key="index" class="tag">
-            {{ tag }}
-            <button @click="removeTag(index)" class="remove-tag">x</button>
-          </li>
-        </ul>
       </div>
     </div>
-    <div class="grid-layout">
-      <CardItem
-        v-for="quiz in filteredQuizzes"
-        :key="quiz.id"
-        :id="quiz.id"
-        :image="quiz.quizPictureUrl || '/defualt-quiz-image.jpg'"
-        :title="quiz.title"
-        :description="quiz.description"
-        :authorName="authorName(quiz)"
-        :tags="quiz.tags"
-        :date="quiz.creationDate"
-        :lastModifiedDate="quiz.lastModifiedDate"
-        :clickable="true"
-        :type="'quiz'"
-        @clicked="() => goToQuiz(quiz.id, quiz.title)"
-      />
+    <div>
+      <ul class="tags-list">
+        <li v-for="(tag, index) in searchTags" :key="index" class="tag">
+          {{ tag }}
+          <button @click="removeTag(index)" class="remove-tag">x</button>
+        </li>
+      </ul>
     </div>
-    <div class="pagination-controls">
-      <PaginationComponent :currentPage="currentPage" :totalPages="totalPages" @changePage="changePage" />
-    </div>
+  </div>
+  <div class="grid-layout">
+    <CardItem
+      v-for="quiz in filteredQuizzes"
+      :key="quiz.id"
+      :id="quiz.id"
+      :image="quiz.quizPictureUrl || '/defualt-quiz-image.jpg'"
+      :title="quiz.title"
+      :description="quiz.description"
+      :authorName="authorName(quiz)"
+      :tags="quiz.tags"
+      :date="quiz.creationDate"
+      :lastModifiedDate="quiz.lastModifiedDate"
+      :clickable="true"
+      :type="'quiz'"
+      @clicked="() => goToQuiz(quiz.id, quiz.title)"
+    />
+  </div>
+  <div class="pagination-controls">
+    <PaginationComponent :currentPage="currentPage" :totalPages="totalPages" @changePage="changePage" />
+  </div>
+  
 </template>
 
 <script setup lang="ts">
@@ -235,73 +237,94 @@ const searchQuizzes = async () => {
   currentPage.value = 1; // Start from the first page
   await fetchQuizzes(); 
 };
-
 </script>
 
 <style scoped>
-
-.tags-input-container {
+.category-quizzes-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 20px;
 }
-
-.tags-input {
+.control-container {
   display: flex;
-  border: 2px solid black;
-  padding: 5px;
+  margin-bottom: 20px;
+  align-items: flex-end;
+  width:100%;
+}
+.tags-input-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: space-between;
 }
 
-.input-tag {
+.search-tags-input {
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  border: 2px solid black;
+  border-radius: 4px;
+  box-shadow: 2px 2px 5px #00000033;
+}
+
+.search-tags-input input[type='text'] {
+  flex-grow: 1;
   border: none;
   outline: none;
-  flex-grow: 1;
+  padding: 8px;
 }
 
-.add-tag-btn {
-  background-color: black;
-  color: white;
-  border: none;
-  padding: 5px 10px;
+.add-tag-button {
+  padding: 8px; 
+  background-color: green; 
+  color: white; 
+  border: none; 
+  border-radius: 4px;
   cursor: pointer;
+  outline: none; 
+  box-shadow: 2px 2px 5px #00000033; 
 }
 
+.add-tag-button:hover {
+  background-color: darkgreen;
+}
 .tags-list {
-  display: flex;
-  gap: 10px;
-  list-style: none;
+  list-style-type: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .tag {
-  background-color: #eeeeee;
-  border: 1px solid #cccccc;
-  border-radius: 10px;
-  padding: 5px 10px;
   display: flex;
-  gap: 5px;
   align-items: center;
-  font-size: 0.8rem;
+  background-color: #f2f2f2;
+  color: #333;
+  border-radius: 20px;
+  padding: 2px 10px;
+  border: solid 1px black;
+  margin-right: 10px;
 }
 
 .remove-tag {
+  margin-left: 5px;
   border: none;
   background-color: transparent;
+  color: #999;
   cursor: pointer;
 }
 
-.input-tag, .add-tag-btn, .search-btn {
-  height: 40px;
+.sort-select-container {
+  position: relative;
 }
 
-.add-tag-btn:hover {
-  background-color: black;
-  color: white;
+.sort-select-container select {
+  padding: 12px;
+  border-radius: 4px;
+  appearance: none;
+  position: relative;
+  font-size: 16px; 
+  cursor: pointer;
 }
-
-
 </style>
-@/types/QuizDTO
