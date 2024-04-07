@@ -76,14 +76,14 @@ const getImageUrl = computed(() => {
 }
 
 @media (max-width: 750px) {
-  .card-title{
-    white-space: nowrap  ;      /* Prevents text wrapping */
-    overflow: hidden;          /* Hides the overflowing content */
+  .card-title {
+    white-space: nowrap; /* Prevents text wrapping */
+    overflow: hidden; /* Hides the overflowing content */
     text-overflow: ellipsis;
   }
-  .item-image{
+  .item-image {
     max-width: 130px;
-    max-height: 100px ;
+    max-height: 100px;
   }
 }
 </style>

@@ -79,8 +79,6 @@ const selectedTemplate: Ref<any> = ref(null)
 
 const fetchCategories = async () => {
   categories.value = await getCategories()
-  console.log('Fetching categories', categories.value)
-
 }
 
 onMounted(fetchCategories)

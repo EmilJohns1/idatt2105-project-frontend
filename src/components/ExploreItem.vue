@@ -37,8 +37,7 @@ interface Category {
 onMounted(async () => {
   const fetchedCategories = await getCategories()
   if (fetchedCategories) {
-    categories.value = fetchedCategories.map((name) => ({ id: name, name }));
-    console.log('Categories fetched:', categories.value);
+    categories.value = fetchedCategories.map((name) => ({ id: name, name }))
   } else {
     console.error('Could not fetch categories')
   }
@@ -78,7 +77,6 @@ function goToCategory(categoryName: string) {
 </script>
 
 <style scoped>
-
 .search-input {
   margin-bottom: 20px;
   width: 100%;

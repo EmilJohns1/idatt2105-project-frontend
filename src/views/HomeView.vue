@@ -94,7 +94,6 @@ function scrollRight() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
 }
 
 .category-card {
